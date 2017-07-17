@@ -1,0 +1,28 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+# nofrills
+
+Low-cost anonymous functions
+
+## Installation
+
+```{r gh-installation, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("egnha/nofrills")
+```
+
+## License
+
+MIT Copyright © 2017 [Eugene Ha](https://github.com/egnha)
