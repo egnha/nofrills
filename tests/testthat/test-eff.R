@@ -17,7 +17,10 @@ test_that("eff() can make multi-argument functions without default values", {
 })
 
 test_that("eff() can make multi-argument functions with default values", {
-  expect_equal(eff(x, y = 1 ~ x + y), function(x, y = 1) x + y)
+  expect_equal(
+    eff(x, y = 1, z = x ~ x + y + z),
+    function(x, y = 1, z = x) x + y + z
+  )
 })
 
 test_that("eff() can make multi-argument, variadic functions", {

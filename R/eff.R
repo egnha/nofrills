@@ -76,7 +76,7 @@ get_head <- function(x) {
   nm <- names(x)
   lhs <- f_lhs(x[[1]])
   if (nzchar(nm))
-    `names<-`(lhs, nm)
+    `names<-`(list(lhs), nm)
   else
     `names<-`(.EMPTY_SYMBOL, expr_name(lhs))
 }
