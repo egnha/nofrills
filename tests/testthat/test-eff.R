@@ -28,10 +28,22 @@ test_that("eff() can make multi-argument, variadic functions", {
   expect_equal(eff(x, ... = , y = 1 ~ x + y), function(x, ..., y = 1) x + y)
 })
 
+test_that("eff() with no LHS creates a function with empty signature", {
+  expect_equal(eff(~NULL), function() NULL)
+})
+
+context("Errors")
+
 test_that("error signaled if eff() is called without any arguments", {
   expect_error(eff(), "No function body specified")
 })
 
-test_that("eff() with no LHS creates a function with empty signature", {
-  expect_equal(eff(~NULL), function() NULL)
+test_that("error signaled if final argument is not a formula", {
+  expect_error(eff(x), "Final argument must be a formula")
+  expect_error(eff(x, y), "Final argument must be a formula")
+})
+
+test_that("error signaled if final argument has no default value", {
+  expect_error(eff(x, y = ~ NULL), "Final argument has no default value")
+  expect_error(eff(y = ~ NULL), "Final argument has no default value")
 })
