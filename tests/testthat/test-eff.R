@@ -27,3 +27,7 @@ test_that("eff() can make multi-argument, variadic functions", {
   expect_equal(eff(x, y = 1, ... ~ x + y), function(x, y = 1, ...) x + y)
   expect_equal(eff(x, ... = , y = 1 ~ x + y), function(x, ..., y = 1) x + y)
 })
+
+test_that("error signaled if eff() is called without any arguments", {
+  expect_error(eff(), "No function body specified")
+})

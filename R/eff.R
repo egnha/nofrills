@@ -40,13 +40,17 @@
 #' is_positive(1)
 #' is_positive(-1)
 #'
-#' @importFrom rlang exprs new_function
+#' @importFrom rlang abort exprs is_empty new_function
 #' @export
 #'
 eff <- function(...) {
   xs <- exprs(...)
-  dec <- get_fn_declaration(xs)
-  new_function(dec$args, dec$body, parent.frame())
+  if (is_empty(xs))
+    abort("No function body specified")
+  else {
+    dec <- get_fn_declaration(xs)
+    new_function(dec$args, dec$body, parent.frame())
+  }
 }
 
 get_fn_declaration <- function(xs) {
