@@ -21,9 +21,7 @@ call signature.
  A \emph{function declaration} is a concise
 expression that specifies a function’s arguments and body. It is a
 comma-separated expression of the form
-
-\code{arg1, arg2, ..., argN ~ body}
-
+\preformatted{    arg1, arg2, ..., argN ~ body}
 The part on the left of \code{~} corresponds to what you would write in a
 conventional function declaration \code{function(...)}: each of \code{arg1}, \code{arg2},
 \dots, \code{argN} is either a bare argument (e.g., \code{x} or \code{...}) or an argument

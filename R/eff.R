@@ -10,9 +10,7 @@
 #' @section Function declarations: A _function declaration_ is a concise
 #'   expression that specifies a function’s arguments and body. It is a
 #'   comma-separated expression of the form
-#'
-#'   `arg1, arg2, ..., argN ~ body`
-#'
+#'   \preformatted{    arg1, arg2, ..., argN ~ body}
 #'   The part on the left of `~` corresponds to what you would write in a
 #'   conventional function declaration `function(...)`: each of `arg1`, `arg2`,
 #'   \dots, `argN` is either a bare argument (e.g., `x` or `...`) or an argument
