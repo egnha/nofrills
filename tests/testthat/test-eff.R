@@ -1,5 +1,7 @@
 context("eff")
 
+context("Creating functions")
+
 test_that("eff() can make unary functions without default values", {
   expect_equal(eff(x ~ x + 1), function(x) x + 1)
 })
