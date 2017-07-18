@@ -31,3 +31,7 @@ test_that("eff() can make multi-argument, variadic functions", {
 test_that("error signaled if eff() is called without any arguments", {
   expect_error(eff(), "No function body specified")
 })
+
+test_that("eff() with no LHS creates a function with empty signature", {
+  expect_equal(eff(~NULL), function() NULL)
+})

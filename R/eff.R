@@ -70,19 +70,34 @@ get_args <- function(xs) {
   xs
 }
 
-#' @importFrom rlang f_rhs
+#' @importFrom rlang f_rhs is_formula
 behead <- function(x) {
+  if (!is_formula(x[[1]]))
+    abort("Final argument of eff() must be a formula (see ?eff)")
   list(head = get_head(x), body = f_rhs(x[[1]]))
 }
-
 #' @importFrom rlang f_lhs
 get_head <- function(x) {
   nm <- names(x)
   lhs <- f_lhs(x[[1]])
-  if (nzchar(nm))
-    `names<-`(list(lhs), nm)
+  if (is_onesided(x[[1]]))
+    get_empty_head(nm)
   else
-    `names<-`(.EMPTY_SYMBOL, expr_name(lhs))
+    get_nonempty_head(lhs, nm)
+}
+is_onesided <- function(x) {
+  length(x) == 2
+}
+get_empty_head <- function(nm) {
+  if (nzchar(nm))
+    abort("Final argument has no default value")
+  NULL
+}
+get_nonempty_head <- function(x, nm) {
+  if (nzchar(nm))
+    `names<-`(list(x), nm)
+  else
+    `names<-`(.EMPTY_SYMBOL, expr_name(x))
 }
 
 .EMPTY_SYMBOL <- list(quote(expr =))
