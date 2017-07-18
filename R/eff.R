@@ -66,7 +66,7 @@ get_args <- function(xs) {
     return(NULL)
   no_name <- !nzchar(names(xs))
   names(xs)[no_name] <- vapply(xs[no_name], expr_name, character(1))
-  xs[no_name] <- .EMPTY_SYMBOL
+  xs[no_name] <- .BLANK
   xs
 }
 
@@ -97,7 +97,7 @@ get_nonempty_head <- function(x, nm) {
   if (nzchar(nm))
     `names<-`(list(x), nm)
   else
-    `names<-`(.EMPTY_SYMBOL, expr_name(x))
+    `names<-`(.BLANK, expr_name(x))
 }
 
-.EMPTY_SYMBOL <- list(quote(expr =))
+.BLANK <- list(quote(expr =))
