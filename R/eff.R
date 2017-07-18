@@ -1,7 +1,7 @@
 #' Low-cost anonymous functions
 #'
 #' `eff()` enables you to concisely create (anonymous) functions of arbitrary
-#' call signature. `..()` is a less visually noisy alias of `eff().`
+#' call signature. `..()` is a less visually noisy alias of `eff()`.
 #'
 #' @param ... Function declaration (see below).
 #' @return `eff()` returns a function whose enclosing environment is the calling
