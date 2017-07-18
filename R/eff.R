@@ -1,7 +1,7 @@
 #' Low-cost anonymous functions
 #'
 #' `eff()` enables you to concisely create (anonymous) functions of arbitrary
-#' call signature.
+#' call signature. `..()` is a less visually noisy alias of `eff().`
 #'
 #' @param ... Function declaration (see below).
 #' @return `eff()` returns a function whose enclosing environment is the calling
@@ -47,7 +47,6 @@
 #'
 #' @importFrom rlang abort exprs is_empty new_function
 #' @export
-#'
 eff <- function(...) {
   xs <- exprs(...)
   if (is_empty(xs))
@@ -57,6 +56,10 @@ eff <- function(...) {
     new_function(dec$args, dec$body, parent.frame())
   }
 }
+
+#' @rdname eff
+#' @export
+.. <- eff
 
 get_fn_declaration <- function(xs) {
   n <- length(xs)

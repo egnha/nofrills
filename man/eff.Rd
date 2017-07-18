@@ -2,9 +2,12 @@
 % Please edit documentation in R/eff.R
 \name{eff}
 \alias{eff}
+\alias{..}
 \title{Low-cost anonymous functions}
 \usage{
 eff(...)
+
+..(...)
 }
 \arguments{
 \item{...}{Function declaration (see below).}
@@ -15,7 +18,7 @@ environment of \code{eff()}.
 }
 \description{
 \code{eff()} enables you to concisely create (anonymous) functions of arbitrary
-call signature.
+call signature. \code{..()} is a less visually noisy alias of \code{eff().}
 }
 \section{Function declarations}{
  A \emph{function declaration} is a concise
