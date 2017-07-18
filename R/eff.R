@@ -78,7 +78,7 @@ get_args <- function(xs) {
 #' @importFrom rlang f_rhs is_formula
 behead <- function(x) {
   if (!is_formula(x[[1]]))
-    abort("Final argument of eff() must be a formula (see ?eff)")
+    abort("Final argument of eff() must be a formula")
   list(head = get_head(x), body = f_rhs(x[[1]]))
 }
 #' @importFrom rlang f_lhs
