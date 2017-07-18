@@ -40,18 +40,13 @@
 #' is_positive(1)
 #' is_positive(-1)
 #'
-#' @importFrom rlang exprs
+#' @importFrom rlang exprs new_function
 #' @export
 #'
 eff <- function(...) {
   xs <- exprs(...)
-  declare_function(xs, parent.frame())
-}
-
-#' @importFrom rlang new_function
-declare_function <- function(xs, env) {
   dec <- get_fn_declaration(xs)
-  new_function(dec$args, dec$body, env)
+  new_function(dec$args, dec$body, parent.frame())
 }
 
 get_fn_declaration <- function(xs) {
