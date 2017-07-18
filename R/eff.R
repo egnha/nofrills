@@ -51,10 +51,8 @@ eff <- function(...) {
   xs <- exprs(...)
   if (is_empty(xs))
     abort("No function body specified")
-  else {
-    dec <- get_fn_declaration(xs)
-    new_function(dec$args, dec$body, parent.frame())
-  }
+  dec <- get_fn_declaration(xs)
+  new_function(dec$args, dec$body, parent.frame())
 }
 
 #' @rdname eff
