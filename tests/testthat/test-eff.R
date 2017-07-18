@@ -1,5 +1,3 @@
-context("eff")
-
 context("Creating functions")
 
 test_that("eff() can make unary functions without default values", {
@@ -34,7 +32,7 @@ test_that("eff() with no LHS creates a function with empty signature", {
   expect_equal(eff(~NULL), function() NULL)
 })
 
-context("Errors")
+context("Error handling")
 
 test_that("error signaled if eff() is called without any arguments", {
   expect_error(eff(), "No function body specified")
