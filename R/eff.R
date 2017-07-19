@@ -46,25 +46,42 @@
 #' zero <- 0
 #' eff(x = UQ(zero) ~ x > !! zero)
 #'
-#' @importFrom rlang abort exprs is_empty new_function
+#' @importFrom rlang abort new_function
 #' @export
 eff <- function(..., ..env = parent.frame()) {
-  xs <- exprs(...)
-  if (is_empty(xs))
-    abort("No function body specified")
-  d <- get_fn_declaration(xs)
+  if (!is.environment(..env))
+    abort("'..env' must be an environment")
+  d <- get_fn_declaration(...)
   new_function(d$args, d$body, ..env)
 }
-
 #' @rdname eff
 #' @export
 .. <- eff
 
-get_fn_declaration <- function(xs) {
-  n <- length(xs)
-  args <- get_args(xs[-n])
-  remains <- behead(xs[n])
+get_fn_declaration <- function(...) {
+  xs <- get_exprs(...)
+  args <- get_args(xs$front)
+  remains <- behead(xs$back)
   list(args = c(args, remains$head), body = remains$body)
+}
+
+#' @importFrom rlang exprs
+get_exprs <- function(...) {
+  xs <- validate(exprs(...))
+  n <- length(xs)
+  list(front = xs[-n], back = xs[n])
+}
+#' @importFrom rlang is_empty is_formula
+validate <- function(xs, n) {
+  if (is_empty(xs))
+    abort("No function specified")
+  n <- length(xs)
+  is_fml <- vapply(xs, is_formula, logical(1))
+  if (any(is_fml[-n]))
+    abort("Only the body (which comes last) is a formula, not the arguments")
+  if (!is_fml[n])
+    abort("Final argument must be a formula (specifying the body)")
+  xs
 }
 
 #' @importFrom rlang expr_name is_empty
@@ -79,8 +96,6 @@ get_args <- function(xs) {
 
 #' @importFrom rlang f_rhs is_formula
 behead <- function(x) {
-  if (!is_formula(x[[1]]))
-    abort("Final argument must be a formula")
   list(head = get_head(x), body = f_rhs(x[[1]]))
 }
 #' @importFrom rlang f_lhs
