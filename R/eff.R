@@ -96,7 +96,7 @@ is_onesided <- function(x) {
 }
 get_empty_head <- function(nm) {
   if (nzchar(nm))
-    abort("Final argument has no default value")
+    abort("Default value of final argument is missing")
   NULL
 }
 get_nonempty_head <- function(x, nm) {

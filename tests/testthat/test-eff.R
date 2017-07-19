@@ -43,7 +43,7 @@ test_that("error signaled if final argument is not a formula", {
   expect_error(eff(x, y), "Final argument must be a formula")
 })
 
-test_that("error signaled if final argument has no default value", {
-  expect_error(eff(x, y = ~ NULL), "Final argument has no default value")
-  expect_error(eff(y = ~ NULL), "Final argument has no default value")
+test_that("error signaled if final argument has = but no default value", {
+  expect_error(eff(x = ~ NULL), "Default value of final argument is missing")
+  expect_error(eff(x, y = ~ NULL), "Default value of final argument is missing")
 })
