@@ -21,7 +21,8 @@ calling environment of \code{eff()}).
 }
 \description{
 \code{eff()} enables you to concisely create (anonymous) functions of arbitrary
-call signature. \code{..()} is a less visually noisy alias of \code{eff()}.
+call signature. For even less visual noise, \code{..()} is provided as alias of
+\code{eff()}.
 }
 \section{Function declarations}{
  A \emph{function declaration} is a concise
@@ -58,9 +59,6 @@ eff(~ message("!"))
 
 # unquoting (via `!!` or UQ()) is supported
 zero <- 0
-is_positive <- eff(x = UQ(zero) ~ x > !! zero)
-is_positive()
-is_positive(1)
-is_positive(-1)
+eff(x = UQ(zero) ~ x > !! zero)
 
 }

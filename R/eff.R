@@ -1,7 +1,8 @@
 #' Low-cost anonymous functions
 #'
 #' `eff()` enables you to concisely create (anonymous) functions of arbitrary
-#' call signature. `..()` is a less visually noisy alias of `eff()`.
+#' call signature. For even less visual noise, `..()` is provided as alias of
+#' `eff()`.
 #'
 #' @param ... Function declaration (see below).
 #' @param ..env Environment in which to create the function (i.e., the
@@ -43,10 +44,7 @@
 #'
 #' # unquoting (via `!!` or UQ()) is supported
 #' zero <- 0
-#' is_positive <- eff(x = UQ(zero) ~ x > !! zero)
-#' is_positive()
-#' is_positive(1)
-#' is_positive(-1)
+#' eff(x = UQ(zero) ~ x > !! zero)
 #'
 #' @importFrom rlang abort exprs is_empty new_function
 #' @export
