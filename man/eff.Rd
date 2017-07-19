@@ -3,11 +3,14 @@
 \name{eff}
 \alias{eff}
 \alias{..}
+\alias{λ}
 \title{Low-cost anonymous functions}
 \usage{
 eff(..., ..env = parent.frame())
 
 ..(..., ..env = parent.frame())
+
+λ(..., ..env = parent.frame())
 }
 \arguments{
 \item{...}{Function declaration (see below).}
@@ -21,8 +24,8 @@ calling environment of \code{eff()}).
 }
 \description{
 \code{eff()} enables you to concisely create (anonymous) functions of arbitrary
-call signature. For even less visual noise, \code{..()} is provided as alias of
-\code{eff()}.
+call signature. For even less visual noise, \code{..()} and \code{λ()} are provided as
+aliases of \code{eff()}.
 }
 \section{Function declarations}{
  A \emph{function declaration} is a concise
