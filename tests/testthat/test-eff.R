@@ -35,6 +35,20 @@ test_that("eff() with no LHS creates a function with empty signature", {
   expect_equal(eff(~NULL), function() NULL)
 })
 
+context("Function environment")
+
+test_that("eff() creates a function in the calling environment, by default", {
+  env <- environment()
+  f <- eff(x ~ NULL)
+  expect_identical(environment(f), env)
+})
+
+test_that("eff() creates a function whose environment is ..env", {
+  env <- new.env()
+  f <- eff(x ~ NULL, ..env = env)
+  expect_identical(environment(f), env)
+})
+
 context("Error handling")
 
 test_that("error signaled if eff() is called without any arguments", {

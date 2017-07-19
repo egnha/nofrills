@@ -4,8 +4,11 @@
 #' call signature. `..()` is a less visually noisy alias of `eff()`.
 #'
 #' @param ... Function declaration (see below).
-#' @return `eff()` returns a function whose enclosing environment is the calling
-#'   environment of `eff()`.
+#' @param ..env Environment in which to create the function (i.e., the
+#'   function’s enclosing environment).
+#'
+#' @return A function whose enclosing environment is `..env` (by default, the
+#'   calling environment of `eff()`).
 #'
 #' @section Function declarations: A _function declaration_ is a concise
 #'   expression that specifies a function’s arguments and body. It is a
@@ -47,7 +50,7 @@
 #'
 #' @importFrom rlang abort exprs is_empty new_function
 #' @export
-eff <- function(...) {
+eff <- function(..., ..env = parent.frame()) {
   xs <- exprs(...)
   if (is_empty(xs))
     abort("No function body specified")

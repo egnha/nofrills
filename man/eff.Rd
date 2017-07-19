@@ -5,16 +5,19 @@
 \alias{..}
 \title{Low-cost anonymous functions}
 \usage{
-eff(...)
+eff(..., ..env = parent.frame())
 
-..(...)
+..(..., ..env = parent.frame())
 }
 \arguments{
 \item{...}{Function declaration (see below).}
+
+\item{..env}{Environment in which to create the function (i.e., the
+function’s enclosing environment).}
 }
 \value{
-\code{eff()} returns a function whose enclosing environment is the calling
-environment of \code{eff()}.
+A function whose enclosing environment is \code{..env} (by default, the
+calling environment of \code{eff()}).
 }
 \description{
 \code{eff()} enables you to concisely create (anonymous) functions of arbitrary
