@@ -51,8 +51,8 @@ eff <- function(...) {
   xs <- exprs(...)
   if (is_empty(xs))
     abort("No function body specified")
-  dec <- get_fn_declaration(xs)
-  new_function(dec$args, dec$body, parent.frame())
+  d <- get_fn_declaration(xs)
+  new_function(d$args, d$body, ..env)
 }
 
 #' @rdname eff
@@ -85,11 +85,11 @@ behead <- function(x) {
 #' @importFrom rlang f_lhs
 get_head <- function(x) {
   nm <- names(x)
-  lhs <- f_lhs(x[[1]])
+  arg <- f_lhs(x[[1]])
   if (is_onesided(x[[1]]))
     get_empty_head(nm)
   else
-    get_nonempty_head(lhs, nm)
+    get_nonempty_head(arg, nm)
 }
 is_onesided <- function(x) {
   length(x) == 2
@@ -99,11 +99,11 @@ get_empty_head <- function(nm) {
     abort("Default value of final argument is missing")
   NULL
 }
-get_nonempty_head <- function(x, nm) {
+get_nonempty_head <- function(arg, nm) {
   if (nzchar(nm))
-    `names<-`(list(x), nm)
+    `names<-`(list(arg), nm)
   else
-    `names<-`(.BLANK, expr_name(x))
+    `names<-`(.BLANK, expr_name(arg))
 }
 
 .BLANK <- list(quote(expr =))
