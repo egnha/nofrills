@@ -104,10 +104,13 @@ validate <- function(xs, n) {
   xs
 }
 
-#' @importFrom rlang expr_name
 get_args <- function(xs) {
   if (is_empty(xs))
     return(NULL)
+  standardize_bare_arguments(xs)
+}
+#' @importFrom rlang expr_name
+standardize_bare_arguments <- function(xs) {
   no_name <- !nzchar(names(xs))
   names(xs)[no_name] <- vapply(xs[no_name], expr_name, character(1))
   xs[no_name] <- .BLANK
