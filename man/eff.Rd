@@ -41,6 +41,11 @@ as you’d do in \code{function(...)}: each of \code{arg1}, \code{arg2}, \dots, 
 either a bare argument (e.g., \code{x} or \code{...}) or an argument with default
 value (e.g., \code{x = 1}). To the right of \code{~}, you write the function body,
 i.e., an expression of the arguments.
+
+\subsection{Quasiquotation in function declarations}{
+All parts of the function declaration support rlang’s
+\link[rlang:quasiquotation]{quasiquotation} syntax.
+}
 }
 
 \examples{
@@ -67,5 +72,11 @@ eff(~ message("!"))
 # unquoting (via `!!` or UQ()) is supported
 zero <- 0
 eff(x = UQ(zero) ~ x > !! zero)
+
+# formals and function bodies can also be spliced in
+f <- function(x, y, ...) x + y
+g <- function(x, y) x - y
+frankenstein <- eff(!!! formals(f), ~ !! body(g))
+stopifnot(identical(frankenstein, function(x, y, ...) x - y))
 
 }

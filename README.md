@@ -46,12 +46,23 @@ f(1, base = 2, y = 1)
 eff(~ NULL)
 #> function () 
 #> NULL
+eff(~ message("!"))
+#> function () 
+#> message("!")
 
 # unquoting (via `!!` or UQ()) is supported
 zero <- 0
 eff(x = UQ(zero) ~ x > !! zero)
 #> function (x = 0) 
 #> x > 0
+
+# formals and function bodies can also be spliced in
+add <- function(x, y) x + y
+sub <- function(y, x) x - y
+frankenstein <- eff(!!! formals(add), ~ !! body(sub))
+frankenstein
+#> function (x, y) 
+#> x - y
 ```
 
 License

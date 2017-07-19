@@ -49,10 +49,17 @@ f(1, base = 2, y = 1)
 
 # use one-sided formula for constant functions or commands
 eff(~ NULL)
+eff(~ message("!"))
 
 # unquoting (via `!!` or UQ()) is supported
 zero <- 0
 eff(x = UQ(zero) ~ x > !! zero)
+
+# formals and function bodies can also be spliced in
+add <- function(x, y) x + y
+sub <- function(y, x) x - y
+frankenstein <- eff(!!! formals(add), ~ !! body(sub))
+frankenstein
 ```
 
 ## License

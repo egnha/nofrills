@@ -30,6 +30,11 @@
 #'   value (e.g., `x = 1`). To the right of `~`, you write the function body,
 #'   i.e., an expression of the arguments.
 #'
+#'   \subsection{Quasiquotation in function declarations}{
+#'     All parts of the function declaration support rlang’s
+#'     [quasiquotation][rlang::quasiquotation] syntax.
+#'   }
+#'
 #' @examples
 #' f <- eff(x ~ x + 1)
 #' f(1)
@@ -54,6 +59,12 @@
 #' # unquoting (via `!!` or UQ()) is supported
 #' zero <- 0
 #' eff(x = UQ(zero) ~ x > !! zero)
+#'
+#' # formals and function bodies can also be spliced in
+#' f <- function(x, y, ...) x + y
+#' g <- function(x, y) x - y
+#' frankenstein <- eff(!!! formals(f), ~ !! body(g))
+#' stopifnot(identical(frankenstein, function(x, y, ...) x - y))
 #'
 #' @importFrom rlang abort new_function
 #' @export
