@@ -1,8 +1,8 @@
 #' Low-cost anonymous functions
 #'
 #' `eff()` enables you to concisely create (anonymous) functions of arbitrary
-#' call signature. For even less visual noise, `..()` and `λ()` are provided as
-#' aliases of `eff()`.
+#' call signature. For even less visual noise, `..()` is provided as an alias
+#' of `eff()`.
 #'
 #' @param ... Function declaration (see below). rlang’s
 #'   [quasiquotation][rlang::quasiquotation] syntax is supported.
@@ -66,9 +66,6 @@ eff <- function(..., ..env = parent.frame()) {
 #' @rdname eff
 #' @export
 .. <- eff
-#' @rdname eff
-#' @export
-λ <- eff
 
 get_fn_declaration <- function(...) {
   xs <- get_exprs(...)

@@ -2,7 +2,6 @@
 
 export(..)
 export(eff)
-export(λ)
 importFrom(rlang,abort)
 importFrom(rlang,expr_name)
 importFrom(rlang,exprs)

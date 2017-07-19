@@ -3,3 +3,5 @@
 ^README\.Rmd$
 ^README-.*\.png$
 ^LICENSE.md$
+^codecov.yml$
+^.travis.yml$
