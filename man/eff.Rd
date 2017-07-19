@@ -30,13 +30,19 @@ aliases of \code{eff()}.
 \section{Function declarations}{
  A \emph{function declaration} is a concise
 expression that specifies a function’s arguments and body. It is a
-comma-separated expression of the form
-\preformatted{    arg1, arg2, ..., argN ~ body}
-The part on the left of \code{~} corresponds to what you would write in a
-conventional function declaration \code{function(...)}: each of \code{arg1}, \code{arg2},
-\dots, \code{argN} is either a bare argument (e.g., \code{x} or \code{...}) or an argument
-with default value (e.g., \code{x = 1}). The part on the right of \code{~} is the
-function body, i.e., an expression of the arguments.
+comma-separated expression of the form\preformatted{    arg1, arg2, ..., argN ~ body
+}
+
+or\preformatted{    arg1, arg2, ..., argN, ~ body
+}
+
+(Note the final, separating comma in the second case.)
+
+To the left of \code{~}, you write a conventional function-argument declaration,
+as you’d do in \code{function(...)}: each of \code{arg1}, \code{arg2}, \dots, \code{argN} is
+either a bare argument (e.g., \code{x} or \code{...}) or an argument with default
+value (e.g., \code{x = 1}). To the right of \code{~}, you write the function body,
+i.e., an expression of the arguments.
 }
 
 \examples{

@@ -34,3 +34,9 @@ test_that("eff() can make multi-argument, variadic functions", {
 test_that("eff() with no LHS creates a function with empty signature", {
   expect_equal(eff(~NULL), function() NULL)
 })
+
+test_that("eff() accepts a separating comma, between the arguments and body", {
+  expect_equal(eff(x, ~ NULL), function(x) NULL)
+  expect_equal(eff(... = , ~ NULL), function(...) NULL)
+  expect_equal(eff(x = 1, ~ NULL), function(x = 1) NULL)
+})

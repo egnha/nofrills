@@ -14,12 +14,20 @@
 #' @section Function declarations: A _function declaration_ is a concise
 #'   expression that specifies a function’s arguments and body. It is a
 #'   comma-separated expression of the form
-#'   \preformatted{    arg1, arg2, ..., argN ~ body}
-#'   The part on the left of `~` corresponds to what you would write in a
-#'   conventional function declaration `function(...)`: each of `arg1`, `arg2`,
-#'   \dots, `argN` is either a bare argument (e.g., `x` or `...`) or an argument
-#'   with default value (e.g., `x = 1`). The part on the right of `~` is the
-#'   function body, i.e., an expression of the arguments.
+#'   ```
+#'       arg1, arg2, ..., argN ~ body
+#'   ```
+#'   or
+#'   ```
+#'       arg1, arg2, ..., argN, ~ body
+#'   ```
+#'   (Note the final, separating comma in the second case.)
+#'
+#'   To the left of `~`, you write a conventional function-argument declaration,
+#'   as you’d do in `function(...)`: each of `arg1`, `arg2`, \dots, `argN` is
+#'   either a bare argument (e.g., `x` or `...`) or an argument with default
+#'   value (e.g., `x = 1`). To the right of `~`, you write the function body,
+#'   i.e., an expression of the arguments.
 #'
 #' @examples
 #' f <- eff(x ~ x + 1)
