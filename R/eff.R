@@ -104,7 +104,7 @@ validate <- function(xs, n) {
   xs
 }
 
-#' @importFrom rlang expr_name is_empty
+#' @importFrom rlang expr_name
 get_args <- function(xs) {
   if (is_empty(xs))
     return(NULL)
@@ -114,7 +114,7 @@ get_args <- function(xs) {
   xs
 }
 
-#' @importFrom rlang f_rhs is_formula
+#' @importFrom rlang f_rhs
 behead <- function(x) {
   list(head = get_head(x), body = f_rhs(x[[1]]))
 }
