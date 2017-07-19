@@ -4,9 +4,10 @@
 #' call signature. For even less visual noise, `..()` and `λ()` are provided as
 #' aliases of `eff()`.
 #'
-#' @param ... Function declaration (see below).
+#' @param ... Function declaration (see below). rlang’s
+#'   [quasiquotation][rlang::quasiquotation] syntax is supported.
 #' @param ..env Environment in which to create the function (i.e., the
-#'   function’s enclosing environment).
+#'   function’s [enclosing environment][base::environment]).
 #'
 #' @return A function whose enclosing environment is `..env` (by default, the
 #'   calling environment of `eff()`).

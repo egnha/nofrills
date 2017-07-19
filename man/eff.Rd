@@ -13,10 +13,11 @@ eff(..., ..env = parent.frame())
 λ(..., ..env = parent.frame())
 }
 \arguments{
-\item{...}{Function declaration (see below).}
+\item{...}{Function declaration (see below). rlang’s
+\link[rlang:quasiquotation]{quasiquotation} syntax is supported.}
 
 \item{..env}{Environment in which to create the function (i.e., the
-function’s enclosing environment).}
+function’s \link[base:environment]{enclosing environment}).}
 }
 \value{
 A function whose enclosing environment is \code{..env} (by default, the
