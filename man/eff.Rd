@@ -83,4 +83,17 @@ g <- function(y, x, ...) x - y
 frankenstein <- eff(!!! formals(f), ~ !! body(g))
 stopifnot(identical(frankenstein, function(x, y) x - y))
 
+## unquoting protects against changes in a function’s scope
+x <- "x"
+f <- function() x
+f_solid <- eff(~ !! x)
+# both return the same value of x
+f()
+f_solid()
+# but if the binding `x` is (unwittingly) changed, f() changes ...
+x <- sin
+f()
+# ... while f_solid() remains unaffected
+f_solid()
+
 }

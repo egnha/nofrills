@@ -1,8 +1,17 @@
 #' Low-cost anonymous functions
 #'
-#' `eff()` enables you to concisely create (anonymous) functions of arbitrary
-#' call signature. For even less visual noise, `..()` is provided as an alias
-#' of `eff()`.
+#' `eff()` enables you to create (anonymous) functions, of arbitrary call
+#' signature. The main advantages of `eff()` over the conventional
+#' \dQuote{`function(<arguments>) <body>`} declaration are:
+#' \itemize{
+#'   \item It is shorter: `eff(x, y = 1 ~ x + y)` is equivalent to
+#'     `function(x, y = 1) x + y`.
+#'   \item It is safer: by enabling [quasiquotation][rlang::quasiquotation],
+#'     `eff()` allows you to \dQuote{burn in} values, which guards your
+#'     function from being affected by unexpected scope changes (see
+#'     _Examples_).
+#' }
+#' For even less visual noise, `..()` is provided as an alias of `eff()`.
 #'
 #' @param ... Function declaration, which supports rlang’s
 #'   [quasiquotation][rlang::quasiquotation] syntax (see below).
@@ -60,6 +69,19 @@
 #' g <- function(y, x, ...) x - y
 #' frankenstein <- eff(!!! formals(f), ~ !! body(g))
 #' stopifnot(identical(frankenstein, function(x, y) x - y))
+#'
+#' ## unquoting protects against changes in a function’s scope
+#' x <- "x"
+#' f <- function() x
+#' f_solid <- eff(~ !! x)
+#' # both return the same value of x
+#' f()
+#' f_solid()
+#' # but if the binding `x` is (unwittingly) changed, f() changes ...
+#' x <- sin
+#' f()
+#' # ... while f_solid() remains unaffected
+#' f_solid()
 #'
 #' @export
 eff <- function(..., ..env = parent.frame()) {
