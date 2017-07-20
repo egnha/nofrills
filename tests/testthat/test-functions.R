@@ -40,3 +40,8 @@ test_that("eff() accepts a separating comma, between the arguments and body", {
   expect_equal(eff(... = , ~ NULL), function(...) NULL)
   expect_equal(eff(x = 1, ~ NULL), function(x = 1) NULL)
 })
+
+test_that("you can find the answer to the riddle", {
+  expect_error(..(8~D)(), NA)
+  expect_error(..(~8^D)())
+})
