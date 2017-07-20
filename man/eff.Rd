@@ -64,7 +64,7 @@ eff(x, ... = , y ~ log(x + y, ...))
 eff(~ NA)
 eff(~ message("!"))
 
-# unquoting (via rlang’s `!!` or UQ()) is supported
+# unquoting is supported (using `!!` or UQ() from rlang)
 zero <- 0
 eff(x = UQ(zero) ~ x > !! zero)
 
