@@ -36,35 +36,30 @@
 #'   }
 #'
 #' @examples
-#' f <- eff(x ~ x + 1)
-#' f(1)
+#' eff(x ~ x + 1)
 #'
-#' f <- eff(x, y ~ x + y)
-#' f(1, 2)
+#' eff(x, y ~ x + y)
 #'
-#' f <- eff(x, y = 2 ~ x + y)
-#' f(1)
+#' eff(x, y = 2 ~ x + y)
 #'
-#' f <- eff(x, y = 1, ... ~ log(x + y, ...))
-#' f(1, 1, base = 2)
+#' eff(x, y = 1, ... ~ log(x + y, ...))
 #'
-#' # to specify '...' in the middle of the call signature, write '... = '
-#' f <- eff(x, ... = , y ~ log(x + y, ...))
-#' f(1, base = 2, y = 1)
+#' # to specify '...' in the middle, write '... = '
+#' eff(x, ... = , y ~ log(x + y, ...))
 #'
 #' # use one-sided formula for constant functions or commands
-#' eff(~ NULL)
+#' eff(~ NA)
 #' eff(~ message("!"))
 #'
-#' # unquoting (via `!!` or UQ()) is supported
+#' # unquoting is supported (using `!!` or UQ() from rlang)
 #' zero <- 0
 #' eff(x = UQ(zero) ~ x > !! zero)
 #'
 #' # formals and function bodies can also be spliced in
-#' f <- function(x, y, ...) x + y
-#' g <- function(x, y) x - y
+#' f <- function(x, y) x + y
+#' g <- function(y, x, ...) x - y
 #' frankenstein <- eff(!!! formals(f), ~ !! body(g))
-#' stopifnot(identical(frankenstein, function(x, y, ...) x - y))
+#' stopifnot(identical(frankenstein, function(x, y) x - y))
 #'
 #' @importFrom rlang abort new_function
 #' @export

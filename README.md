@@ -21,45 +21,45 @@ Usage
 ``` r
 library(nofrills)
 
-f <- eff(x ~ x + 1)
-f(1)
-#> [1] 2
+eff(x ~ x + 1)
+#> function (x) 
+#> x + 1
 
-f <- eff(x, y ~ x + y)
-f(1, 2)
-#> [1] 3
+eff(x, y ~ x + y)
+#> function (x, y) 
+#> x + y
 
-f <- eff(x, y = 2 ~ x + y)
-f(1)
-#> [1] 3
+eff(x, y = 2 ~ x + y)
+#> function (x, y = 2) 
+#> x + y
 
-f <- eff(x, y = 1, ... ~ log(x + y, ...))
-f(1, 1, base = 2)
-#> [1] 1
+eff(x, y = 1, ... ~ log(x + y, ...))
+#> function (x, y = 1, ...) 
+#> log(x + y, ...)
 
-# to specify '...' in the middle of the call signature, write '... = '
-f <- eff(x, ... = , y ~ log(x + y, ...))
-f(1, base = 2, y = 1)
-#> [1] 1
+# to specify '...' in the middle, write '... = '
+eff(x, ... = , y ~ log(x + y, ...))
+#> function (x, ..., y) 
+#> log(x + y, ...)
 
 # use one-sided formula for constant functions or commands
-eff(~ NULL)
+eff(~ NA)
 #> function () 
-#> NULL
+#> NA
 eff(~ message("!"))
 #> function () 
 #> message("!")
 
-# unquoting (via `!!` or UQ()) is supported
+# unquoting is supported (using `!!` or UQ() from rlang)
 zero <- 0
 eff(x = UQ(zero) ~ x > !! zero)
 #> function (x = 0) 
 #> x > 0
 
 # formals and function bodies can also be spliced in
-add <- function(x, y) x + y
-sub <- function(y, x) x - y
-frankenstein <- eff(!!! formals(add), ~ !! body(sub))
+f <- function(x, y) x + y
+g <- function(y, x, ...) x - y
+frankenstein <- eff(!!! formals(f), ~ !! body(g))
 frankenstein
 #> function (x, y) 
 #> x - y
