@@ -10,35 +10,44 @@ eff(..., ..env = parent.frame())
 ..(..., ..env = parent.frame())
 }
 \arguments{
-\item{...}{Function declaration (see below). rlang’s
-\link[rlang:quasiquotation]{quasiquotation} syntax is supported.}
+\item{...}{Function declaration, which supports rlang’s
+\link[rlang:quasiquotation]{quasiquotation} syntax (see below).}
 
 \item{..env}{Environment in which to create the function (i.e., the
 function’s \link[base:environment]{enclosing environment}).}
 }
 \value{
-A function whose enclosing environment is \code{..env} (by default, the
-calling environment of \code{eff()}).
+A function whose enclosing environment is \code{..env}.
 }
 \description{
-\code{eff()} enables you to concisely create (anonymous) functions of arbitrary
-call signature. For even less visual noise, \code{..()} is provided as an alias
-of \code{eff()}.
+\code{eff()} enables you to create (anonymous) functions, of arbitrary call
+signature. The main advantages of \code{eff()} over the conventional
+\dQuote{\code{function(<arguments>) <body>}} declaration are:
+\itemize{
+\item It is shorter: \code{eff(x, y = 1 ~ x + y)} is equivalent to
+\code{function(x, y = 1) x + y}.
+\item It is safer: by enabling \link[rlang:quasiquotation]{quasiquotation},
+\code{eff()} allows you to \dQuote{burn in} values, which guards your
+function from being affected by unexpected scope changes (see
+\emph{Examples}).
+}
+For even less visual noise, \code{..()} is provided as an alias of \code{eff()}.
 }
 \section{Function declarations}{
- A \emph{function declaration} is a concise
-expression that specifies a function’s arguments and body. It is a
-comma-separated expression of the form\preformatted{    arg1, arg2, ..., argN ~ body
+ A \emph{function declaration} is an expression
+that specifies a function’s arguments and body, as a comma-separated
+expression of the form\preformatted{    arg1, arg2, ..., argN ~ body
 }
 
 or\preformatted{    arg1, arg2, ..., argN, ~ body
 }
 
-(Note the final, separating comma in the second case.)
+(Note the final comma in the second case. This is relevant for
+\link[rlang:UQ]{unquoting} the body, see below.)
 
 To the left of \code{~}, you write a conventional function-argument declaration,
-as you’d do in \code{function(...)}: each of \code{arg1}, \code{arg2}, \dots, \code{argN} is
-either a bare argument (e.g., \code{x} or \code{...}) or an argument with default
+just as in \code{function(<arguments>)}: each of \code{arg1}, \code{arg2}, \dots, \code{argN}
+is either a bare argument (e.g., \code{x} or \code{...}) or an argument with default
 value (e.g., \code{x = 1}). To the right of \code{~}, you write the function body,
 i.e., an expression of the arguments.
 

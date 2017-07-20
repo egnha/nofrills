@@ -4,17 +4,16 @@
 #' call signature. For even less visual noise, `..()` is provided as an alias
 #' of `eff()`.
 #'
-#' @param ... Function declaration (see below). rlang’s
-#'   [quasiquotation][rlang::quasiquotation] syntax is supported.
+#' @param ... Function declaration, which supports rlang’s
+#'   [quasiquotation][rlang::quasiquotation] syntax (see below).
 #' @param ..env Environment in which to create the function (i.e., the
 #'   function’s [enclosing environment][base::environment]).
 #'
-#' @return A function whose enclosing environment is `..env` (by default, the
-#'   calling environment of `eff()`).
+#' @return A function whose enclosing environment is `..env`.
 #'
-#' @section Function declarations: A _function declaration_ is a concise
-#'   expression that specifies a function’s arguments and body. It is a
-#'   comma-separated expression of the form
+#' @section Function declarations: A _function declaration_ is an expression
+#'   that specifies a function’s arguments and body, as a comma-separated
+#'   expression of the form
 #'   ```
 #'       arg1, arg2, ..., argN ~ body
 #'   ```
@@ -22,11 +21,12 @@
 #'   ```
 #'       arg1, arg2, ..., argN, ~ body
 #'   ```
-#'   (Note the final, separating comma in the second case.)
+#'   (Note the final comma in the second case. This is relevant for
+#'   [unquoting][rlang::UQ()] the body, see below.)
 #'
 #'   To the left of `~`, you write a conventional function-argument declaration,
-#'   as you’d do in `function(...)`: each of `arg1`, `arg2`, \dots, `argN` is
-#'   either a bare argument (e.g., `x` or `...`) or an argument with default
+#'   just as in `function(<arguments>)`: each of `arg1`, `arg2`, \dots, `argN`
+#'   is either a bare argument (e.g., `x` or `...`) or an argument with default
 #'   value (e.g., `x = 1`). To the right of `~`, you write the function body,
 #'   i.e., an expression of the arguments.
 #'
