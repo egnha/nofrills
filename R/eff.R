@@ -1,8 +1,8 @@
 #' Low-cost anonymous functions
 #'
 #' `eff()` enables you to create (anonymous) functions, of arbitrary call
-#' signature. The main advantages of `eff()` over the conventional
-#' \dQuote{`function(<arguments>) <body>`} declaration are:
+#' signature. It comes at a lower cost than `function(<arguments>) <body>`, in
+#' the sense that:
 #' \itemize{
 #'   \item It is shorter: `eff(x, y = 1 ~ x + y)` is equivalent to
 #'     `function(x, y = 1) x + y`.

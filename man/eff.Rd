@@ -21,8 +21,8 @@ A function whose enclosing environment is \code{..env}.
 }
 \description{
 \code{eff()} enables you to create (anonymous) functions, of arbitrary call
-signature. The main advantages of \code{eff()} over the conventional
-\dQuote{\code{function(<arguments>) <body>}} declaration are:
+signature. It comes at a lower cost than \code{function(<arguments>) <body>}, in
+the sense that:
 \itemize{
 \item It is shorter: \code{eff(x, y = 1 ~ x + y)} is equivalent to
 \code{function(x, y = 1) x + y}.
