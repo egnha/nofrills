@@ -61,13 +61,12 @@
 #' frankenstein <- eff(!!! formals(f), ~ !! body(g))
 #' stopifnot(identical(frankenstein, function(x, y) x - y))
 #'
-#' @importFrom rlang abort new_function
 #' @export
 eff <- function(..., ..env = parent.frame()) {
   if (!is.environment(..env))
-    abort("'..env' must be an environment")
+    rlang::abort("'..env' must be an environment")
   d <- get_fn_declaration(...)
-  new_function(d$args, d$body, ..env)
+  rlang::new_function(d$args, d$body, ..env)
 }
 #' @rdname eff
 #' @export
@@ -80,46 +79,41 @@ get_fn_declaration <- function(...) {
   list(args = c(args, remains$head), body = remains$body)
 }
 
-#' @importFrom rlang exprs
 get_exprs <- function(...) {
-  xs <- validate(exprs(...))
+  xs <- validate(rlang::exprs(...))
   n <- length(xs)
   list(front = xs[-n], back = xs[n])
 }
-#' @importFrom rlang is_empty is_formula
 validate <- function(xs, n) {
-  if (is_empty(xs))
-    abort("No function specified")
+  if (rlang::is_empty(xs))
+    rlang::abort("No function specified")
   n <- length(xs)
-  is_fml <- vapply(xs, is_formula, logical(1))
+  is_fml <- vapply(xs, rlang::is_formula, logical(1))
   if (any(is_fml[-n]))
-    abort("Only the body (as last argument) should be a formula")
+    rlang::abort("Only the body (as last argument) should be a formula")
   if (!is_fml[n])
-    abort("Final argument must be a formula (specifying the body)")
+    rlang::abort("Final argument must be a formula (specifying the body)")
   xs
 }
 
 get_args <- function(xs) {
-  if (is_empty(xs))
+  if (rlang::is_empty(xs))
     return(NULL)
   standardize_bare_arguments(xs)
 }
-#' @importFrom rlang expr_name
 standardize_bare_arguments <- function(xs) {
   no_name <- !nzchar(names(xs))
-  names(xs)[no_name] <- vapply(xs[no_name], expr_name, character(1))
+  names(xs)[no_name] <- vapply(xs[no_name], rlang::expr_name, character(1))
   xs[no_name] <- .BLANK
   xs
 }
 
-#' @importFrom rlang f_rhs
 behead <- function(x) {
-  list(head = get_head(x), body = f_rhs(x[[1]]))
+  list(head = get_head(x), body = rlang::f_rhs(x[[1]]))
 }
-#' @importFrom rlang f_lhs
 get_head <- function(x) {
   nm <- names(x)
-  arg <- f_lhs(x[[1]])
+  arg <- rlang::f_lhs(x[[1]])
   if (is_onesided(x[[1]]))
     get_empty_head(nm)
   else
@@ -130,14 +124,14 @@ is_onesided <- function(x) {
 }
 get_empty_head <- function(nm) {
   if (nzchar(nm))
-    abort("Default value of final argument is missing")
+    rlang::abort("Default value of final argument is missing")
   NULL
 }
 get_nonempty_head <- function(arg, nm) {
   if (nzchar(nm))
     `names<-`(list(arg), nm)
   else
-    `names<-`(.BLANK, expr_name(arg))
+    `names<-`(.BLANK, rlang::expr_name(arg))
 }
 
 .BLANK <- list(quote(expr =))

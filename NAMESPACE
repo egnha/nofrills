@@ -2,11 +2,3 @@
 
 export(..)
 export(eff)
-importFrom(rlang,abort)
-importFrom(rlang,expr_name)
-importFrom(rlang,exprs)
-importFrom(rlang,f_lhs)
-importFrom(rlang,f_rhs)
-importFrom(rlang,is_empty)
-importFrom(rlang,is_formula)
-importFrom(rlang,new_function)
