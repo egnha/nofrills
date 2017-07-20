@@ -14,7 +14,7 @@
 #' For even less visual noise, `..()` is provided as an alias of `eff()`.
 #'
 #' @param ... Function declaration, which supports rlang’s
-#'   [quasiquotation][rlang::quasiquotation] syntax (see below).
+#'   [quasiquotation][rlang::quasiquotation] syntax.
 #' @param ..env Environment in which to create the function (i.e., the
 #'   function’s [enclosing environment][base::environment]).
 #'
@@ -39,9 +39,20 @@
 #'   value (e.g., `x = 1`). To the right of `~`, you write the function body,
 #'   i.e., an expression of the arguments.
 #'
-#'   \subsection{Quasiquotation in function declarations}{
+#'   \subsection{Quasiquotation}{
 #'     All parts of the function declaration support rlang’s
-#'     [quasiquotation][rlang::quasiquotation] syntax.
+#'     [quasiquotation][rlang::quasiquotation] syntax:
+#'     \itemize{
+#'       \item To unquote values (of arguments or parts of the body), use `!!`
+#'         or `UQ()`:
+#'         \preformatted{z <- 0; eff(x, y = !! z ~ x + y); eff(x ~ x > !! z)}
+#'       \item To unquote argument names (with default value), use `:=`
+#'         (definition operator):
+#'         \preformatted{arg <- "y"; eff(x, !! arg := 0 ~ x + !! as.name(arg))}
+#'       \item To splice in a (formal) list of arguments, use `!!!` or `UQS()`:
+#'         \preformatted{eff(!!! alist(x, y = 0), ~ x + y)}
+#'         (Note that the body-formula in this case must be one-sided.)
+#'     }
 #'   }
 #'
 #' @examples

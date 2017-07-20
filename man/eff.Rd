@@ -11,7 +11,7 @@ eff(..., ..env = parent.frame())
 }
 \arguments{
 \item{...}{Function declaration, which supports rlang’s
-\link[rlang:quasiquotation]{quasiquotation} syntax (see below).}
+\link[rlang:quasiquotation]{quasiquotation} syntax.}
 
 \item{..env}{Environment in which to create the function (i.e., the
 function’s \link[base:environment]{enclosing environment}).}
@@ -51,9 +51,20 @@ is either a bare argument (e.g., \code{x} or \code{...}) or an argument with def
 value (e.g., \code{x = 1}). To the right of \code{~}, you write the function body,
 i.e., an expression of the arguments.
 
-\subsection{Quasiquotation in function declarations}{
+\subsection{Quasiquotation}{
 All parts of the function declaration support rlang’s
-\link[rlang:quasiquotation]{quasiquotation} syntax.
+\link[rlang:quasiquotation]{quasiquotation} syntax:
+\itemize{
+\item To unquote values (of arguments or parts of the body), use \code{!!}
+or \code{UQ()}:
+\preformatted{z <- 0; eff(x, y = !! z ~ x + y); eff(x ~ x > !! z)}
+\item To unquote argument names (with default value), use \code{:=}
+(definition operator):
+\preformatted{arg <- "y"; eff(x, !! arg := 0 ~ x + !! as.name(arg))}
+\item To splice in a (formal) list of arguments, use \code{!!!} or \code{UQS()}:
+\preformatted{eff(!!! alist(x, y = 0), ~ x + y)}
+(Note that the body-formula in this case must be one-sided.)
+}
 }
 }
 
