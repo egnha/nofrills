@@ -93,7 +93,7 @@ validate <- function(xs, n) {
   n <- length(xs)
   is_fml <- vapply(xs, is_formula, logical(1))
   if (any(is_fml[-n]))
-    abort("Only the body (which comes last) is a formula, not the arguments")
+    abort("Only the body (as last argument) should be a formula")
   if (!is_fml[n])
     abort("Final argument must be a formula (specifying the body)")
   xs

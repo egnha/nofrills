@@ -5,7 +5,7 @@ test_that("error signaled if eff() is called without any arguments", {
 })
 
 test_that("error signaled if any formuals appear before the body-formula", {
-  msg <- "Only the body \\(which comes last\\) is a formula, not the arguments"
+  msg <- "Only the body \\(as last argument\\) should be a formula"
   expect_error(eff(x ~ NULL, y), msg)
   expect_error(eff(a, x ~ NULL, b), msg)
   expect_error(eff(a ~ b, x ~ NULL), msg)
