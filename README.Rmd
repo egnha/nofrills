@@ -39,22 +39,35 @@ eff(x, y = 2 ~ x + y)
 
 eff(x, y = 1, ... ~ log(x + y, ...))
 
-# to specify '...' in the middle, write '... = '
+## to specify '...' in the middle, write '... = '
 eff(x, ... = , y ~ log(x + y, ...))
 
-# use one-sided formula for constant functions or commands
+## use one-sided formula for constant functions or commands
 eff(~ NA)
 eff(~ message("!"))
 
-# unquoting is supported (using `!!` or UQ() from rlang)
+## unquoting is supported (using `!!` or UQ() from rlang)
 zero <- 0
 eff(x = UQ(zero) ~ x > !! zero)
 
-# formals and function bodies can also be spliced in
+## formals and function bodies can also be spliced in
 f <- function(x, y) x + y
 g <- function(y, x, ...) x - y
 frankenstein <- eff(!!! formals(f), ~ !! body(g))
 frankenstein
+
+## unquoting protects against changes in a function’s scope
+x <- "x"
+f <- function() x
+f_solid <- eff(~ !! x)
+# both return the same value of x
+f()
+f_solid()
+# but if the binding `x` is (unwittingly) changed, f() changes ...
+x <- sin
+f()
+# ... while f_solid() remains unaffected
+f_solid()
 ```
 
 ## License
