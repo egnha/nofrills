@@ -45,13 +45,20 @@
 #'     \itemize{
 #'       \item To unquote values (of arguments or parts of the body), use `!!`
 #'         or `UQ()`:
-#'         \preformatted{z <- 0; eff(x, y = !! z ~ x + y); eff(x ~ x > !! z)}
+#'         \preformatted{
+#'     z <- 0
+#'     eff(x, y = !! z ~ x + y)
+#'     eff(x ~ x > !! z)}
 #'       \item To unquote argument names (with default value), use `:=`
 #'         (definition operator):
-#'         \preformatted{arg <- "y"; eff(x, !! arg := 0 ~ x + !! as.name(arg))}
+#'         \preformatted{
+#'     arg <- "y"
+#'     eff(x, !! arg := 0 ~ x + !! as.name(arg))}
 #'       \item To splice in a (formal) list of arguments, use `!!!` or `UQS()`:
-#'         \preformatted{eff(!!! alist(x, y = 0), ~ x + y)}
-#'         (Note that the body-formula in this case must be one-sided.)
+#'         \preformatted{
+#'     eff(!!! alist(x, y = 0), ~ x + y)}
+#'         (Note that the body in this case must be given as a one-sided
+#'         formula.)
 #'     }
 #'   }
 #'
