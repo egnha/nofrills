@@ -1,5 +1,7 @@
 context("Error handling")
 
+context("eff()")
+
 test_that("error signaled if eff() is called without any arguments", {
   expect_error(eff(), "No function specified")
 })
@@ -25,4 +27,17 @@ test_that("error signaled if final argument has = but no default value", {
 
 test_that("error signaled if '..env' is not an environment", {
   expect_error(eff(~ NULL, ..env = NULL), "'..env' must be an environment")
+})
+
+context("as_eff()")
+
+foo <- function(x) as_eff(x)
+
+test_that("error signaled if '.f' is neither function nor anonymous function", {
+  expect_error(foo(NULL), "mode 'function' was not found")
+})
+
+test_that("error signaled if as_eff() applied across calls", {
+  bar <- function(y) foo(y)
+  expect_error(bar(.(x ~ x + 1)), 'could not find function "."')
 })
