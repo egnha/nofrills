@@ -42,8 +42,8 @@ expression of the form\preformatted{    arg1, arg2, ..., argN ~ body
 or\preformatted{    arg1, arg2, ..., argN, ~ body
 }
 
-(Note the final comma in the second case. This is relevant for
-\link[rlang:UQ]{unquoting} the body, see below.)
+(Note in the second form that the body is a one-sided formula. This
+distinction is relevant for argument \link[rlang:UQS]{splicing}; see below.)
 
 To the left of \code{~}, you write a conventional function-argument declaration,
 just as in \code{function(<arguments>)}: each of \code{arg1}, \code{arg2}, \dots, \code{argN}

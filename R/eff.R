@@ -30,8 +30,8 @@
 #'   ```
 #'       arg1, arg2, ..., argN, ~ body
 #'   ```
-#'   (Note the final comma in the second case. This is relevant for
-#'   [unquoting][rlang::UQ()] the body, see below.)
+#'   (Note in the second form that the body is a one-sided formula. This
+#'   distinction is relevant for argument [splicing][rlang::UQS()]; see below.)
 #'
 #'   To the left of `~`, you write a conventional function-argument declaration,
 #'   just as in `function(<arguments>)`: each of `arg1`, `arg2`, \dots, `argN`
