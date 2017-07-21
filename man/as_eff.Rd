@@ -17,11 +17,11 @@ If \code{.f} is a function, it is simply returned, otherwise the function
 of the \link[=eff]{function declaration} is returned.
 }
 \description{
-\code{as_eff()} is for functions that take functional arguments. Use \code{as_eff()} in
-a function to enable it to accept a minimal anonymous-function notation for
-arguments that are functions. This notation is that of \code{\link[=eff]{eff()}}, but with
-\sQuote{\code{eff}} replaced by \sQuote{\code{.}}—it is scarcely possible for a
-general anonymous-function notation to use fewer tokens than that.
+\code{as_eff()} is for functions that take functional arguments. Use \code{as_eff()}
+\emph{inside} a function to enable it to accept a minimal anonymous-function
+notation for arguments that are functions. This notation is that of \code{\link[=eff]{eff()}},
+but with \sQuote{\code{eff}} replaced by \sQuote{\code{.}}—it is scarcely possible for
+a general anonymous-function notation to use fewer tokens than that.
 }
 \details{
 \code{as_eff()} cannot follow promise expressions across function calls.

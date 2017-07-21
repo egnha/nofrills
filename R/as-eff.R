@@ -1,10 +1,10 @@
 #' Minimal notation for arguments that are functions
 #'
-#' `as_eff()` is for functions that take functional arguments. Use `as_eff()` in
-#' a function to enable it to accept a minimal anonymous-function notation for
-#' arguments that are functions. This notation is that of [eff()], but with
-#' \sQuote{`eff`} replaced by \sQuote{`.`}—it is scarcely possible for a
-#' general anonymous-function notation to use fewer tokens than that.
+#' `as_eff()` is for functions that take functional arguments. Use `as_eff()`
+#' _inside_ a function to enable it to accept a minimal anonymous-function
+#' notation for arguments that are functions. This notation is that of [eff()],
+#' but with \sQuote{`eff`} replaced by \sQuote{`.`}—it is scarcely possible for
+#' a general anonymous-function notation to use fewer tokens than that.
 #'
 #' @param .f A function or an abbreviated anonymous-function expression of the
 #'   form `.(...)`, where `...` is a [function declaration][eff()] (i.e., `.`,
