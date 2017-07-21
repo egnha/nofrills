@@ -104,9 +104,9 @@
 #' @export
 eff <- function(..., ..env = parent.frame()) {
   if (!is.environment(..env))
-    rlang::abort("'..env' must be an environment")
+    abort("'..env' must be an environment")
   d <- get_fn_declaration(...)
-  rlang::new_function(d$args, d$body, ..env)
+  new_function(d$args, d$body, ..env)
 }
 #' @rdname eff
 #' @export
@@ -120,40 +120,40 @@ get_fn_declaration <- function(...) {
 }
 
 get_exprs <- function(...) {
-  xs <- validate(rlang::exprs(...))
+  xs <- validate(exprs(...))
   n <- length(xs)
   list(front = xs[-n], back = xs[n])
 }
 validate <- function(xs, n) {
-  if (rlang::is_empty(xs))
-    rlang::abort("No function specified")
+  if (is_empty(xs))
+    abort("No function specified")
   n <- length(xs)
-  is_fml <- vapply(xs, rlang::is_formula, logical(1))
+  is_fml <- vapply(xs, is_formula, logical(1))
   if (any(is_fml[-n]))
-    rlang::abort("Only the body (as last argument) should be a formula")
+    abort("Only the body (as last argument) should be a formula")
   if (!is_fml[n])
-    rlang::abort("Final argument must be a formula (specifying the body)")
+    abort("Final argument must be a formula (specifying the body)")
   xs
 }
 
 get_args <- function(xs) {
-  if (rlang::is_empty(xs))
+  if (is_empty(xs))
     return(NULL)
   standardize_bare_arguments(xs)
 }
 standardize_bare_arguments <- function(xs) {
   no_name <- !nzchar(names(xs))
-  names(xs)[no_name] <- vapply(xs[no_name], rlang::expr_name, character(1))
+  names(xs)[no_name] <- vapply(xs[no_name], expr_name, character(1))
   xs[no_name] <- .BLANK
   xs
 }
 
 behead <- function(x) {
-  list(head = get_head(x), body = rlang::f_rhs(x[[1]]))
+  list(head = get_head(x), body = f_rhs(x[[1]]))
 }
 get_head <- function(x) {
   nm <- names(x)
-  arg <- rlang::f_lhs(x[[1]])
+  arg <- f_lhs(x[[1]])
   if (is_onesided(x[[1]]))
     get_empty_head(nm)
   else
@@ -164,14 +164,14 @@ is_onesided <- function(x) {
 }
 get_empty_head <- function(nm) {
   if (nzchar(nm))
-    rlang::abort("Default value of final argument is missing")
+    abort("Default value of final argument is missing")
   NULL
 }
 get_nonempty_head <- function(arg, nm) {
   if (nzchar(nm))
     `names<-`(list(arg), nm)
   else
-    `names<-`(.BLANK, rlang::expr_name(arg))
+    `names<-`(.BLANK, expr_name(arg))
 }
 
 .BLANK <- list(quote(expr =))
