@@ -50,15 +50,13 @@ Map_(.(x, y, z ~ paste(x, y, paste("and", z), sep = ", ")), 1:3, 4:6, 7:9)
 
 ## abbreviated anonymous functions are interpreted in the calling environment
 # so this works, as expected
-as_eff(.(x ~ x + 1))
+foo <- function(a) as_eff(a)
+foo(.(x ~ x + 1))
 # but as_eff() can't interpret abbreviated anonymous functions across calls
 foo <- function(a) bar(a)
 bar <- function(b) as_eff(b)
 \dontrun{
 foo(.(x ~ x + 1))}
-# for foo() to accept 'a' as an abbreivated anonymous function, write:
-foo <- function(a) as_eff(a)
-foo(.(x ~ x + 1))
 
 }
 \seealso{
