@@ -115,3 +115,6 @@ f()
 f_solid()
 
 }
+\seealso{
+\code{\link[=as_eff]{as_eff()}}
+}

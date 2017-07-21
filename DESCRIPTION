@@ -11,5 +11,9 @@ Imports: rlang (>= 0.1.1)
 Suggests: testthat
 URL: https://github.com/egnha/nofrills
 BugReports: https://github.com/egnha/nofrills/issues
+Collate:
+    'nofrills.R'
+    'eff.R'
+    'as-eff.R'
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)

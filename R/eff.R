@@ -62,6 +62,8 @@
 #'     }
 #'   }
 #'
+#' @seealso [as_eff()]
+#'
 #' @examples
 #' eff(x ~ x + 1)
 #'
