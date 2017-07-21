@@ -24,12 +24,12 @@ A function whose enclosing environment is \code{..env}.
 signature. It comes at a lower cost than \code{function(<arguments>) <body>}, in
 the sense that:
 \itemize{
-\item It is shorter: \code{eff(x, y = 1 ~ x + y)} is equivalent to
-\code{function(x, y = 1) x + y}.
-\item It is safer: by enabling \link[rlang:quasiquotation]{quasiquotation},
+\item it is shorter — \code{eff(x, y = 1 ~ x + y)} is equivalent to
+\code{function(x, y = 1) x + y}
+\item it is safer — by enabling \link[rlang:quasiquotation]{quasiquotation},
 \code{eff()} allows you to \dQuote{burn in} values, which guards your
 function from being affected by unexpected scope changes (see
-\emph{Examples}).
+\emph{Examples})
 }
 For even less visual noise, \code{..()} is provided as an alias of \code{eff()}.
 }

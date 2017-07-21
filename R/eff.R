@@ -4,12 +4,12 @@
 #' signature. It comes at a lower cost than `function(<arguments>) <body>`, in
 #' the sense that:
 #' \itemize{
-#'   \item It is shorter: `eff(x, y = 1 ~ x + y)` is equivalent to
-#'     `function(x, y = 1) x + y`.
-#'   \item It is safer: by enabling [quasiquotation][rlang::quasiquotation],
+#'   \item it is shorter — `eff(x, y = 1 ~ x + y)` is equivalent to
+#'     `function(x, y = 1) x + y`
+#'   \item it is safer — by enabling [quasiquotation][rlang::quasiquotation],
 #'     `eff()` allows you to \dQuote{burn in} values, which guards your
 #'     function from being affected by unexpected scope changes (see
-#'     _Examples_).
+#'     _Examples_)
 #' }
 #' For even less visual noise, `..()` is provided as an alias of `eff()`.
 #'
