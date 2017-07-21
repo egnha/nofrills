@@ -3,9 +3,30 @@
 nofrills
 ========
 
+*Everyday low-cost anonymous functions*
+
 [![Travis-CI Build Status](https://travis-ci.org/egnha/nofrills.svg?branch=master)](https://travis-ci.org/egnha/nofrills) [![codecov](https://codecov.io/gh/egnha/nofrills/branch/master/graph/badge.svg)](https://codecov.io/gh/egnha/nofrills)
 
-Low-cost anonymous functions
+Overview
+--------
+
+*nofrills* is a tiny R package that provides a function `eff()`, which enables you to create (anonymous) functions, of *arbitrary* call signature. It’s a lower cost, drop-in replacement for the usual `function(<arguments>) <body>` invocation, in that:
+
+-   it is **shorter**:
+
+    ``` r
+    eff(x, y = 1 ~ x + y)
+
+    ..(x, y = 1 ~ x + y)
+    ```
+
+    are both equivalent to
+
+    ``` r
+    function(x, y = 1) x + y
+    ```
+
+-   it is **safer**: by enabling [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html), `eff()` allows you to “burn in” values, which guards your function from being affected by unexpected scope change
 
 Installation
 ------------
@@ -18,9 +39,11 @@ devtools::install_github("egnha/nofrills")
 Usage
 -----
 
-``` r
-library(nofrills)
+For details and more examples, see the package documentation (`?eff`).
 
+### Same syntax as `function()`, just shorter
+
+``` r
 eff(x ~ x + 1)
 #> function (x) 
 #> x + 1
@@ -37,50 +60,96 @@ eff(x, y = 1, ... ~ log(x + y, ...))
 #> function (x, y = 1, ...) 
 #> log(x + y, ...)
 
-## to specify '...' in the middle, write '... = '
+# to specify `...` in the middle, write `... = `.
 eff(x, ... = , y ~ log(x + y, ...))
 #> function (x, ..., y) 
 #> log(x + y, ...)
 
-## use one-sided formula for constant functions or commands
 eff(~ NA)
 #> function () 
 #> NA
-eff(~ message("!"))
-#> function () 
-#> message("!")
+```
 
-## unquoting is supported (using `!!` or UQ() from rlang)
-zero <- 0
-eff(x = UQ(zero) ~ x > !! zero)
-#> function (x = 0) 
+### Supports quasiquotation
+
+#### Unquoting values
+
+``` r
+z <- 0
+eff(x, y = !! z ~ x + y)
+#> function (x, y = 0) 
+#> x + y
+eff(x ~ x > !! z)
+#> function (x) 
 #> x > 0
+```
 
-## formals and function bodies can also be spliced in
-f <- function(x, y) x + y
-g <- function(y, x, ...) x - y
-frankenstein <- eff(!!! formals(f), ~ !! body(g))
-frankenstein
-#> function (x, y) 
-#> x - y
+#### Unquoting argument names
 
-## unquoting protects against changes in a function’s scope
+``` r
+arg <- "y"
+eff(x, !! arg := 0 ~ x + !! as.name(arg))
+#> function (x, y = 0) 
+#> x + y
+```
+
+#### Splicing in argument lists
+
+``` r
+args <- alist(x, y = 0)
+eff(!!! args, ~ x + y)
+#> function (x, y = 0) 
+#> x + y
+```
+
+(Note that the function body here is a one-sided formula.)
+
+#### Protect functions against scope changes
+
+``` r
 x <- "x"
 f <- function() x
 f_solid <- eff(~ !! x)
-# both return the same value of x
+```
+
+Both return the same value of x
+
+``` r
 f()
 #> [1] "x"
-f_solid()
-#> [1] "x"
-# but if the binding `x` is (unwittingly) changed, f() changes ...
-x <- sin
-f()
-#> function (x)  .Primitive("sin")
-# ... while f_solid() remains unaffected
 f_solid()
 #> [1] "x"
 ```
+
+But if the binding `x` is (unwittingly) changed, `f()` changes, while `f_solid()` remains unaffected.
+
+``` r
+x <- sin
+f()
+#> function (x)  .Primitive("sin")
+f_solid()
+#> [1] "x"
+```
+
+### Smiley functions
+
+A riddle: Both of these smileys produce functions.
+
+``` r
+..(~8^D)
+..(8~D)
+```
+
+But which one is actually callable?
+
+Alternatives
+------------
+
+The following functions also create (anonymous) functions. They are able to be more concise than `eff()` and `..()`, because they are specialized rather than general.
+
+-   [`rlang::as_function()`](http://rlang.tidyverse.org/reference/as_function.html) allows you to create anonymous functions of up to two arguments.
+
+-   The [lambda](https://github.com/jimhester/lambda) package uses a `bquote()`-like notation for function declarations, which are very compact, because you dont’t configure the call signature. Quasiquotation is not supported.
 
 License
 -------
