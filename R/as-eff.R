@@ -8,7 +8,8 @@
 #'
 #' @param .f A function or an abbreviated anonymous-function expression of the
 #'   form `.(...)`, where `...` is a [function declaration][eff()] (i.e., `.`,
-#'   in this context, is an alias of [eff()]).
+#'   in this context, is an alias of [eff()]). As for [eff()],
+#'   [quasiquotation][rlang::quasiquotation] is supported.
 #'
 #' @return If `.f` is a function, it is simply returned, otherwise the function
 #'   of the [function declaration][eff()] is returned.

@@ -9,7 +9,8 @@ as_eff(.f)
 \arguments{
 \item{.f}{A function or an abbreviated anonymous-function expression of the
 form \code{.(...)}, where \code{...} is a \link[=eff]{function declaration} (i.e., \code{.},
-in this context, is an alias of \code{\link[=eff]{eff()}}).}
+in this context, is an alias of \code{\link[=eff]{eff()}}). As for \code{\link[=eff]{eff()}},
+\link[rlang:quasiquotation]{quasiquotation} is supported.}
 }
 \value{
 If \code{.f} is a function, it is simply returned, otherwise the function
