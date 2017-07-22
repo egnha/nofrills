@@ -9,14 +9,15 @@
 #'     fn(x, y = 1 ~ x + y)
 #'     function(x, y = 1) x + y}
 #'     are equivalent.
-#'   \item It is **safer**: by enabling [quasiquotation][rlang::quasiquotation],
-#'     `fn()` allows you to \dQuote{burn in} values, which guards your function
-#'     from being affected by unexpected scope changes (see _Examples_).
+#'   \item It is **safer**: by enabling (Tidyverse)
+#'     [quasiquotation][rlang::quasiquotation], `fn()` allows you to
+#'     \dQuote{burn in} values, which can guard your function from unexpected
+#'     scope changes (see _Examples_).
 #' }
 #' To reduce visual noise, `..()` is provided as an alias of `fn()`.
 #'
-#' @param ... Function declaration, which supports rlang’s
-#'   [quasiquotation][rlang::quasiquotation] syntax.
+#' @param ... Function declaration, which supports
+#'   [quasiquotation][rlang::quasiquotation].
 #' @param ..env Environment in which to create the function (i.e., the
 #'   function’s [enclosing environment][base::environment]).
 #'
@@ -42,8 +43,8 @@
 #'   i.e., an expression of the arguments.
 #'
 #'   \subsection{Quasiquotation}{
-#'     All parts of the function declaration support rlang’s
-#'     [quasiquotation][rlang::quasiquotation] syntax:
+#'     All parts of a function declaration support (Tidyverse)
+#'     [quasiquotation][rlang::quasiquotation]:
 #'     \itemize{
 #'       \item To unquote values (of arguments or parts of the body), use `!!`
 #'         or `UQ()`:

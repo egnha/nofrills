@@ -10,8 +10,8 @@ fn(..., ..env = parent.frame())
 ..(..., ..env = parent.frame())
 }
 \arguments{
-\item{...}{Function declaration, which supports rlang’s
-\link[rlang:quasiquotation]{quasiquotation} syntax.}
+\item{...}{Function declaration, which supports
+\link[rlang:quasiquotation]{quasiquotation}.}
 
 \item{..env}{Environment in which to create the function (i.e., the
 function’s \link[base:environment]{enclosing environment}).}
@@ -29,9 +29,10 @@ signature. It is a drop-in replacement for the usual
     fn(x, y = 1 ~ x + y)
     function(x, y = 1) x + y}
 are equivalent.
-\item It is \strong{safer}: by enabling \link[rlang:quasiquotation]{quasiquotation},
-\code{fn()} allows you to \dQuote{burn in} values, which guards your function
-from being affected by unexpected scope changes (see \emph{Examples}).
+\item It is \strong{safer}: by enabling (Tidyverse)
+\link[rlang:quasiquotation]{quasiquotation}, \code{fn()} allows you to
+\dQuote{burn in} values, which can guard your function from unexpected
+scope changes (see \emph{Examples}).
 }
 To reduce visual noise, \code{..()} is provided as an alias of \code{fn()}.
 }
@@ -54,8 +55,8 @@ value (e.g., \code{x = 1}). To the right of \code{~}, you write the function bod
 i.e., an expression of the arguments.
 
 \subsection{Quasiquotation}{
-All parts of the function declaration support rlang’s
-\link[rlang:quasiquotation]{quasiquotation} syntax:
+All parts of a function declaration support (Tidyverse)
+\link[rlang:quasiquotation]{quasiquotation}:
 \itemize{
 \item To unquote values (of arguments or parts of the body), use \code{!!}
 or \code{UQ()}:

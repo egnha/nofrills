@@ -1,9 +1,9 @@
 #' Minimal notation for functional arguments
 #'
 #' `as_fn()` is for functions that take functional arguments. Use `as_fn()`
-#' _inside_ a function to enable it to accept a minimal anonymous-function
+#' _inside_ a function to enable it to comprehend a minimal anonymous-function
 #' notation for arguments that are functions. This notation is that of [fn()],
-#' but with \sQuote{`fn`} replaced by a single dot, \sQuote{`.`}.
+#' but with \sQuote{`fn`} replaced by a single dot (\sQuote{`.`}).
 #'
 #' @param .f A function or an abbreviated anonymous-function expression of the
 #'   form `.(...)`, where `...` is a [function declaration][fn()] (i.e., `.`, in
@@ -11,7 +11,7 @@
 #'   [quasiquotation][rlang::quasiquotation] is supported.
 #'
 #' @return If `.f` is a function, it is simply returned, otherwise the function
-#'   of the [function declaration][fn()] is returned.
+#'   determined by the [function declaration][fn()] is returned.
 #'
 #' @details `as_fn()` cannot follow promise expressions across function calls.
 #'   It is only intended to work in the immediate context in which a function

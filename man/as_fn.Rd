@@ -14,13 +14,13 @@ this context, is an alias of \code{\link[=fn]{fn()}}). As for \code{\link[=fn]{f
 }
 \value{
 If \code{.f} is a function, it is simply returned, otherwise the function
-of the \link[=fn]{function declaration} is returned.
+determined by the \link[=fn]{function declaration} is returned.
 }
 \description{
 \code{as_fn()} is for functions that take functional arguments. Use \code{as_fn()}
-\emph{inside} a function to enable it to accept a minimal anonymous-function
+\emph{inside} a function to enable it to comprehend a minimal anonymous-function
 notation for arguments that are functions. This notation is that of \code{\link[=fn]{fn()}},
-but with \sQuote{\code{fn}} replaced by a single dot, \sQuote{\code{.}}.
+but with \sQuote{\code{fn}} replaced by a single dot (\sQuote{\code{.}}).
 }
 \details{
 \code{as_fn()} cannot follow promise expressions across function calls.
