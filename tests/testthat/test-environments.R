@@ -1,23 +1,23 @@
 context("Function environment")
 
-context("eff()")
+context("fn()")
 
-test_that("eff() creates a function in the calling environment, by default", {
+test_that("fn() creates a function in the calling environment, by default", {
   env <- environment()
-  f <- eff(x ~ NULL)
+  f <- fn(x ~ NULL)
   expect_identical(environment(f), env)
 })
 
-test_that("eff() creates a function whose environment is ..env", {
+test_that("fn() creates a function whose environment is ..env", {
   env <- new.env()
-  f <- eff(x ~ NULL, ..env = env)
+  f <- fn(x ~ NULL, ..env = env)
   expect_identical(environment(f), env)
 })
 
-context("as_eff()")
+context("as_fn()")
 
-test_that("as_eff() creates a function in the caller's calling environment", {
-  foo <- function(x) as_eff(x)
+test_that("as_fn() creates a function in the caller's calling environment", {
+  foo <- function(x) as_fn(x)
   env <- environment()
   f <- foo(.(x ~ NULL))
   expect_identical(environment(f), env)

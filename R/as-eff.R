@@ -1,28 +1,28 @@
 #' Minimal notation for arguments that are functions
 #'
-#' `as_eff()` is for functions that take functional arguments. Use `as_eff()`
+#' `as_fn()` is for functions that take functional arguments. Use `as_fn()`
 #' _inside_ a function to enable it to accept a minimal anonymous-function
-#' notation for arguments that are functions. This notation is that of [eff()],
-#' but with \sQuote{`eff`} replaced by \sQuote{`.`}—it is scarcely possible for
-#' a general anonymous-function notation to use fewer tokens than that.
+#' notation for arguments that are functions. This notation is that of [fn()],
+#' but with \sQuote{`fn`} replaced by \sQuote{`.`}—it is scarcely possible for a
+#' general anonymous-function notation to use fewer tokens than that.
 #'
 #' @param .f A function or an abbreviated anonymous-function expression of the
-#'   form `.(...)`, where `...` is a [function declaration][eff()] (i.e., `.`,
-#'   in this context, is an alias of [eff()]). As for [eff()],
+#'   form `.(...)`, where `...` is a [function declaration][fn()] (i.e., `.`, in
+#'   this context, is an alias of [fn()]). As for [fn()],
 #'   [quasiquotation][rlang::quasiquotation] is supported.
 #'
 #' @return If `.f` is a function, it is simply returned, otherwise the function
-#'   of the [function declaration][eff()] is returned.
+#'   of the [function declaration][fn()] is returned.
 #'
-#' @details `as_eff()` cannot follow promise expressions across function calls.
+#' @details `as_fn()` cannot follow promise expressions across function calls.
 #'   It is only intended to work in the immediate context in which a function
 #'   declaration is to be interpreted (see _Examples_).
 #'
-#' @seealso [eff()]
+#' @seealso [fn()]
 #'
 #' @examples
 #' call_fn <- function(.f, x) {
-#'   f <- as_eff(.f)
+#'   f <- as_fn(.f)
 #'   f(x)
 #' }
 #' call_fn(log, 1)
@@ -33,7 +33,7 @@
 #'
 #' ## wrap Map() to accept abbreviated anonymous function expressions
 #' Map_ <- function (f, ...) {
-#'   f <- as_eff(f)
+#'   f <- as_fn(f)
 #'   mapply(FUN = f, ..., SIMPLIFY = FALSE)
 #' }
 #' # you can call Map_() just like Map()
@@ -43,19 +43,19 @@
 #'
 #' ## abbreviated anonymous functions are interpreted in the calling environment
 #' # so this works, as expected
-#' foo <- function(a) as_eff(a)
+#' foo <- function(a) as_fn(a)
 #' foo(.(x ~ x + 1))
-#' # but as_eff() can't interpret abbreviated anonymous functions across calls
+#' # but as_fn() can't interpret abbreviated anonymous functions across calls
 #' foo <- function(a) bar(a)
-#' bar <- function(b) as_eff(b)
+#' bar <- function(b) as_fn(b)
 #' \dontrun{
 #' foo(.(x ~ x + 1))}
 #'
 #' @export
-as_eff <- function(.f) {
+as_fn <- function(.f) {
   x <- eval_bare(substitute(rlang::enexpr(.f)), parent.frame())
   if (is_anon_fn_expr(x))
-    eval_bare(mut_node_car(x, eff), parent.frame(2))
+    eval_bare(mut_node_car(x, fn), parent.frame(2))
   else
     match.fun(.f)
 }

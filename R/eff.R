@@ -1,17 +1,16 @@
 #' Low-cost anonymous functions
 #'
-#' `eff()` enables you to create (anonymous) functions, of arbitrary call
+#' `fn()` enables you to create (anonymous) functions, of arbitrary call
 #' signature. It comes at a lower cost than `function(<arguments>) <body>`, in
 #' the sense that:
 #' \itemize{
-#'   \item it is shorter — `eff(x, y = 1 ~ x + y)` is equivalent to
+#'   \item it is shorter — `fn(x, y = 1 ~ x + y)` is equivalent to
 #'     `function(x, y = 1) x + y`
 #'   \item it is safer — by enabling [quasiquotation][rlang::quasiquotation],
-#'     `eff()` allows you to \dQuote{burn in} values, which guards your
-#'     function from being affected by unexpected scope changes (see
-#'     _Examples_)
+#'     `fn()` allows you to \dQuote{burn in} values, which guards your function
+#'     from being affected by unexpected scope changes (see _Examples_)
 #' }
-#' For even less visual noise, `..()` is provided as an alias of `eff()`.
+#' For reduced visual noise, `..()` is provided as an alias of `fn()`.
 #'
 #' @param ... Function declaration, which supports rlang’s
 #'   [quasiquotation][rlang::quasiquotation] syntax.
@@ -47,53 +46,50 @@
 #'         or `UQ()`:
 #'         \preformatted{
 #'     z <- 0
-#'     eff(x, y = !! z ~ x + y)
-#'     eff(x ~ x > !! z)}
+#'     fn(x, y = !! z ~ x + y)
+#'     fn(x ~ x > !! z)}
 #'       \item To unquote argument names (with default value), use `:=`
 #'         (definition operator):
 #'         \preformatted{
 #'     arg <- "y"
-#'     eff(x, !! arg := 0 ~ x + !! as.name(arg))}
+#'     fn(x, !! arg := 0 ~ x + !! as.name(arg))}
 #'       \item To splice in a (formal) list of arguments, use `!!!` or `UQS()`:
 #'         \preformatted{
-#'     eff(!!! alist(x, y = 0), ~ x + y)}
+#'     fn(!!! alist(x, y = 0), ~ x + y)}
 #'         (Note that the body in this case must be given as a one-sided
 #'         formula.)
 #'     }
 #'   }
 #'
-#' @seealso [as_eff()]
+#' @seealso [as_fn()]
 #'
 #' @examples
-#' eff(x ~ x + 1)
-#'
-#' eff(x, y ~ x + y)
-#'
-#' eff(x, y = 2 ~ x + y)
-#'
-#' eff(x, y = 1, ... ~ log(x + y, ...))
+#' fn(x ~ x + 1)
+#' fn(x, y ~ x + y)
+#' fn(x, y = 2 ~ x + y)
+#' fn(x, y = 1, ... ~ log(x + y, ...))
 #'
 #' ## to specify '...' in the middle, write '... = '
-#' eff(x, ... = , y ~ log(x + y, ...))
+#' fn(x, ... = , y ~ log(x + y, ...))
 #'
 #' ## use one-sided formula for constant functions or commands
-#' eff(~ NA)
-#' eff(~ message("!"))
+#' fn(~ NA)
+#' fn(~ message("!"))
 #'
 #' ## unquoting is supported (using `!!` or UQ() from rlang)
 #' zero <- 0
-#' eff(x = UQ(zero) ~ x > !! zero)
+#' fn(x = UQ(zero) ~ x > !! zero)
 #'
 #' ## formals and function bodies can also be spliced in
 #' f <- function(x, y) x + y
 #' g <- function(y, x, ...) x - y
-#' frankenstein <- eff(!!! formals(f), ~ !! body(g))
+#' frankenstein <- fn(!!! formals(f), ~ !! body(g))
 #' stopifnot(identical(frankenstein, function(x, y) x - y))
 #'
 #' ## unquoting protects against changes in a function’s scope
 #' x <- "x"
 #' f <- function() x
-#' f_solid <- eff(~ !! x)
+#' f_solid <- fn(~ !! x)
 #' # both return the same value of x
 #' f()
 #' f_solid()
@@ -104,15 +100,15 @@
 #' f_solid()
 #'
 #' @export
-eff <- function(..., ..env = parent.frame()) {
+fn <- function(..., ..env = parent.frame()) {
   if (!is.environment(..env))
     abort("'..env' must be an environment")
   d <- get_fn_declaration(...)
   new_function(d$args, d$body, ..env)
 }
-#' @rdname eff
+#' @rdname fn
 #' @export
-.. <- eff
+.. <- fn
 
 get_fn_declaration <- function(...) {
   xs <- get_exprs(...)
