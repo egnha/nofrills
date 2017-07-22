@@ -146,6 +146,11 @@ The following packages provide alternative anonymous-function constructors. Unli
 
 -   [rlang](https://github.com/tidyverse/rlang) provides [`as_function()`](http://rlang.tidyverse.org/reference/as_function.html), which allows you to create anonymous functions of up to two arguments.
 
+Acknowledgement
+---------------
+
+The [rlang](https://github.com/tidyverse/rlang) package by [Lionel Henry](https://github.com/lionel-) and [Hadley Wickham](https://github.com/hadley) makes *nofrills* possible. Crucially, rlang provides the engine for quasiquotation and expression capture.
+
 License
 -------
 
