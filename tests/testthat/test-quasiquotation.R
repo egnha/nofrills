@@ -22,6 +22,9 @@ test_that("arguments can be unquoted, as symbols", {
 
 test_that("formals can be spliced in as arguments", {
   f <- function(x, y = 1, ..., z = x + y) x + y + z
+  fmls <- formals(f)
+  expect_equal(fn(!!! fmls, ~ x + y + z), f)
+  expect_equal(fn(UQS(fmls), ~ x + y + z), f)
   expect_equal(fn(!!! formals(f), ~ x + y + z), f)
   expect_equal(fn(UQS(formals(f)), ~ x + y + z), f)
 })
@@ -59,6 +62,9 @@ test_that("arguments can be unquoted, as symbols", {
 
 test_that("formals can be spliced in as arguments", {
   f <- function(x, y = 1, ..., z = x + y) x + y + z
+  fmls <- formals(f)
+  expect_equal(foo(.(!!! fmls, ~ x + y + z)), f)
+  expect_equal(foo(.(UQS(fmls), ~ x + y + z)), f)
   expect_equal(foo(.(!!! formals(f), ~ x + y + z)), f)
   expect_equal(foo(.(UQS(formals(f)), ~ x + y + z)), f)
 })

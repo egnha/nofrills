@@ -52,7 +52,8 @@
 #'
 #' @export
 as_fn <- function(.f) {
-  x <- eval_bare(substitute(rlang::enexpr(.f)), parent.frame())
+  x <- rlang::enexpr(.f)
+  x <- eval_bare(substitute(substitute(x)), parent.frame())
   if (is_anon_fn_expr(x))
     eval_bare(mut_node_car(x, fn), parent.frame(2))
   else
