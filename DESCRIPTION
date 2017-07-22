@@ -13,7 +13,7 @@ URL: https://github.com/egnha/nofrills
 BugReports: https://github.com/egnha/nofrills/issues
 Collate:
     'nofrills.R'
-    'eff.R'
-    'as-eff.R'
+    'fn.R'
+    'as-fn.R'
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
