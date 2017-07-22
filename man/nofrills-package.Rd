@@ -4,9 +4,10 @@
 \name{nofrills-package}
 \alias{nofrills}
 \alias{nofrills-package}
-\title{nofrills: Low-cost Anonymous Functions}
+\title{nofrills: Low-Cost Anonymous Functions}
 \description{
-Low-cost anonymous functions.
+Provides a more concise way to construct functions using the same
+syntax as 'function()', with support for Tidyverse-style quasiquotation.
 }
 \seealso{
 Useful links:
