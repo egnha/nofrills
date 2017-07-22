@@ -53,15 +53,15 @@ context("as_fn()")
 foo <- function(x) as_fn(x)
 
 test_that("returns functions, unchanged", {
-  expect_identical(foo(identity), identity)
-  expect_identical(foo(function(x) NULL), function(x) NULL)
+  expect_equal(foo(identity), identity)
+  expect_equal(foo(function(x) NULL), function(x) NULL)
 })
 
 test_that("can interpret minimal anonymous-function expressions", {
-  expect_identical(foo(.(~ NULL)), function() NULL)
-  expect_identical(foo(.(x ~ NULL)), function(x) NULL)
-  expect_identical(foo(.(... ~ NULL)), function(...) NULL)
-  expect_identical(foo(.(x, ... ~ NULL)), function(x, ...) NULL)
-  expect_identical(foo(.(x, ... = , y ~ NULL)), function(x, ..., y) NULL)
-  expect_identical(foo(.(x, y = 1, ... ~ NULL)), function(x, y = 1, ...) NULL)
+  expect_equal(foo(.(~ NULL)), function() NULL)
+  expect_equal(foo(.(x ~ NULL)), function(x) NULL)
+  expect_equal(foo(.(... ~ NULL)), function(...) NULL)
+  expect_equal(foo(.(x, ... ~ NULL)), function(x, ...) NULL)
+  expect_equal(foo(.(x, ... = , y ~ NULL)), function(x, ..., y) NULL)
+  expect_equal(foo(.(x, y = 1, ... ~ NULL)), function(x, y = 1, ...) NULL)
 })
