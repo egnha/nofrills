@@ -6,3 +6,4 @@
 ^codecov.yml$
 ^.travis.yml$
 ^.*\.org$
+^cran-comments.md$
