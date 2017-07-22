@@ -39,9 +39,7 @@ devtools::install_github("egnha/nofrills")
 Usage
 -----
 
-For details and more examples, see the package documentation (`?fn`).
-
-### Same syntax as `function()`, just shorter
+### Same syntax as `function()` but shorter
 
 ``` r
 fn(x ~ x + 1)
@@ -56,7 +54,6 @@ fn(x, y = 2 ~ x + y)
 fn(x, y = 1, ... ~ log(x + y, ...))
 #> function (x, y = 1, ...) 
 #> log(x + y, ...)
-# to specify `...` in the middle, write `... = `.
 fn(x, ... = , y ~ log(x + y, ...))
 #> function (x, ..., y) 
 #> log(x + y, ...)
@@ -92,24 +89,19 @@ fn(x, !! arg := 0 ~ x + !! as.name(arg))
 
 ``` r
 args <- alist(x, y = 0)
-fn(!!! args, ~ x + y)
+fn(!!! args, ~ x + y)  # note the one-sided formula
 #> function (x, y = 0) 
 #> x + y
 ```
 
-(Note that the function body here is a one-sided formula.)
+### Protect functions against scope changes
 
-#### Protect functions against scope changes
+Both `f()` and `f_solid()` return the same value of x
 
 ``` r
 x <- "x"
 f <- function() x
 f_solid <- fn(~ !! x)
-```
-
-Both return the same value of x
-
-``` r
 f()
 #> [1] "x"
 f_solid()
@@ -126,7 +118,7 @@ f_solid()
 #> [1] "x"
 ```
 
-### Smiley functions
+### 🙂 functions
 
 A riddle: Both of these smileys produce functions.
 
