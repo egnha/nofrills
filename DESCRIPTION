@@ -3,8 +3,8 @@ Type: Package
 Title: Low-Cost Anonymous Functions
 Version: 0.1.0
 Authors@R: person("Eugene", "Ha", , "eha@posteo.de", c("aut", "cre"))
-Description: Provides a more concise way to construct functions using the same
-  syntax as 'function()', with support for Tidyverse-style quasiquotation.
+Description: Provides a compact way to declare functions using the syntax of
+  'function()', with support for Tidyverse-style quasiquotation.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
