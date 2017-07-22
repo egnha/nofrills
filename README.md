@@ -45,19 +45,24 @@ Usage
 fn(x ~ x + 1)
 #> function (x) 
 #> x + 1
+
 fn(x, y ~ x + y)
 #> function (x, y) 
 #> x + y
+
 fn(x, y = 2 ~ x + y)
 #> function (x, y = 2) 
 #> x + y
+
 fn(x, y = 1, ... ~ log(x + y, ...))
 #> function (x, y = 1, ...) 
 #> log(x + y, ...)
+
 # the only exception, cf. alist()
 fn(x, ... = , y ~ log(x + y, ...))
 #> function (x, ..., y) 
 #> log(x + y, ...)
+
 fn(~ NA)
 #> function () 
 #> NA
@@ -69,9 +74,11 @@ fn(~ NA)
 
 ``` r
 z <- 0
+
 fn(x, y = !! z ~ x + y)
 #> function (x, y = 0) 
 #> x + y
+
 fn(x ~ x > !! z)
 #> function (x) 
 #> x > 0
@@ -81,6 +88,7 @@ fn(x ~ x > !! z)
 
 ``` r
 arg <- "y"
+
 fn(x, !! arg := 0 ~ x + !! as.name(arg))
 #> function (x, y = 0) 
 #> x + y
@@ -90,6 +98,7 @@ fn(x, !! arg := 0 ~ x + !! as.name(arg))
 
 ``` r
 args <- alist(x, y = 0)
+
 fn(!!! args, ~ x + y)  # note the one-sided formula
 #> function (x, y = 0) 
 #> x + y
@@ -101,10 +110,13 @@ Both `f()` and `f_solid()` return the same value of x
 
 ``` r
 x <- "x"
+
 f <- function() x
 f_solid <- fn(~ !! x)
+
 f()
 #> [1] "x"
+
 f_solid()
 #> [1] "x"
 ```
@@ -113,8 +125,10 @@ But if the binding `x` is (unwittingly) changed, `f()` changes, while `f_solid()
 
 ``` r
 x <- sin
+
 f()
 #> function (x)  .Primitive("sin")
+
 f_solid()
 #> [1] "x"
 ```
