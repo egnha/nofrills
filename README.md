@@ -133,9 +133,9 @@ f_solid()
 #> [1] "x"
 ```
 
-### 🙂 functions
+### 😃 functions
 
-A riddle: Both of these smileys produce functions.
+Pop quiz: Both of these smileys produce functions.
 
 ``` r
 ..(~8^D)
@@ -147,11 +147,11 @@ But which one is actually callable?
 Alternatives
 ------------
 
-The following packages provide alternative anonymous-function constructors. Unlike `fn()`, they are specialized rather than general, so they can afford to be more concise.
+The following packages provide alternative anonymous-function constructors. Unlike `fn()`, they automatically configure the resulting function’s call signature, so they can afford to be more concise.
 
--   [lambda](https://github.com/jimhester/lambda) provides `f()`. It uses a `bquote()`-like notation for function declaration, which, by forgoing explicit call signature specification, is very compact. Quasiquotation is not supported, because that wasn't available when lambda was developed.
+-   [lambda](https://github.com/jimhester/lambda) provides `f()`. It uses a `bquote()`-like notation for function declaration, which, by forgoing explicit call signature specification, is very compact. However, quasiquotation is not supported, as it wasn't available when lambda was developed.
 
--   [rlang](https://github.com/tidyverse/rlang) provides [`as_function()`](http://rlang.tidyverse.org/reference/as_function.html), which allows you to create anonymous functions of up to two arguments.
+-   [rlang](https://github.com/tidyverse/rlang) provides [`as_function()`](http://rlang.tidyverse.org/reference/as_function.html), which allows you to create anonymous functions of an arbitrary number of arguments, named `..1` (`.x`), `..2` (`.y`), `..3`, etc. The call signature is fixed.
 
 Acknowledgement
 ---------------
