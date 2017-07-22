@@ -14,19 +14,19 @@ knitr::opts_chunk$set(
 
 # nofrills
 
-_Everyday low-cost anonymous functions_
+_Low-Cost Anonymous Functions_
 
 [![Travis-CI Build Status](https://travis-ci.org/egnha/nofrills.svg?branch=master)](https://travis-ci.org/egnha/nofrills)
 [![codecov](https://codecov.io/gh/egnha/nofrills/branch/master/graph/badge.svg)](https://codecov.io/gh/egnha/nofrills)
 
 ## Overview
 
-_nofrills_ is a tiny R package that provides a function `fn()`, which enables 
-you to create (anonymous) functions, of _arbitrary_ call signature. It’s a lower
-cost, drop-in replacement for the usual `function(<arguments>) <body>`
-invocation, in that:
+_nofrills_ is a tiny R package that provides a function, `fn()`, that enables 
+you to create (anonymous) functions, of _arbitrary_ call signature, 
+economically. It is a drop-in replacement for the usual `function(<arguments>)
+<body>` invocation, but costs less:
 
-  - it is **shorter**:
+  - It is **shorter**:
     ```R
     fn(x, y = 1 ~ x + y)
     
@@ -37,10 +37,10 @@ invocation, in that:
     function(x, y = 1) x + y
     ```
     
-  - it is **safer**: by enabling
+  - It is **safer**: by enabling
     [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html),
    `fn()` allows you to “burn in” values, which guards your function from being
-   affected by unexpected scope change
+   affected by unexpected scope changes (see example, below).
 
 
 ## Installation
