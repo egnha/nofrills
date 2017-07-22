@@ -63,6 +63,7 @@ fn(x ~ x + 1)
 fn(x, y ~ x + y)
 fn(x, y = 2 ~ x + y)
 fn(x, y = 1, ... ~ log(x + y, ...))
+# the only exception, cf. alist()
 fn(x, ... = , y ~ log(x + y, ...))
 fn(~ NA)
 ```
