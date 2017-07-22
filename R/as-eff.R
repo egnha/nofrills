@@ -3,8 +3,7 @@
 #' `as_fn()` is for functions that take functional arguments. Use `as_fn()`
 #' _inside_ a function to enable it to accept a minimal anonymous-function
 #' notation for arguments that are functions. This notation is that of [fn()],
-#' but with \sQuote{`fn`} replaced by \sQuote{`.`}—it is scarcely possible for a
-#' general anonymous-function notation to use fewer tokens than that.
+#' but with \sQuote{`fn`} replaced by \sQuote{`.`}.
 #'
 #' @param .f A function or an abbreviated anonymous-function expression of the
 #'   form `.(...)`, where `...` is a [function declaration][fn()] (i.e., `.`, in
