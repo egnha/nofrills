@@ -21,13 +21,14 @@ _Everyday low-cost anonymous functions_
 
 ## Overview
 
-_nofrills_ is a tiny R package that provides a function `eff()`, which enables 
-you to create (anonymous) functions, of _arbitrary_ call signature. It’s a 
-lower cost, drop-in replacement for the usual `function(<arguments>) <body>` invocation, in that:
+_nofrills_ is a tiny R package that provides a function `fn()`, which enables 
+you to create (anonymous) functions, of _arbitrary_ call signature. It’s a lower
+cost, drop-in replacement for the usual `function(<arguments>) <body>`
+invocation, in that:
 
   - it is **shorter**:
     ```R
-    eff(x, y = 1 ~ x + y)
+    fn(x, y = 1 ~ x + y)
     
     ..(x, y = 1 ~ x + y)
     ```
@@ -38,7 +39,7 @@ lower cost, drop-in replacement for the usual `function(<arguments>) <body>` inv
     
   - it is **safer**: by enabling
     [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html),
-   `eff()` allows you to “burn in” values, which guards your function from being
+   `fn()` allows you to “burn in” values, which guards your function from being
    affected by unexpected scope change
 
 
@@ -55,23 +56,18 @@ devtools::install_github("egnha/nofrills")
 library(nofrills)
 ```
 
-For details and more examples, see the package documentation (`?eff`).
+For details and more examples, see the package documentation (`?fn`).
 
 ### Same syntax as `function()`, just shorter
 
 ```{r}
-eff(x ~ x + 1)
-
-eff(x, y ~ x + y)
-
-eff(x, y = 2 ~ x + y)
-
-eff(x, y = 1, ... ~ log(x + y, ...))
-
+fn(x ~ x + 1)
+fn(x, y ~ x + y)
+fn(x, y = 2 ~ x + y)
+fn(x, y = 1, ... ~ log(x + y, ...))
 # to specify `...` in the middle, write `... = `.
-eff(x, ... = , y ~ log(x + y, ...))
-
-eff(~ NA)
+fn(x, ... = , y ~ log(x + y, ...))
+fn(~ NA)
 ```
 
 ### Supports quasiquotation
@@ -80,22 +76,22 @@ eff(~ NA)
 
 ```{r}
 z <- 0
-eff(x, y = !! z ~ x + y)
-eff(x ~ x > !! z)
+fn(x, y = !! z ~ x + y)
+fn(x ~ x > !! z)
 ```
 
 #### Unquoting argument names
 
 ```{r}
 arg <- "y"
-eff(x, !! arg := 0 ~ x + !! as.name(arg))
+fn(x, !! arg := 0 ~ x + !! as.name(arg))
 ```
 
 #### Splicing in argument lists
 
 ```{r}
 args <- alist(x, y = 0)
-eff(!!! args, ~ x + y)
+fn(!!! args, ~ x + y)
 ```
 
 (Note that the function body here is a one-sided formula.)
@@ -105,7 +101,7 @@ eff(!!! args, ~ x + y)
 ```{r}
 x <- "x"
 f <- function() x
-f_solid <- eff(~ !! x)
+f_solid <- fn(~ !! x)
 ```
 
 Both return the same value of x
