@@ -1,3 +1,19 @@
+# Resubmission (23-07-2017)
+
+This is a resubmission to fix the following issue: the package description
+requires elaboration.
+
+The description has been changed from
+
+> Provides a compact way to declare functions using the syntax of
+> 'function()', with support for Tidyverse-style quasiquotation.
+
+to
+
+> Provides a compact variation of the usual syntax of function
+> declaration, in order to support Tidyverse-style quasiquotation of a
+> function's arguments and body.
+
 ## Test environments
 
 * OS X 10.11.6 (local): R 3.4.1

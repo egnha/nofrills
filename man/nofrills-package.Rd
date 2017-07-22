@@ -6,8 +6,9 @@
 \alias{nofrills-package}
 \title{nofrills: Low-Cost Anonymous Functions}
 \description{
-Provides a compact way to declare functions using the syntax of
-'function()', with support for Tidyverse-style quasiquotation.
+Provides a compact variation of the usual syntax of function
+declaration, in order to support Tidyverse-style quasiquotation of a
+function's arguments and body.
 }
 \seealso{
 Useful links:
