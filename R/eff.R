@@ -1,16 +1,19 @@
 #' Low-cost anonymous functions
 #'
 #' `fn()` enables you to create (anonymous) functions, of arbitrary call
-#' signature. It comes at a lower cost than `function(<arguments>) <body>`, in
-#' the sense that:
+#' signature. It is a drop-in replacement for the usual
+#' `function(<arguments>) <body>` invocation, but costs less:
 #' \itemize{
-#'   \item it is shorter — `fn(x, y = 1 ~ x + y)` is equivalent to
-#'     `function(x, y = 1) x + y`
-#'   \item it is safer — by enabling [quasiquotation][rlang::quasiquotation],
+#'   \item It is **shorter**:
+#'     \preformatted{
+#'     fn(x, y = 1 ~ x + y)
+#'     function(x, y = 1) x + y}
+#'     are equivalent.
+#'   \item It is **safer**: by enabling [quasiquotation][rlang::quasiquotation],
 #'     `fn()` allows you to \dQuote{burn in} values, which guards your function
-#'     from being affected by unexpected scope changes (see _Examples_)
+#'     from being affected by unexpected scope changes (see _Examples_).
 #' }
-#' For reduced visual noise, `..()` is provided as an alias of `fn()`.
+#' To reduce visual noise, `..()` is provided as an alias of `fn()`.
 #'
 #' @param ... Function declaration, which supports rlang’s
 #'   [quasiquotation][rlang::quasiquotation] syntax.
@@ -56,7 +59,7 @@
 #'       \item To splice in a (formal) list of arguments, use `!!!` or `UQS()`:
 #'         \preformatted{
 #'     fn(!!! alist(x, y = 0), ~ x + y)}
-#'         (Note that the body in this case must be given as a one-sided
+#'         (Note that the body, in this case, must be given as a one-sided
 #'         formula.)
 #'     }
 #'   }

@@ -21,16 +21,19 @@ A function whose enclosing environment is \code{..env}.
 }
 \description{
 \code{fn()} enables you to create (anonymous) functions, of arbitrary call
-signature. It comes at a lower cost than \code{function(<arguments>) <body>}, in
-the sense that:
+signature. It is a drop-in replacement for the usual
+\code{function(<arguments>) <body>} invocation, but costs less:
 \itemize{
-\item it is shorter — \code{fn(x, y = 1 ~ x + y)} is equivalent to
-\code{function(x, y = 1) x + y}
-\item it is safer — by enabling \link[rlang:quasiquotation]{quasiquotation},
+\item It is \strong{shorter}:
+\preformatted{
+    fn(x, y = 1 ~ x + y)
+    function(x, y = 1) x + y}
+are equivalent.
+\item It is \strong{safer}: by enabling \link[rlang:quasiquotation]{quasiquotation},
 \code{fn()} allows you to \dQuote{burn in} values, which guards your function
-from being affected by unexpected scope changes (see \emph{Examples})
+from being affected by unexpected scope changes (see \emph{Examples}).
 }
-For reduced visual noise, \code{..()} is provided as an alias of \code{fn()}.
+To reduce visual noise, \code{..()} is provided as an alias of \code{fn()}.
 }
 \section{Function declarations}{
  A \emph{function declaration} is an expression
@@ -68,7 +71,7 @@ or \code{UQ()}:
 \item To splice in a (formal) list of arguments, use \code{!!!} or \code{UQS()}:
 \preformatted{
     fn(!!! alist(x, y = 0), ~ x + y)}
-(Note that the body in this case must be given as a one-sided
+(Note that the body, in this case, must be given as a one-sided
 formula.)
 }
 }

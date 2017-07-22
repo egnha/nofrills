@@ -2,7 +2,7 @@
 % Please edit documentation in R/as-eff.R
 \name{as_fn}
 \alias{as_fn}
-\title{Minimal notation for arguments that are functions}
+\title{Minimal notation for functional arguments}
 \usage{
 as_fn(.f)
 }
@@ -20,7 +20,7 @@ of the \link[=fn]{function declaration} is returned.
 \code{as_fn()} is for functions that take functional arguments. Use \code{as_fn()}
 \emph{inside} a function to enable it to accept a minimal anonymous-function
 notation for arguments that are functions. This notation is that of \code{\link[=fn]{fn()}},
-but with \sQuote{\code{fn}} replaced by \sQuote{\code{.}}.
+but with \sQuote{\code{fn}} replaced by a single dot, \sQuote{\code{.}}.
 }
 \details{
 \code{as_fn()} cannot follow promise expressions across function calls.
