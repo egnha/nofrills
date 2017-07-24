@@ -155,7 +155,7 @@ signature, so they can afford to be more concise.
   - [lambda](https://github.com/jimhester/lambda) provides `f()`. It uses a
     `bquote()`-like notation for function declaration, which, by forgoing 
     explicit call signature specification, is very compact. However,
-    quasiquotation is not supported, as it wasn't available when lambda was
+    quasiquotation is not supported, as that wasn’t available when lambda was
     developed.
 
   - [rlang](https://github.com/tidyverse/rlang) provides 
