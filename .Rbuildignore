@@ -7,3 +7,4 @@
 ^.travis.yml$
 ^.*\.org$
 ^cran-comments.md$
+^logo.png$
