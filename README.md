@@ -141,14 +141,14 @@ f_solid()
 
 ### 😃 functions
 
-Pop quiz: Both of these smileys produce functions.
+Pop quiz!—These smileys produce functions
 
 ``` r
 ..(~8^D)
 ..(8~D)
 ```
 
-But which one is actually callable?
+but which one is actually callable?
 
 Alternatives
 ------------
