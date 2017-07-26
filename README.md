@@ -10,9 +10,11 @@ nofrills <img src="logo.png" align="right" />
 Overview
 --------
 
-*nofrills* is a tiny R package that provides a function, `fn()`, that enables you to create (anonymous) functions, of *arbitrary* call signature, economically. It is a drop-in replacement for the usual `function(<arguments>) <body>` invocation, but costs less:
+*nofrills* is a lightweight R package that provides `fn()`, a more powerful variation of `function()` that:
 
--   It is **shorter**:
+-   **costs less** — it enables Tidyverse [**quasiquotation**](http://rlang.tidyverse.org/reference/quasiquotation.html) for extra [safety](#protect-functions-against-scope-changes), when you need it
+-   has the **same great taste** — supports a superset of `function()`’s syntax and capabilities
+-   is **less filling** —
 
     ``` r
     fn(x, y = 1 ~ x + y)
@@ -25,8 +27,6 @@ Overview
     ``` r
     function(x, y = 1) x + y
     ```
-
--   It is **safer**: by enabling [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html), `fn()` allows you to “burn in” values, which guards your function from being affected by unexpected scope changes (see example, below).
 
 Installation
 ------------
@@ -112,32 +112,34 @@ fn(!!! args, ~ x + y)  # note the one-sided formula
 
 ### Protect functions against scope changes
 
-Both `f()` and `f_solid()` return the same value of x
+By enabling [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html), `fn()` allows you to “burn in” values, which guards your function from being affected by unexpected scope changes.
 
-``` r
-x <- "x"
+-   **Example** — Both `f()` and `f_solid()` return the same value of x
 
-f <- function() x
-f_solid <- fn(~ !! x)
+    ``` r
+    x <- "x"
 
-f()
-#> [1] "x"
+    f <- function() x
+    f_solid <- fn(~ !! x)
 
-f_solid()
-#> [1] "x"
-```
+    f()
+    #> [1] "x"
 
-But if the binding `x` is (unwittingly) changed, `f()` changes, while `f_solid()` remains unaffected.
+    f_solid()
+    #> [1] "x"
+    ```
 
-``` r
-x <- sin
+    But if the binding `x` is (unwittingly) changed, `f()` changes, while `f_solid()` remains unaffected.
 
-f()
-#> function (x)  .Primitive("sin")
+    ``` r
+    x <- sin
 
-f_solid()
-#> [1] "x"
-```
+    f()
+    #> function (x)  .Primitive("sin")
+
+    f_solid()
+    #> [1] "x"
+    ```
 
 ### 😃 functions
 
@@ -150,8 +152,8 @@ Pop quiz!—These smileys produce functions
 
 but which one is actually callable?
 
-Alternatives to `fn()`
-----------------------
+Alternatives to *nofrills*
+--------------------------
 
 Here are some alternative anonymous-function constructors (which don’t support quasiquotation), ordered by increasing concision and decreasing flexibility:
 
