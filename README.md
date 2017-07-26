@@ -12,7 +12,7 @@ Overview
 
 *nofrills* is a lightweight R package that provides `fn()`, a more powerful variation of `function()` that:
 
--   **costs less** — it enables Tidyverse [**quasiquotation**](http://rlang.tidyverse.org/reference/quasiquotation.html) for extra [safety](#protect-functions-against-scope-changes), when you need it
+-   **costs less** — enables Tidyverse [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html) for extra [safety](#protect-functions-against-scope-changes), when you need it
 -   has the **same great taste** — supports a superset of `function()`’s syntax and capabilities
 -   is **less filling** —
 
@@ -155,7 +155,7 @@ but which one is actually callable?
 Alternatives to *nofrills*
 --------------------------
 
-Here are some alternative anonymous-function constructors (which don’t support quasiquotation), ordered by increasing concision and decreasing flexibility:
+Here are some alternative anonymous-function constructors (which don’t support quasiquotation), ordered by increasing concision and specialization:
 
 -   [`pryr::f()`](https://github.com/hadley/pryr)
 -   [`lambda::f()`](https://github.com/jimhester/lambda)
