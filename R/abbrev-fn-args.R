@@ -20,7 +20,8 @@
 #' @export
 abbrev_fn_args <- function(f, ...) {
   f <- match.fun(f)
-  interpret_anon_fns <- anon_fn_interpreter(f, ...)
+  fmls <- fn_fmls(f)
+  interpret_anon_fns <- anon_fn_interpreter(names(fmls), ...)
   `formals<-`(
     function() {
       env_encl <- parent.env(environment())
@@ -28,16 +29,16 @@ abbrev_fn_args <- function(f, ...) {
       call <- interpret_anon_fns(match.call(), env_call)
       eval_bare(mut_node_car(call, env_encl$f), env_call)
     },
-    value = fn_fmls(f)
+    value = fmls
   )
 }
 
-anon_fn_interpreter <- function(f, ...) {
-  nms <- chr(...)
-  if (any(!nms %in% fn_fmls_names(f)))
+anon_fn_interpreter <- function(nms, ...) {
+  nms_fn <- chr(...)
+  if (any(!nms_fn %in% nms))
     abort("Invalid argument name(s)")
   function(call, env) {
-    call[nms] <- lapply(call[nms], interpret_anon_fn, env = env)
+    call[nms_fn] <- lapply(call[nms_fn], interpret_anon_fn, env = env)
     call
   }
 }
