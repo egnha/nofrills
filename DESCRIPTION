@@ -19,5 +19,6 @@ Collate:
     'nofrills.R'
     'fn.R'
     'as-fn.R'
+    'abbrev-fn-args.R'
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)

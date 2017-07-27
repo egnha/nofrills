@@ -1,0 +1,49 @@
+#' Enhance a function to interpret abbreviated function expressions
+#'
+#' `abbrev_fn_args()` is a functional operator that \dQuote{upgrades} a function
+#' to one that can interpret abbreviated function expressions.
+#'
+#' @param f Function, or symbol or name of a function.
+#' @param ... Name(s) of functional argument(s) of `f` (strings). Unsplicing of
+#'   lists of strings is supported via `!!!` or `UQS()`.
+#'
+#' @return A function with the same call signature as `f`, but whose function
+#'   arguments, as designated by `...`, may also be specified as abbreviated
+#'   function expression of the form `.(...)`, cf. [as_fn()].
+#'
+#' @seealso [as_fn()]
+#'
+#' @examples
+#' reduce <- abbrev_fn_args(Reduce, "f")
+#' reduce(.(u, v ~ u + 1 / v), c(3, 7, 15, 1, 292), right = TRUE)
+#'
+#' @export
+abbrev_fn_args <- function(f, ...) {
+  f <- match.fun(f)
+  interpret_anon_fns <- anon_fn_interpreter(f, ...)
+  `formals<-`(
+    function() {
+      env_encl <- parent.env(environment())
+      env_call <- parent.frame()
+      call <- interpret_anon_fns(match.call(), env_call)
+      eval_bare(`[[<-`(call, 1, env_encl$f), env_call)
+    },
+    value = fn_fmls(f)
+  )
+}
+
+anon_fn_interpreter <- function(f, ...) {
+  nms <- chr(...)
+  if (any(!nms %in% fn_fmls_names(f)))
+    abort("Invalid argument name(s)")
+  function(call, env) {
+    call[nms] <- lapply(call[nms], interpret_anon_fn, env = env)
+    call
+  }
+}
+interpret_anon_fn <- function(x, env) {
+  if (is_anon_fn_expr(x))
+    eval(mut_node_car(x, fn), env)
+  else
+    x
+}
