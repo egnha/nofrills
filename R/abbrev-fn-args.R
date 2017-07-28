@@ -22,6 +22,8 @@ abbrev_fn_args <- function(f, ...) {
   f <- match.fun(f)
   fmls <- fn_fmls(f)
   interpret_anon_fns <- anon_fn_interpreter(names(fmls), ...)
+  if (is.null(interpret_anon_fns))
+    return(f)
   `formals<-`(
     function() {
       env_encl <- parent.env(environment())
@@ -35,6 +37,9 @@ abbrev_fn_args <- function(f, ...) {
 
 anon_fn_interpreter <- function(nms, ...) {
   nms_fn <- chr(...)
+  # detect emptiness here, rather than in caller, so that empty splice is empty
+  if (is_empty(nms_fn))
+    return(NULL)
   if (any(!nms_fn %in% nms))
     abort("Invalid argument name(s)")
   function(call, env) {
