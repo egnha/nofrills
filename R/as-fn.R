@@ -54,14 +54,14 @@
 as_fn <- function(.f) {
   x <- enexpr(.f)
   x <- eval_bare(substitute(substitute(x)), parent.frame())
-  interpret_fn(x, .f, parent.frame(2))
+  interpret_fn(x, match.fun(.f), parent.frame(2))
 }
 
 interpret_fn <- function(x, f = x, env) {
   if (is_anon_fn_expr(x))
-    eval(mut_node_car(x, fn), env)
+    eval_bare(mut_node_car(x, fn), env)
   else
-    match.fun(f)
+    f
 }
 
 is_anon_fn_expr <- function(x) {
