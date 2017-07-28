@@ -4,18 +4,19 @@
 #' to one that can interpret abbreviated function expressions.
 #'
 #' @param f Function, or symbol or name of a function.
-#' @param ... Name(s) of functional argument(s) of `f` (strings). Unsplicing of
-#'   lists of strings is supported via `!!!` or `UQS()`.
+#' @param ... Name(s) of functional argument(s) of `f` (strings) or `NULL`.
+#'   Unsplicing of lists of strings is supported via `!!!` or `UQS()`.
 #'
 #' @return A function with the same call signature as `f`, but whose function
-#'   arguments, as designated by `...`, may also be specified as abbreviated
-#'   function expression of the form `.(...)`, cf. [as_fn()].
+#'   arguments, as designated by `...`, may be specified using an abbreviated
+#'   function expression of the form `.(...)`, cf. [as_fn()]. If `...` is empty
+#'   or `NULL`, then `f` is simply returned.
 #'
 #' @seealso [as_fn()]
 #'
 #' @examples
 #' reduce <- abbrev_fn_args(Reduce, "f")
-#' reduce(.(u, v ~ u + 1 / v), c(3, 7, 15, 1, 292), right = TRUE)
+#' reduce(.(a, b ~ a + 1 / b), c(3, 7, 15, 1, 292), right = TRUE)
 #'
 #' @export
 abbrev_fn_args <- function(f, ...) {

@@ -9,13 +9,14 @@ abbrev_fn_args(f, ...)
 \arguments{
 \item{f}{Function, or symbol or name of a function.}
 
-\item{...}{Name(s) of functional argument(s) of \code{f} (strings). Unsplicing of
-lists of strings is supported via \code{!!!} or \code{UQS()}.}
+\item{...}{Name(s) of functional argument(s) of \code{f} (strings) or \code{NULL}.
+Unsplicing of lists of strings is supported via \code{!!!} or \code{UQS()}.}
 }
 \value{
 A function with the same call signature as \code{f}, but whose function
-arguments, as designated by \code{...}, may also be specified as abbreviated
-function expression of the form \code{.(...)}, cf. \code{\link[=as_fn]{as_fn()}}.
+arguments, as designated by \code{...}, may be specified using an abbreviated
+function expression of the form \code{.(...)}, cf. \code{\link[=as_fn]{as_fn()}}. If \code{...} is empty
+or \code{NULL}, then \code{f} is simply returned.
 }
 \description{
 \code{abbrev_fn_args()} is a functional operator that \dQuote{upgrades} a function
@@ -23,7 +24,7 @@ to one that can interpret abbreviated function expressions.
 }
 \examples{
 reduce <- abbrev_fn_args(Reduce, "f")
-reduce(.(u, v ~ u + 1 / v), c(3, 7, 15, 1, 292), right = TRUE)
+reduce(.(a, b ~ a + 1 / b), c(3, 7, 15, 1, 292), right = TRUE)
 
 }
 \seealso{
