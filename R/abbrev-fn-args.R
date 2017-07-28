@@ -38,13 +38,7 @@ anon_fn_interpreter <- function(nms, ...) {
   if (any(!nms_fn %in% nms))
     abort("Invalid argument name(s)")
   function(call, env) {
-    call[nms_fn] <- lapply(call[nms_fn], interpret_anon_fn, env = env)
+    call[nms_fn] <- lapply(call[nms_fn], interpret_fn, env = env)
     call
   }
-}
-interpret_anon_fn <- function(x, env) {
-  if (is_anon_fn_expr(x))
-    eval(mut_node_car(x, fn), env)
-  else
-    x
 }
