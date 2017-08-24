@@ -30,7 +30,8 @@ abbrev_fn_args <- function(f, ...) {
       env_encl <- parent.env(environment())
       env_call <- parent.frame()
       call <- interpret_anon_fns(match.call(), env_call)
-      eval_bare(mut_node_car(call, env_encl$f), env_call)
+      call[[1]] <- env_encl$f
+      eval_bare(call, env_call)
     },
     value = fmls
   )

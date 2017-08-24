@@ -58,9 +58,10 @@ as_fn <- function(.f) {
 }
 
 interpret_fn <- function(x, f = x, env) {
-  if (is_anon_fn_expr(x))
-    eval_bare(mut_node_car(x, fn), env)
-  else
+  if (is_anon_fn_expr(x)) {
+    x[[1]] <- fn
+    eval_bare(x, env)
+  } else
     f
 }
 
