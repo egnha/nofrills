@@ -102,8 +102,8 @@ of \code{foo(1)}.\preformatted{    foo(1)  #> [1] 2
 }
 
 In other words, the value of \code{foo(x)} does not depend solely on the value
-of \code{x}, because \code{foo()} has a \dQuote{hidden} dependence on the \emph{mutable}
-object \code{a}.
+of \code{x}, because \code{foo()} has an internal dependence on the externally
+\emph{mutable} binding \code{a}.
 
 \code{fn()} eliminates such indeterminacy by enabling
 \link[rlang:quasiquotation]{quasiquotation}.

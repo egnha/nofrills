@@ -138,7 +138,8 @@ you intend.
     foo(1)
     ```
     In other words, the value of `foo(x)` does not depend solely on the value of
-    `x`, because `foo()` has a “hidden” dependence on the _mutable_ object `a`.
+    `x`, because `foo()` has an internal dependence on the externally _mutable_
+    binding `a`.
     
 `fn()` eliminates such indeterminacy by enabling
 [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html).

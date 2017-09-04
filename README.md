@@ -135,7 +135,7 @@ Functions in R generally violate a basic tenet of [functional programming](http:
     #> [1] 1
     ```
 
-    In other words, the value of `foo(x)` does not depend solely on the value of `x`, because `foo()` has a “hidden” dependence on the *mutable* object `a`.
+    In other words, the value of `foo(x)` does not depend solely on the value of `x`, because `foo()` has an internal dependence on the externally *mutable* binding `a`.
 
 `fn()` eliminates such indeterminacy by enabling [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html).
 

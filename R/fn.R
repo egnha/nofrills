@@ -90,8 +90,8 @@
 #'       foo(1)  #> [1] 1
 #'   ```
 #'   In other words, the value of `foo(x)` does not depend solely on the value
-#'   of `x`, because `foo()` has a \dQuote{hidden} dependence on the _mutable_
-#'   object `a`.
+#'   of `x`, because `foo()` has an internal dependence on the externally
+#'   _mutable_ binding `a`.
 #'
 #'   `fn()` eliminates such indeterminacy by enabling
 #'   [quasiquotation][rlang::quasiquotation].
