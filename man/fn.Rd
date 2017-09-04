@@ -84,8 +84,8 @@ Functions in R generally violate a basic tenet of
 \href{http://adv-r.hadley.nz/functional-programming.html}{functional programming}:
 they are \href{https://en.wikipedia.org/wiki/Pure_function}{impure}. In simple
 terms, this means that the return value of a function will \emph{not} in general
-be determined by the value of its inputs. The reason is that a function’s
-behavior can be mutated by changes in its
+be determined by the value of its inputs alone. The reason is that a
+function’s behavior can be mutated by changes in its
 \href{http://adv-r.hadley.nz/functions.html#lexical-scoping}{lexical scope}.
 This makes it trickier to reason about your code and ensure that functions
 do what you intend.
