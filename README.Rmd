@@ -110,7 +110,18 @@ args <- alist(x, y = 0)
 fn(!!! args, ~ x + y)  # note the one-sided formula
 ```
 
-### What’s the point of quasiquotation?
+### 😃 functions
+
+Pop quiz!—These smileys produce functions
+
+```{r, eval = FALSE}
+..(~8^D)
+..(8~D)
+```
+
+but which one is actually callable?
+
+## What’s the point of quasiquotation?
 
 Functions in R generally violate a basic tenet of
 [functional programming](http://adv-r.hadley.nz/functional-programming.html):
@@ -158,18 +169,7 @@ you intend.
     foo(1)
     ```
 
-### 😃 functions
-
-Pop quiz!—These smileys produce functions
-
-```{r, eval = FALSE}
-..(~8^D)
-..(8~D)
-```
-
-but which one is actually callable?
-
-## Alternatives to _nofrills_
+# Alternatives to _nofrills_
 
 Here are some alternative anonymous-function constructors (which don’t support
 quasiquotation), ordered by increasing concision and specialization:

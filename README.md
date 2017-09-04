@@ -112,7 +112,19 @@ fn(!!! args, ~ x + y)  # note the one-sided formula
 #> x + y
 ```
 
-### What’s the point of quasiquotation?
+### 😃 functions
+
+Pop quiz!—These smileys produce functions
+
+``` r
+..(~8^D)
+..(8~D)
+```
+
+but which one is actually callable?
+
+What’s the point of quasiquotation?
+-----------------------------------
 
 Functions in R generally violate a basic tenet of [functional programming](http://adv-r.hadley.nz/functional-programming.html): they are [impure](https://en.wikipedia.org/wiki/Pure_function). In simple terms, this means that the return value of a function will *not* in general be determined by the value of its inputs alone. The reason is that a function’s behavior can be mutated by changes in its [lexical scope](http://adv-r.hadley.nz/functions.html#lexical-scoping). This makes it trickier to reason about your code and ensure that functions do what you intend.
 
@@ -158,19 +170,8 @@ Functions in R generally violate a basic tenet of [functional programming](http:
     #> [1] 2
     ```
 
-### 😃 functions
-
-Pop quiz!—These smileys produce functions
-
-``` r
-..(~8^D)
-..(8~D)
-```
-
-but which one is actually callable?
-
 Alternatives to *nofrills*
---------------------------
+==========================
 
 Here are some alternative anonymous-function constructors (which don’t support quasiquotation), ordered by increasing concision and specialization:
 
