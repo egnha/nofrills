@@ -122,12 +122,12 @@ can be mutated by changes in its
 makes it trickier to reason about your code and ensure that functions do what
 you intend.
 
-  - **Example** — Consider the following function:
+  - Consider the following function:
     ```{r}
     a <- 1
     foo <- function(x) x + a
     ```
-    What is the value of `foo(1)`? It is not necessarily `2`, because the value
+    What is the value of `foo(1)`? It is not necessarily `2` because the value
     of `a` may have changed between the _creation_ of `foo()` and the _calling_
     of `foo(1)`.
     ```{r}
@@ -143,8 +143,8 @@ you intend.
 `fn()` eliminates such indeterminacy by enabling
 [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html).
 
-  - **Example** — With `fn()`, you can unquote `a` to “burn in” its value at
-    the point of creation:
+  - With `fn()`, you can unquote `a` to “burn in” its value at the point of
+    creation:
     ```{r}
     a <- 1
     foo <- fn(x ~ x + !! a)

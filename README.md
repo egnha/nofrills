@@ -116,14 +116,14 @@ fn(!!! args, ~ x + y)  # note the one-sided formula
 
 Functions in R generally violate a basic tenet of [functional programming](http://adv-r.hadley.nz/functional-programming.html): they are [impure](https://en.wikipedia.org/wiki/Pure_function). In simple terms, this means that the return value of a function will *not* in general be determined by the value of its inputs. The reason is that a function’s behavior can be mutated by changes in its [lexical scope](http://adv-r.hadley.nz/functions.html#lexical-scoping). This makes it trickier to reason about your code and ensure that functions do what you intend.
 
--   **Example** — Consider the following function:
+-   Consider the following function:
 
     ``` r
     a <- 1
     foo <- function(x) x + a
     ```
 
-    What is the value of `foo(1)`? It is not necessarily `2`, because the value of `a` may have changed between the *creation* of `foo()` and the *calling* of `foo(1)`.
+    What is the value of `foo(1)`? It is not necessarily `2` because the value of `a` may have changed between the *creation* of `foo()` and the *calling* of `foo(1)`.
 
     ``` r
     foo(1)
@@ -139,7 +139,7 @@ Functions in R generally violate a basic tenet of [functional programming](http:
 
 `fn()` eliminates such indeterminacy by enabling [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html).
 
--   **Example** — With `fn()`, you can unquote `a` to “burn in” its value at the point of creation:
+-   With `fn()`, you can unquote `a` to “burn in” its value at the point of creation:
 
     ``` r
     a <- 1
