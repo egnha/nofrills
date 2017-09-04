@@ -171,7 +171,7 @@ Functions in R generally violate a basic tenet of [functional programming](http:
     ```
 
 Alternatives to *nofrills*
-==========================
+--------------------------
 
 Here are some alternative anonymous-function constructors (which don’t support quasiquotation), ordered by increasing concision and specialization:
 
