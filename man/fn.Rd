@@ -79,15 +79,16 @@ formula.)
 }
 
 \section{What’s the point of quasiquotation?}{
-
-Functions in R generally violate a basic tenet of
+ Functions in R generally
+violate a basic tenet of
 \href{http://adv-r.hadley.nz/functional-programming.html}{functional programming}:
-they are \href{https://en.wikipedia.org/wiki/Pure_function}{impure}. In simple
-terms, this means that the return value of a function will \emph{not} in general
-be determined by the value of its inputs alone. The reason is that a
-function’s behavior can be mutated by changes in its
+they are
+\href{https://en.wikipedia.org/wiki/Pure_function}{impure}. In simple terms,
+this means that the return value of a function will \emph{not} in general be
+determined by the value of its inputs alone. The reason is that a
+function’s behavior may mutate under changes in its
 \href{http://adv-r.hadley.nz/functions.html#lexical-scoping}{lexical scope}.
-This makes it trickier to reason about your code and ensure that functions
+This can make it tricky to reason about your code and ensure that functions
 do what you intend.
 
 \strong{Example} — Consider the following function:\preformatted{    a <- 1
@@ -104,8 +105,9 @@ of \code{foo(1)}:\preformatted{    foo(1)  #> [1] 2
 In other words, \code{foo()} is impure because the value of \code{foo(x)} depends not
 only on the value of \code{x} but also on the \emph{externally mutable} value of \code{a}.
 
-\code{fn()} eliminates such indeterminacy by enabling
-\link[rlang:quasiquotation]{quasiquotation}.
+\code{fn()} enables you to write pure functions by using
+\href{http://rlang.tidyverse.org/reference/quasiquotation.html}{quasiquotation}
+to eliminate such indeterminacy.
 
 \strong{Example} — With \code{fn()}, you can unquote \code{a} to \dQuote{burn in} its
 value at the point of creation:\preformatted{    a <- 1
