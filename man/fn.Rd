@@ -96,14 +96,13 @@ do what you intend.
 
 What is the value of \code{foo(1)}? It is not necessarily \code{2}, because the value
 of \code{a} may have changed between the \emph{creation} of \code{foo()} and the \emph{calling}
-of \code{foo(1)}.\preformatted{    foo(1)  #> [1] 2
+of \code{foo(1)}:\preformatted{    foo(1)  #> [1] 2
     a <- 0
     foo(1)  #> [1] 1
 }
 
-In other words, the value of \code{foo(x)} does not depend solely on the value
-of \code{x}, because \code{foo()} has an internal dependence on the externally
-\emph{mutable} binding \code{a}.
+In other words, \code{foo()} is impure because the value of \code{foo(x)} depends not
+only on the value of \code{x} but also on the \emph{externally mutable} value of \code{a}.
 
 \code{fn()} eliminates such indeterminacy by enabling
 \link[rlang:quasiquotation]{quasiquotation}.

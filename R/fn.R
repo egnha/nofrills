@@ -83,15 +83,14 @@
 #'   ```
 #'   What is the value of `foo(1)`? It is not necessarily `2`, because the value
 #'   of `a` may have changed between the _creation_ of `foo()` and the _calling_
-#'   of `foo(1)`.
+#'   of `foo(1)`:
 #'   ```
 #'       foo(1)  #> [1] 2
 #'       a <- 0
 #'       foo(1)  #> [1] 1
 #'   ```
-#'   In other words, the value of `foo(x)` does not depend solely on the value
-#'   of `x`, because `foo()` has an internal dependence on the externally
-#'   _mutable_ binding `a`.
+#'   In other words, `foo()` is impure because the value of `foo(x)` depends not
+#'   only on the value of `x` but also on the _externally mutable_ value of `a`.
 #'
 #'   `fn()` eliminates such indeterminacy by enabling
 #'   [quasiquotation][rlang::quasiquotation].

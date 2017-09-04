@@ -123,7 +123,7 @@ Functions in R generally violate a basic tenet of [functional programming](http:
     foo <- function(x) x + a
     ```
 
-    What is the value of `foo(1)`? It is not necessarily `2` because the value of `a` may have changed between the *creation* of `foo()` and the *calling* of `foo(1)`.
+    What is the value of `foo(1)`? It is not necessarily `2` because the value of `a` may have changed between the *creation* of `foo()` and the *calling* of `foo(1)`:
 
     ``` r
     foo(1)
@@ -135,7 +135,7 @@ Functions in R generally violate a basic tenet of [functional programming](http:
     #> [1] 1
     ```
 
-    In other words, the value of `foo(x)` does not depend solely on the value of `x`, because `foo()` has an internal dependence on the externally *mutable* binding `a`.
+    In other words, `foo()` is impure because the value of `foo(x)` depends not only on the value of `x` but also on the *externally mutable* value of `a`.
 
 `fn()` eliminates such indeterminacy by enabling [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html).
 
