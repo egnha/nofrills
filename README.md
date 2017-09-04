@@ -12,8 +12,10 @@ Overview
 
 *nofrills* is a lightweight R package that provides `fn()`, a more powerful variation of `function()` that:
 
--   **costs less** — enables Tidyverse [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html) for extra [safety](#protect-functions-against-scope-changes), when you need it
+-   **costs less** — enables Tidyverse [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html) so you don’t pay the price of [functional impurity](#what’s-the-point-of-quasiquotation?)
+
 -   has the **same great taste** — supports a superset of `function()`’s syntax and capabilities
+
 -   is **less filling** —
 
     ``` r
@@ -110,35 +112,50 @@ fn(!!! args, ~ x + y)  # note the one-sided formula
 #> x + y
 ```
 
-### Protect functions against scope changes
+### What’s the point of quasiquotation?
 
-By enabling [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html), `fn()` allows you to “burn in” values, which guards your function from being affected by unexpected scope changes.
+Functions in R generally violate a basic tenet of [functional programming](http://adv-r.hadley.nz/functional-programming.html): they are [impure](https://en.wikipedia.org/wiki/Pure_function). In simple terms, this means that the return value of a function will *not* in general be determined by its inputs. The reason is that a function’s behavior can be mutated by changes in its [lexical scope](http://adv-r.hadley.nz/functions.html#lexical-scoping). This makes it trickier to reason about your code and ensure that functions do what you intend.
 
--   **Example** — Both `f()` and `f_solid()` return the same value of x
+-   **Example** — Consider the function
 
     ``` r
-    x <- "x"
-
-    f <- function() x
-    f_solid <- fn(~ !! x)
-
-    f()
-    #> [1] "x"
-
-    f_solid()
-    #> [1] "x"
+    a <- 1
+    foo <- function(x) x + a
     ```
 
-    But if the binding `x` is (unwittingly) changed, `f()` changes, while `f_solid()` remains unaffected.
+    What is the value of `foo(1)`? It is not necessarily `2`, because the value of `a` may have changed during the time when `foo()` was *created* and the time when `foo(1)` is *called*.
 
     ``` r
-    x <- sin
+    foo(1)
+    #> [1] 2
 
-    f()
-    #> function (x)  .Primitive("sin")
+    a <- 0
 
-    f_solid()
-    #> [1] "x"
+    foo(1)
+    #> [1] 1
+    ```
+
+    In other words, the value of `foo(x)` does not depend solely on the value of `x`, because `foo()` has a “hidden” dependence on the *mutable* object `a`.
+
+`fn()` eliminates such indeterminancy by enabling [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html).
+
+-   **Example** — With `fn()`, you can unquote `a` to “burn in” its value at the point of creation:
+
+    ``` r
+    a <- 1
+    foo <- fn(x ~ x + !! a)
+    ```
+
+    Now `foo()` is a pure function, unaffected by changes in its lexical scope:
+
+    ``` r
+    foo(1)
+    #> [1] 2
+
+    a <- 0
+
+    foo(1)
+    #> [1] 2
     ```
 
 ### 😃 functions
