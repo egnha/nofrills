@@ -65,6 +65,50 @@
 #'     }
 #'   }
 #'
+#' @section What’s the point of quasiquotation?:
+#'   Functions in R generally violate a basic tenet of
+#'   [functional programming](http://adv-r.hadley.nz/functional-programming.html):
+#'   they are [impure](https://en.wikipedia.org/wiki/Pure_function). In simple
+#'   terms, this means that the return value of a function will _not_ in general
+#'   be determined by the value of its inputs. The reason is that a function’s
+#'   behavior can be mutated by changes in its
+#'   [lexical scope](http://adv-r.hadley.nz/functions.html#lexical-scoping).
+#'   This makes it trickier to reason about your code and ensure that functions
+#'   do what you intend.
+#'
+#'   **Example** — Consider the following function:
+#'   ```
+#'       a <- 1
+#'       foo <- function(x) x + a
+#'   ```
+#'   What is the value of `foo(1)`? It is not necessarily `2`, because the value
+#'   of `a` may have changed between the _creation_ of `foo()` and the _calling_
+#'   of `foo(1)`.
+#'   ```
+#'       foo(1)  #> [1] 2
+#'       a <- 0
+#'       foo(1)  #> [1] 1
+#'   ```
+#'   In other words, the value of `foo(x)` does not depend solely on the value
+#'   of `x`, because `foo()` has a \dQuote{hidden} dependence on the _mutable_
+#'   object `a`.
+#'
+#'   `fn()` eliminates such indeterminacy by enabling
+#'   [quasiquotation][rlang::quasiquotation].
+#'
+#'   **Example** — With `fn()`, you can unquote `a` to \dQuote{burn in} its
+#'   value at the point of creation:
+#'   ```
+#'       a <- 1
+#'       foo <- fn(x ~ x + !! a)
+#'   ```
+#'   Now `foo()` is a pure function, unaffected by changes in its lexical scope:
+#'   ```
+#'       foo(1)  #> [1] 2
+#'       a <- 0
+#'       foo(1)  #> [1] 2
+#'   ```
+#'
 #' @seealso [as_fn()]
 #'
 #' @examples

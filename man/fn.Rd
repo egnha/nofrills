@@ -78,6 +78,47 @@ formula.)
 }
 }
 
+\section{What’s the point of quasiquotation?}{
+
+Functions in R generally violate a basic tenet of
+\href{http://adv-r.hadley.nz/functional-programming.html}{functional programming}:
+they are \href{https://en.wikipedia.org/wiki/Pure_function}{impure}. In simple
+terms, this means that the return value of a function will \emph{not} in general
+be determined by the value of its inputs. The reason is that a function’s
+behavior can be mutated by changes in its
+\href{http://adv-r.hadley.nz/functions.html#lexical-scoping}{lexical scope}.
+This makes it trickier to reason about your code and ensure that functions
+do what you intend.
+
+\strong{Example} — Consider the following function:\preformatted{    a <- 1
+    foo <- function(x) x + a
+}
+
+What is the value of \code{foo(1)}? It is not necessarily \code{2}, because the value
+of \code{a} may have changed between the \emph{creation} of \code{foo()} and the \emph{calling}
+of \code{foo(1)}.\preformatted{    foo(1)  #> [1] 2
+    a <- 0
+    foo(1)  #> [1] 1
+}
+
+In other words, the value of \code{foo(x)} does not depend solely on the value
+of \code{x}, because \code{foo()} has a \dQuote{hidden} dependence on the \emph{mutable}
+object \code{a}.
+
+\code{fn()} eliminates such indeterminacy by enabling
+\link[rlang:quasiquotation]{quasiquotation}.
+
+\strong{Example} — With \code{fn()}, you can unquote \code{a} to \dQuote{burn in} its
+value at the point of creation:\preformatted{    a <- 1
+    foo <- fn(x ~ x + !! a)
+}
+
+Now \code{foo()} is a pure function, unaffected by changes in its lexical scope:\preformatted{    foo(1)  #> [1] 2
+    a <- 0
+    foo(1)  #> [1] 2
+}
+}
+
 \examples{
 fn(x ~ x + 1)
 fn(x, y ~ x + y)
