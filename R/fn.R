@@ -167,7 +167,7 @@ get_fn_declaration <- function(...) {
 }
 
 get_exprs <- function(...) {
-  xs <- validate(exprs(...))
+  xs <- validate(exprs_(...))
   n <- length(xs)
   list(front = xs[-n], back = xs[n])
 }
