@@ -64,6 +64,18 @@
 #'     fn(!!! alist(x, y = 0), ~ x + y)}
 #'         (Note that the body, in this case, must be given as a one-sided
 #'         formula.)
+#'       \item To write literal unquoting operators, use `QUQ()`, `QUQS()`,
+#'         `QUQE()`:
+#'         \preformatted{
+#'     library(dplyr)
+#'
+#'     my_summarise <- fn(df, ... ~ {
+#'       group_by <- quos(...)
+#'       df \%>\%
+#'         group_by(QUQS(group_by)) \%>\%
+#'         summarise(a = mean(a))
+#'     })}
+#'         (From the vignette _Programming with dplyr_.)
 #'     }
 #'   }
 #'
