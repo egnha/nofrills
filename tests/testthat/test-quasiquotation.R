@@ -38,6 +38,15 @@ test_that("function body can be unquoted", {
   expect_equal(fn(x ~ UQ(body(f))), f)
 })
 
+test_that("unquoting operators can be literally expressed", {
+  expect_equal(fn(x = foo(QUQ(y)) ~ NULL), function(x = foo(UQ(y))) NULL)
+  expect_equal(fn(x = foo(QUQS(y)) ~ NULL), function(x = foo(UQS(y))) NULL)
+  expect_equal(fn(x = foo(QUQE(y)) ~ NULL), function(x = foo(UQE(y))) NULL)
+  expect_equal(fn(x ~ foo(QUQ(x))), function(x) foo(UQ(x)))
+  expect_equal(fn(x ~ foo(QUQS(x))), function(x) foo(UQS(x)))
+  expect_equal(fn(x ~ foo(QUQE(x))), function(x) foo(UQE(x)))
+})
+
 context("as_fn()")
 
 foo <- function(x) as_fn(x)
