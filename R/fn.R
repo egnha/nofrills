@@ -1,18 +1,18 @@
 #' Low-cost anonymous functions
 #'
 #' `fn()` enables you to create (anonymous) functions, of arbitrary call
-#' signature. It is a drop-in replacement for the usual
-#' `function(<arguments>) <body>` invocation, but costs less:
+#' signature. Use it in place of the usual `function()` invocation whenever you
+#' want to:
 #' \itemize{
-#'   \item It is **shorter**:
+#'   \item type less:
 #'     \preformatted{
 #'     fn(x, y = 1 ~ x + y)
 #'     function(x, y = 1) x + y}
 #'     are equivalent.
-#'   \item It is **safer**: by enabling (Tidyverse)
-#'     [quasiquotation][rlang::quasiquotation], `fn()` allows you to
-#'     \dQuote{burn in} values, which can guard your function from unexpected
-#'     scope changes (see _Examples_).
+#'   \item guard against changes in lexical scope: by enabling
+#'     tidyverse [quasiquotation][rlang::quasiquotation], `fn()` allows you to
+#'     \dQuote{burn in} values at the point of function creation (see
+#'     _Why should I care about quasiquotation?_).
 #' }
 #' To reduce visual noise, `..()` is provided as an alias of `fn()`.
 #'
@@ -34,16 +34,18 @@
 #'       arg1, arg2, ..., argN, ~ body
 #'   ```
 #'   (Note in the second form that the body is a one-sided formula. This
-#'   distinction is relevant for argument [splicing][rlang::UQS()]; see below.)
+#'   distinction is relevant for argument [splicing][rlang::UQS()], see below.)
 #'
-#'   To the left of `~`, you write a conventional function-argument declaration,
-#'   just as in `function(<arguments>)`: each of `arg1`, `arg2`, \dots, `argN`
-#'   is either a bare argument (e.g., `x` or `...`) or an argument with default
-#'   value (e.g., `x = 1`). To the right of `~`, you write the function body,
-#'   i.e., an expression of the arguments.
+#'   - To the left of `~`, you write a conventional function-argument
+#'     declaration, just as in `function(<arguments>)`: each of `arg1`, `arg2`,
+#'     \dots, `argN` is either a bare argument (e.g., `x` or `...`) or an
+#'     argument with default value (e.g., `x = 1`).
+#'
+#'   - To the right of `~`, you write the function body,
+#'     i.e., an expression of the arguments.
 #'
 #'   \subsection{Quasiquotation}{
-#'     All parts of a function declaration support (Tidyverse)
+#'     All parts of a function declaration support tidyverse
 #'     [quasiquotation][rlang::quasiquotation]:
 #'     \itemize{
 #'       \item To unquote values (of arguments or parts of the body), use `!!`

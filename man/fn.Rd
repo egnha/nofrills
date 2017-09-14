@@ -21,18 +21,18 @@ A function whose enclosing environment is \code{..env}.
 }
 \description{
 \code{fn()} enables you to create (anonymous) functions, of arbitrary call
-signature. It is a drop-in replacement for the usual
-\code{function(<arguments>) <body>} invocation, but costs less:
+signature. Use it in place of the usual \code{function()} invocation whenever you
+want to:
 \itemize{
-\item It is \strong{shorter}:
+\item type less:
 \preformatted{
     fn(x, y = 1 ~ x + y)
     function(x, y = 1) x + y}
 are equivalent.
-\item It is \strong{safer}: by enabling (Tidyverse)
-\link[rlang:quasiquotation]{quasiquotation}, \code{fn()} allows you to
-\dQuote{burn in} values, which can guard your function from unexpected
-scope changes (see \emph{Examples}).
+\item guard against changes in lexical scope: by enabling
+tidyverse \link[rlang:quasiquotation]{quasiquotation}, \code{fn()} allows you to
+\dQuote{burn in} values at the point of function creation (see
+\emph{Why should I care about quasiquotation?}).
 }
 To reduce visual noise, \code{..()} is provided as an alias of \code{fn()}.
 }
@@ -46,16 +46,18 @@ or\preformatted{    arg1, arg2, ..., argN, ~ body
 }
 
 (Note in the second form that the body is a one-sided formula. This
-distinction is relevant for argument \link[rlang:UQS]{splicing}; see below.)
-
-To the left of \code{~}, you write a conventional function-argument declaration,
-just as in \code{function(<arguments>)}: each of \code{arg1}, \code{arg2}, \dots, \code{argN}
-is either a bare argument (e.g., \code{x} or \code{...}) or an argument with default
-value (e.g., \code{x = 1}). To the right of \code{~}, you write the function body,
+distinction is relevant for argument \link[rlang:UQS]{splicing}, see below.)
+\itemize{
+\item To the left of \code{~}, you write a conventional function-argument
+declaration, just as in \code{function(<arguments>)}: each of \code{arg1}, \code{arg2},
+\dots, \code{argN} is either a bare argument (e.g., \code{x} or \code{...}) or an
+argument with default value (e.g., \code{x = 1}).
+\item To the right of \code{~}, you write the function body,
 i.e., an expression of the arguments.
+}
 
 \subsection{Quasiquotation}{
-All parts of a function declaration support (Tidyverse)
+All parts of a function declaration support tidyverse
 \link[rlang:quasiquotation]{quasiquotation}:
 \itemize{
 \item To unquote values (of arguments or parts of the body), use \code{!!}
