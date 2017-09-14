@@ -3,8 +3,8 @@ exprs_ <- function(..., .ignore_empty = "trailing") {
 }
 
 f_rhs_ <- function(x) {
-  eval_bare(substitute(substitute(., quq), list(. = f_rhs(x))))
+  eval_bare(substitute(substitute(., quote_uq), list(. = f_rhs(x))))
 }
 
-quq <- lapply(set_names(c("UQ", "UQS", "UQE")), as.name)
-names(quq) <- paste0("Q", names(quq))
+quote_uq <- lapply(set_names(c("UQ", "UQS", "UQE")), as.name)
+names(quote_uq) <- paste0("Q", names(quote_uq))
