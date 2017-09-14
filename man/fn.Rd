@@ -78,18 +78,17 @@ formula.)
 }
 }
 
-\section{What’s the point of quasiquotation?}{
- Functions in R generally
-violate a basic tenet of
-\href{http://adv-r.hadley.nz/functional-programming.html}{functional programming}:
-they are
-\href{https://en.wikipedia.org/wiki/Pure_function}{impure}. In simple terms,
-this means that the return value of a function will \emph{not} in general be
-determined by the value of its inputs alone. The reason is that a
-function’s behavior may mutate under changes in its
+\section{Why should I care about quasiquotation?}{
+ Functions in R are
+generally \href{https://en.wikipedia.org/wiki/Pure_function}{impure}, i.e., the
+return value of a function will \emph{not} in general be determined by the value
+of its inputs alone. The reason is that a function’s behavior may mutate
+under changes in its
 \href{http://adv-r.hadley.nz/functions.html#lexical-scoping}{lexical scope}.
-This can make it tricky to reason about your code and ensure that functions
-do what you intend.
+This is by design and normally not a problem. But if you are working
+interactively and sourcing files into the global environment, it can be
+tricky to ensure that you haven't unwittingly mutated an object your
+function depends upon.
 
 \strong{Example} — Consider the following function:\preformatted{    a <- 1
     foo <- function(x) x + a
@@ -142,19 +141,6 @@ f <- function(x, y) x + y
 g <- function(y, x, ...) x - y
 frankenstein <- fn(!!! formals(f), ~ !! body(g))
 stopifnot(identical(frankenstein, function(x, y) x - y))
-
-## unquoting protects against changes in a function’s scope
-x <- "x"
-f <- function() x
-f_solid <- fn(~ !! x)
-# both return the same value of x
-f()
-f_solid()
-# but if the binding `x` is (unwittingly) changed, f() changes ...
-x <- sin
-f()
-# ... while f_solid() remains unaffected
-f_solid()
 
 }
 \seealso{
