@@ -87,7 +87,8 @@ formula.)
         group_by(QUQS(group_by)) \%>\%
         summarise(a = mean(a))
     })}
-(From the vignette \emph{Programming with dplyr}.)
+(From the vignette
+\href{http://dplyr.tidyverse.org/articles/programming.html}{Programming with dplyr}.)
 }
 }
 }

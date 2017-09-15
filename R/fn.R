@@ -75,7 +75,8 @@
 #'         group_by(QUQS(group_by)) \%>\%
 #'         summarise(a = mean(a))
 #'     })}
-#'         (From the vignette _Programming with dplyr_.)
+#'         (From the vignette
+#'         [Programming with dplyr](http://dplyr.tidyverse.org/articles/programming.html).)
 #'     }
 #'   }
 #'
