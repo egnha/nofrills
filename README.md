@@ -12,7 +12,7 @@ Overview
 
 *nofrills* is a lightweight R package that provides `fn()`, a more powerful variation of `function()` that:
 
--   **costs less** — enables tidyverse [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html) so you don’t pay the price of [functional impurity](#whats-the-point-of-quasiquotation)
+-   **costs less** — enables tidyverse [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html) so you don’t pay the price of [functional impurity](#why-should-I-care-about-quasiquotation)
 
 -   has the **same great taste** — supports a superset of `function()`’s syntax and capabilities
 
@@ -123,7 +123,7 @@ Pop quiz!—These smileys produce functions
 
 but which one is actually callable?
 
-Whay should I care aboutquasiquotation?
+Why should I care about quasiquotation?
 ---------------------------------------
 
 Functions in R are generally [impure](https://en.wikipedia.org/wiki/Pure_function), i.e., the return value of a function will *not* in general be determined by the value of its inputs alone. The reason is that a function’s behavior may mutate under changes in its [lexical scope](http://adv-r.hadley.nz/functions.html#lexical-scoping). This is by design and normally not a problem. But if you are working interactively and sourcing files into the global environment, it can be tricky to ensure that you haven't unwittingly mutated an object your function depends upon.
