@@ -97,13 +97,13 @@ formula.)
  Functions in R are
 generally \href{https://en.wikipedia.org/wiki/Pure_function}{impure}, i.e., the
 return value of a function will \emph{not} in general be determined by the value
-of its inputs alone. The reason is that a function’s behavior may mutate
-under changes in its
+of its inputs alone. This is because a function may depend on mutable
+objects in its
 \href{http://adv-r.hadley.nz/functions.html#lexical-scoping}{lexical scope}.
-This is by design and normally not a problem. But if you are working
-interactively and sourcing files into the global environment, it can be
-tricky to ensure that you haven't unwittingly mutated an object your
-function depends upon.
+Normally this isn’t an issue. But if you are working interactively and
+sourcing files into the global environment, say, it can be tricky to ensure
+that you haven’t unwittingly mutated an object that an earlier function
+depends upon.
 
 \strong{Example} — Consider the following function:\preformatted{    a <- 1
     foo <- function(x) x + a

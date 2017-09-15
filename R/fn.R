@@ -83,13 +83,13 @@
 #' @section Why should I care about quasiquotation?: Functions in R are
 #'   generally [impure](https://en.wikipedia.org/wiki/Pure_function), i.e., the
 #'   return value of a function will _not_ in general be determined by the value
-#'   of its inputs alone. The reason is that a function’s behavior may mutate
-#'   under changes in its
+#'   of its inputs alone. This is because a function may depend on mutable
+#'   objects in its
 #'   [lexical scope](http://adv-r.hadley.nz/functions.html#lexical-scoping).
-#'   This is by design and normally not a problem. But if you are working
-#'   interactively and sourcing files into the global environment, it can be
-#'   tricky to ensure that you haven't unwittingly mutated an object your
-#'   function depends upon.
+#'   Normally this isn’t an issue. But if you are working interactively and
+#'   sourcing files into the global environment, say, it can be tricky to ensure
+#'   that you haven’t unwittingly mutated an object that an earlier function
+#'   depends upon.
 #'
 #'   **Example** — Consider the following function:
 #'   ```
