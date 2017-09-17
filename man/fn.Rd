@@ -157,6 +157,20 @@ g <- function(y, x, ...) x - y
 frankenstein <- fn(!!! formals(f), ~ !! body(g))
 stopifnot(identical(frankenstein, function(x, y) x - y))
 
+## mixing unquoting and literal unquoting is possible
+if (suppressWarnings(require(dplyr))) {
+  summariser <- quote(mean)
+
+  my_summarise <- fn(df, ... ~ {
+    group_by <- quos(...)
+    df \%>\%
+      group_by(QUQS(group_by)) \%>\%
+      summarise(a = UQ(summariser)(a))
+  })
+
+  my_summarise
+}
+
 }
 \seealso{
 \code{\link[=as_fn]{as_fn()}}

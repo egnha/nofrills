@@ -12,7 +12,7 @@ LazyData: true
 ByteCompile: true
 Depends: R (>= 3.1.0)
 Imports: rlang (>= 0.1.1)
-Suggests: testthat
+Suggests: testthat, dplyr (>= 0.7.3)
 URL: https://github.com/egnha/nofrills
 BugReports: https://github.com/egnha/nofrills/issues
 Collate:
