@@ -14,7 +14,6 @@
 #'     \dQuote{burn in} values at the point of function creation (see
 #'     _Why should I care about quasiquotation?_).
 #' }
-#' To reduce visual noise, `..()` is provided as an alias of `fn()`.
 #'
 #' @param ... Function declaration, which supports
 #'   [quasiquotation][rlang::quasiquotation].
@@ -172,7 +171,11 @@ fn <- function(..., ..env = parent.frame()) {
 }
 #' @rdname fn
 #' @export
-.. <- fn
+#' @usage NULL
+.. <- function(..., ..env = parent.frame()) {
+  warn("`..()` is deprecated. Please use `fn()` instead.")
+  fn(..., ..env = ..env)
+}
 
 get_fn_declaration <- function(...) {
   xs <- get_exprs(...)

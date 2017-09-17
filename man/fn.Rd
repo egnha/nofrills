@@ -6,8 +6,6 @@
 \title{Low-cost anonymous functions}
 \usage{
 fn(..., ..env = parent.frame())
-
-..(..., ..env = parent.frame())
 }
 \arguments{
 \item{...}{Function declaration, which supports
@@ -34,7 +32,6 @@ tidyverse \link[rlang:quasiquotation]{quasiquotation}, \code{fn()} allows you to
 \dQuote{burn in} values at the point of function creation (see
 \emph{Why should I care about quasiquotation?}).
 }
-To reduce visual noise, \code{..()} is provided as an alias of \code{fn()}.
 }
 \section{Function declarations}{
  A \emph{function declaration} is an expression

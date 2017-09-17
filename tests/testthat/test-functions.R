@@ -43,9 +43,8 @@ test_that("can accept a separating comma, between the arguments and body", {
   expect_equal(fn(x = 1, ~ NULL), function(x = 1) NULL)
 })
 
-test_that("you can find the answer to the riddle", {
-  expect_error(..(8~D)(), NA)
-  expect_error(..(~8^D)())
+test_that("..() is deprecated", {
+  expect_warning(..(x ~ NULL), "`..\\(\\)` is deprecated")
 })
 
 context("as_fn()")

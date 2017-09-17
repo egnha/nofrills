@@ -1,5 +1,7 @@
 # nofrills 0.1.0.9000
 
+* `..()`, an alias of `fn()`, is softly deprecated.
+
 * `fn()` now comprehends literal unquoting operators via the use of `QUQ()`,
   `QUQS()` and `QUQE()`. This allows you to make functions with `fn()` that
   contain unquoting operators, which is handy when programming with dplyr or

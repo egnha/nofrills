@@ -20,11 +20,9 @@ Overview
 
     ``` r
     fn(x, y = 1 ~ x + y)
-
-    ..(x, y = 1 ~ x + y)
     ```
 
-    are both equivalent to
+    is equivalent to
 
     ``` r
     function(x, y = 1) x + y
@@ -111,17 +109,6 @@ fn(!!! args, ~ x + y)  # note the one-sided formula
 #> function (x, y = 0) 
 #> x + y
 ```
-
-### 😃 functions
-
-Pop quiz!—These smileys produce functions
-
-``` r
-..(~8^D)
-..(8~D)
-```
-
-but which one is actually callable?
 
 Why should I care about quasiquotation?
 ---------------------------------------
