@@ -2,7 +2,7 @@
 % Please edit documentation in R/abbrev-fn-args.R
 \name{abbrev_fn_args}
 \alias{abbrev_fn_args}
-\title{Enhance a function to interpret abbreviated function expressions}
+\title{Enhance a function to interpret abbreviated functional arguments}
 \usage{
 abbrev_fn_args(f, ...)
 }
@@ -20,7 +20,7 @@ or \code{NULL}, then \code{f} is simply returned.
 }
 \description{
 \code{abbrev_fn_args()} is a functional operator that \dQuote{upgrades} a function
-to one that can interpret abbreviated function expressions.
+to one that can interpret abbreviated functional arguments.
 }
 \examples{
 reduce <- abbrev_fn_args(Reduce, "f")

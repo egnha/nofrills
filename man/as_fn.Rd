@@ -2,15 +2,15 @@
 % Please edit documentation in R/as-fn.R
 \name{as_fn}
 \alias{as_fn}
-\title{Minimal notation for functional arguments}
+\title{Abbreviated functional arguments}
 \usage{
 as_fn(.f)
 }
 \arguments{
 \item{.f}{A function or an abbreviated anonymous-function expression of the
-form \code{.(...)}, where \code{...} is a \link[=fn]{function declaration} (i.e., \code{.}, in
-this context, is an alias of \code{\link[=fn]{fn()}}). As for \code{\link[=fn]{fn()}},
-\link[rlang:quasiquotation]{quasiquotation} is supported.}
+form \code{.(...)}, where \code{...} is a \link[=fn]{function declaration} (i.e., \code{.}
+(dot) in this context is an alias of \code{\link[=fn]{fn()}}).
+\link[rlang:quasiquotation]{Quasiquotation} is supported.}
 }
 \value{
 If \code{.f} is a function, it is simply returned, otherwise the function
@@ -20,7 +20,7 @@ determined by the \link[=fn]{function declaration} is returned.
 \code{as_fn()} is for functions that take functional arguments. Use \code{as_fn()}
 \emph{inside} a function to enable it to comprehend a minimal anonymous-function
 notation for arguments that are functions. This notation is that of \code{\link[=fn]{fn()}},
-but with \sQuote{\code{fn}} replaced by a single dot (\sQuote{\code{.}}).
+but with \sQuote{\code{fn}} replaced by \sQuote{\code{.}} (dot).
 }
 \details{
 \code{as_fn()} cannot follow promise expressions across function calls.
@@ -60,5 +60,5 @@ foo(.(x ~ x + 1))}
 
 }
 \seealso{
-\code{\link[=fn]{fn()}}
+\code{\link[=fn]{fn()}}, \code{\link[=abbrev_fn_args]{abbrev_fn_args()}}
 }

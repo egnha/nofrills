@@ -1,7 +1,7 @@
-#' Enhance a function to interpret abbreviated function expressions
+#' Enhance a function to interpret abbreviated functional arguments
 #'
 #' `abbrev_fn_args()` is a functional operator that \dQuote{upgrades} a function
-#' to one that can interpret abbreviated function expressions.
+#' to one that can interpret abbreviated functional arguments.
 #'
 #' @param f Function, or symbol or name of a function.
 #' @param ... Name(s) of functional argument(s) of `f` (strings) or `NULL`.

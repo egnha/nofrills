@@ -1,14 +1,14 @@
-#' Minimal notation for functional arguments
+#' Abbreviated functional arguments
 #'
 #' `as_fn()` is for functions that take functional arguments. Use `as_fn()`
 #' _inside_ a function to enable it to comprehend a minimal anonymous-function
 #' notation for arguments that are functions. This notation is that of [fn()],
-#' but with \sQuote{`fn`} replaced by a single dot (\sQuote{`.`}).
+#' but with \sQuote{`fn`} replaced by \sQuote{`.`} (dot).
 #'
 #' @param .f A function or an abbreviated anonymous-function expression of the
-#'   form `.(...)`, where `...` is a [function declaration][fn()] (i.e., `.`, in
-#'   this context, is an alias of [fn()]). As for [fn()],
-#'   [quasiquotation][rlang::quasiquotation] is supported.
+#'   form `.(...)`, where `...` is a [function declaration][fn()] (i.e., `.`
+#'   (dot) in this context is an alias of [fn()]).
+#'   [Quasiquotation][rlang::quasiquotation] is supported.
 #'
 #' @return If `.f` is a function, it is simply returned, otherwise the function
 #'   determined by the [function declaration][fn()] is returned.
@@ -17,7 +17,7 @@
 #'   It is only intended to work in the immediate context in which a function
 #'   declaration is to be interpreted (see _Examples_).
 #'
-#' @seealso [fn()]
+#' @seealso [fn()], [abbrev_fn_args()]
 #'
 #' @examples
 #' call_fn <- function(.f, x) {
