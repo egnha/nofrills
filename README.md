@@ -115,11 +115,13 @@ fn(!!! args, ~ x + y)  # note the one-sided formula
 ``` r
 library(dplyr, warn.conflicts = FALSE)
 
+summariser <- quote(mean)
+
 my_summarise <- fn(df, ... ~ {
   group_by <- quos(...)
   df %>%
     group_by(QUQS(group_by)) %>%
-    summarise(a = mean(a))
+    summarise(a = UQ(summariser)(a))
 })
 
 my_summarise
