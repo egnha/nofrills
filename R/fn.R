@@ -75,7 +75,7 @@
 #'         summarise(a = mean(a))
 #'     })}
 #'         (From the vignette
-#'         [Programming with dplyr](http://dplyr.tidyverse.org/articles/programming.html).)
+#'         _[Programming with dplyr](http://dplyr.tidyverse.org/articles/programming.html)_.)
 #'     }
 #'   }
 #'
