@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-nofrills <img src="logo.png" align="right" />
-=============================================
+nofrills <img src="inst/logo.png" align="right" />
+==================================================
 
 *Low-Cost Anonymous Functions*
 
