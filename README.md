@@ -110,6 +110,28 @@ fn(!!! args, ~ x + y)  # note the one-sided formula
 #> x + y
 ```
 
+#### Literal unquoting via `QUQ()`, `QUQS()`, `QUQE()`
+
+``` r
+library(dplyr, warn.conflicts = FALSE)
+
+my_summarise <- fn(df, ... ~ {
+  group_by <- quos(...)
+  df %>%
+    group_by(QUQS(group_by)) %>%
+    summarise(a = mean(a))
+})
+
+my_summarise
+#> function (df, ...) 
+#> {
+#>     group_by <- quos(...)
+#>     df %>% group_by(UQS(group_by)) %>% summarise(a = mean(a))
+#> }
+```
+
+(Source: [*Programming with dplyr*](http://dplyr.tidyverse.org/articles/programming.html))
+
 Leveraging quasiquotation
 -------------------------
 
