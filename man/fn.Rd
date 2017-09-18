@@ -26,11 +26,11 @@ want to:
 \preformatted{
     fn(x, y = 1 ~ x + y)
     function(x, y = 1) x + y}
-are equivalent.
-\item guard against changes in lexical scope: by enabling
-tidyverse \link[rlang:quasiquotation]{quasiquotation}, \code{fn()} allows you to
+are equivalent
+\item guard against changes in lexical scope: by enabling tidyverse
+\link[rlang:quasiquotation]{quasiquotation}, \code{fn()} allows you to
 \dQuote{burn in} values at the point of function creation (see
-\emph{Why should I care about quasiquotation?}).
+\emph{Leveraging quasiquotation})
 }
 }
 \section{Function declarations}{
@@ -84,18 +84,18 @@ formula.)
         group_by(QUQS(group_by)) \%>\%
         summarise(a = mean(a))
     })}
-(From the vignette
-\emph{\href{http://dplyr.tidyverse.org/articles/programming.html}{Programming with dplyr}}.)
+(Source:
+\emph{\href{http://dplyr.tidyverse.org/articles/programming.html}{Programming with dplyr}})
 }
 }
 }
 
-\section{Why should I care about quasiquotation?}{
- Functions in R are
-generally \href{https://en.wikipedia.org/wiki/Pure_function}{impure}, i.e., the
-return value of a function will \emph{not} in general be determined by the value
-of its inputs alone. This is because a function may depend on mutable
-objects in its
+\section{Leveraging quasiquotation}{
+ Functions in R are generally
+\href{https://en.wikipedia.org/wiki/Pure_function}{impure}, i.e., the return
+value of a function will \emph{not} in general be determined by the value of its
+inputs alone. This is because a function may depend on mutable objects in
+its
 \href{http://adv-r.hadley.nz/functions.html#lexical-scoping}{lexical scope}.
 Normally this isn’t an issue. But if you are working interactively and
 sourcing files into the global environment, say, it can be tricky to ensure
@@ -170,5 +170,5 @@ if (suppressWarnings(require(dplyr))) {
 
 }
 \seealso{
-\code{\link[=as_fn]{as_fn()}}
+\code{\link[=as_fn]{as_fn()}}, \code{\link[=make_fn_aware]{make_fn_aware()}}
 }

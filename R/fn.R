@@ -8,11 +8,11 @@
 #'     \preformatted{
 #'     fn(x, y = 1 ~ x + y)
 #'     function(x, y = 1) x + y}
-#'     are equivalent.
-#'   \item guard against changes in lexical scope: by enabling
-#'     tidyverse [quasiquotation][rlang::quasiquotation], `fn()` allows you to
+#'     are equivalent
+#'   \item guard against changes in lexical scope: by enabling tidyverse
+#'     [quasiquotation][rlang::quasiquotation], `fn()` allows you to
 #'     \dQuote{burn in} values at the point of function creation (see
-#'     _Why should I care about quasiquotation?_).
+#'     _Leveraging quasiquotation_)
 #' }
 #'
 #' @param ... Function declaration, which supports
@@ -74,16 +74,16 @@
 #'         group_by(QUQS(group_by)) \%>\%
 #'         summarise(a = mean(a))
 #'     })}
-#'         (From the vignette
-#'         _[Programming with dplyr](http://dplyr.tidyverse.org/articles/programming.html)_.)
+#'         (Source:
+#'         _[Programming with dplyr](http://dplyr.tidyverse.org/articles/programming.html)_)
 #'     }
 #'   }
 #'
-#' @section Why should I care about quasiquotation?: Functions in R are
-#'   generally [impure](https://en.wikipedia.org/wiki/Pure_function), i.e., the
-#'   return value of a function will _not_ in general be determined by the value
-#'   of its inputs alone. This is because a function may depend on mutable
-#'   objects in its
+#' @section Leveraging quasiquotation: Functions in R are generally
+#'   [impure](https://en.wikipedia.org/wiki/Pure_function), i.e., the return
+#'   value of a function will _not_ in general be determined by the value of its
+#'   inputs alone. This is because a function may depend on mutable objects in
+#'   its
 #'   [lexical scope](http://adv-r.hadley.nz/functions.html#lexical-scoping).
 #'   Normally this isn’t an issue. But if you are working interactively and
 #'   sourcing files into the global environment, say, it can be tricky to ensure
@@ -123,7 +123,7 @@
 #'       foo(1)  #> [1] 2
 #'   ```
 #'
-#' @seealso [as_fn()]
+#' @seealso [as_fn()], [make_fn_aware()]
 #'
 #' @examples
 #' fn(x ~ x + 1)
