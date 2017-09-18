@@ -125,7 +125,7 @@ my_summarise <- fn(df, ... ~ {
 my_summarise
 ```
 (Source:
-[_Programming with dplyr_](http://dplyr.tidyverse.org/articles/programming.html))
+[_Programming with dplyr_](http://dplyr.tidyverse.org/articles/programming.html#capturing-multiple-variables))
 
 ## Leveraging quasiquotation
 

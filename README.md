@@ -132,7 +132,7 @@ my_summarise
 #> }
 ```
 
-(Source: [*Programming with dplyr*](http://dplyr.tidyverse.org/articles/programming.html))
+(Source: [*Programming with dplyr*](http://dplyr.tidyverse.org/articles/programming.html#capturing-multiple-variables))
 
 Leveraging quasiquotation
 -------------------------
