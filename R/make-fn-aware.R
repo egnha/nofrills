@@ -1,7 +1,7 @@
-#' Enhance a function to interpret abbreviated functional arguments
+#' Make a function aware of abbreviated functional arguments
 #'
-#' `abbrev_fn_args()` is a functional operator that \dQuote{upgrades} a function
-#' to one that can interpret abbreviated functional arguments.
+#' `make_fn_aware()` is a functional operator that enhances a function by
+#' enabling it to interpret abbreviated functional arguments.
 #'
 #' @param f Function, or symbol or name of a function.
 #' @param ... Name(s) of functional argument(s) of `f` (strings) or `NULL`.
@@ -15,11 +15,17 @@
 #' @seealso [as_fn()]
 #'
 #' @examples
-#' reduce <- abbrev_fn_args(Reduce, "f")
-#' reduce(.(a, b ~ a + 1 / b), c(3, 7, 15, 1, 292), right = TRUE)
+#' reduce <- make_fn_aware(Reduce, "f")
+#'
+#' ## reduce() behaves just like Reduce()
+#' Reduce(function(u, v) u + 1 / v, c(3, 7, 15, 1, 292), right = TRUE)
+#' reduce(function(u, v) u + 1 / v, c(3, 7, 15, 1, 292), right = TRUE)
+#'
+#' ## reduce() can also interpret abbreviated function expressions
+#' reduce(.(u, v ~ u + 1 / v), c(3, 7, 15, 1, 292), right = TRUE)
 #'
 #' @export
-abbrev_fn_args <- function(f, ...) {
+make_fn_aware <- function(f, ...) {
   f <- match.fun(f)
   fmls <- fn_fmls(f)
   interpret_anon_fns <- anon_fn_interpreter(names(fmls), ...)

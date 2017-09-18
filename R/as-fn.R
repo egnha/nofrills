@@ -17,7 +17,7 @@
 #'   It is only intended to work in the immediate context in which a function
 #'   declaration is to be interpreted (see _Examples_).
 #'
-#' @seealso [fn()], [abbrev_fn_args()]
+#' @seealso [fn()], [make_fn_aware()]
 #'
 #' @examples
 #' call_fn <- function(.f, x) {

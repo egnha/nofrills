@@ -60,5 +60,5 @@ foo(.(x ~ x + 1))}
 
 }
 \seealso{
-\code{\link[=fn]{fn()}}, \code{\link[=abbrev_fn_args]{abbrev_fn_args()}}
+\code{\link[=fn]{fn()}}, \code{\link[=make_fn_aware]{make_fn_aware()}}
 }
