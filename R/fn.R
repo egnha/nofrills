@@ -12,7 +12,7 @@
 #'   \item guard against changes in lexical scope: by enabling tidyverse
 #'     [quasiquotation][rlang::quasiquotation], `fn()` allows you to
 #'     \dQuote{burn in} values at the point of function creation (see
-#'     _Leveraging quasiquotation_)
+#'     _Pure functions via quasiquotation_)
 #' }
 #'
 #' @param ... Function declaration, which supports
@@ -79,7 +79,7 @@
 #'     }
 #'   }
 #'
-#' @section Leveraging quasiquotation: Functions in R are generally
+#' @section Pure functions via quasiquotation: Functions in R are generally
 #'   [impure](https://en.wikipedia.org/wiki/Pure_function), i.e., the return
 #'   value of a function will _not_ in general be determined by the value of its
 #'   inputs alone. This is because a function may depend on mutable objects in
@@ -106,7 +106,7 @@
 #'   In other words, `foo()` is impure because the value of `foo(x)` depends not
 #'   only on the value of `x` but also on the _externally mutable_ value of `a`.
 #'
-#'   `fn()` enables you to write pure functions by using
+#'   `fn()` enables you to write _pure_ functions by using
 #'   [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html)
 #'   to eliminate such indeterminacy.
 #'

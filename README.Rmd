@@ -29,7 +29,7 @@ variation of `function()` that:
   - **costs less** — enables tidyverse
     [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html)
     so you don’t pay the price of
-    [functional impurity](#leveraging-quasiquotation)
+    [functional impurity](#pure-functions-via-quasiquotation)
     
   - has the **same great taste** — supports a superset of `function()`’s syntax
     and capabilities
@@ -127,7 +127,7 @@ my_summarise
 (Source:
 [_Programming with dplyr_](http://dplyr.tidyverse.org/articles/programming.html#capturing-multiple-variables))
 
-## Leveraging quasiquotation
+## Pure functions via quasiquotation
 
 Functions in R are generally
 [impure](https://en.wikipedia.org/wiki/Pure_function), i.e., the return value of
@@ -156,7 +156,7 @@ into the global environment, say, it can be tricky to ensure that you
     In other words, `foo()` is impure because the value of `foo(x)` depends not
     only on the value of `x` but also on the _externally mutable_ value of `a`.
     
-`fn()` enables you to write pure functions by using
+`fn()` enables you to write **pure** functions by using
 [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html)
 to eliminate such indeterminacy.
 

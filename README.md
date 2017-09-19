@@ -12,7 +12,7 @@ Overview
 
 *nofrills* is a lightweight R package that provides `fn()`, a more powerful variation of `function()` that:
 
--   **costs less** — enables tidyverse [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html) so you don’t pay the price of [functional impurity](#leveraging-quasiquotation)
+-   **costs less** — enables tidyverse [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html) so you don’t pay the price of [functional impurity](#pure-functions-via-quasiquotation)
 
 -   has the **same great taste** — supports a superset of `function()`’s syntax and capabilities
 
@@ -134,8 +134,8 @@ my_summarise
 
 (Source: [*Programming with dplyr*](http://dplyr.tidyverse.org/articles/programming.html#capturing-multiple-variables))
 
-Leveraging quasiquotation
--------------------------
+Pure functions via quasiquotation
+---------------------------------
 
 Functions in R are generally [impure](https://en.wikipedia.org/wiki/Pure_function), i.e., the return value of a function will *not* in general be determined by the value of its inputs alone. This is because a function may depend on mutable objects in its [lexical scope](http://adv-r.hadley.nz/functions.html#lexical-scoping). Normally this isn’t an issue. But if you are working interactively and sourcing files into the global environment, say, it can be tricky to ensure that you haven’t unwittingly mutated an object that an earlier function depends upon.
 
@@ -160,7 +160,7 @@ Functions in R are generally [impure](https://en.wikipedia.org/wiki/Pure_functio
 
     In other words, `foo()` is impure because the value of `foo(x)` depends not only on the value of `x` but also on the *externally mutable* value of `a`.
 
-`fn()` enables you to write pure functions by using [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html) to eliminate such indeterminacy.
+`fn()` enables you to write **pure** functions by using [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html) to eliminate such indeterminacy.
 
 -   With `fn()`, you can unquote `a` to “burn in” its value at the point of creation:
 
