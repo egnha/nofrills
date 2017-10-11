@@ -12,7 +12,7 @@ exprs_ <- function(..., .ignore_empty = "trailing") {
 }
 
 f_rhs_ <- function(x) {
-  eval_bare(substitute(substitute(., quote_uq), list(. = f_rhs(x))))
+  do.call("substitute", list(f_rhs(x), quote_uq))
 }
 
 quote_uq <- lapply(set_names(c("UQ", "UQS", "UQE")), as.name)
