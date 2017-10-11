@@ -65,6 +65,8 @@ interpret_fn <- function(x, f = x, env) {
     f
 }
 
-is_anon_fn_expr <- function(x) {
-  is.call(x) && identical(x[[1]], as.name("."))
-}
+is_anon_fn_expr <- local({
+  sym_dot <- as.name(".")
+  function(x)
+    is.call(x) && identical(x[[1]], sym_dot)
+})
