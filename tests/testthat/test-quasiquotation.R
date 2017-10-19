@@ -23,10 +23,10 @@ test_that("arguments can be unquoted, as symbols", {
 test_that("formals can be spliced in as arguments", {
   f <- function(x, y = 1, ..., z = x + y) x + y + z
   fmls <- formals(f)
-  expect_equal(fn(!!! fmls, ~ x + y + z), f)
-  expect_equal(fn(UQS(fmls), ~ x + y + z), f)
-  expect_equal(fn(!!! formals(f), ~ x + y + z), f)
-  expect_equal(fn(UQS(formals(f)), ~ x + y + z), f)
+  expect_equal_(fn(!!! fmls, ~ x + y + z), f)
+  expect_equal_(fn(UQS(fmls), ~ x + y + z), f)
+  expect_equal_(fn(!!! formals(f), ~ x + y + z), f)
+  expect_equal_(fn(UQS(formals(f)), ~ x + y + z), f)
 })
 
 test_that("function body can be unquoted", {
@@ -42,9 +42,9 @@ test_that("unquoting operators can be literally expressed", {
   expect_equal(fn(x = foo(QUQ(y)) ~ NULL), function(x = foo(UQ(y))) NULL)
   expect_equal(fn(x = foo(QUQS(y)) ~ NULL), function(x = foo(UQS(y))) NULL)
   expect_equal(fn(x = foo(QUQE(y)) ~ NULL), function(x = foo(UQE(y))) NULL)
-  expect_equal(fn(x ~ foo(QUQ(x))), function(x) foo(UQ(x)))
-  expect_equal(fn(x ~ foo(QUQS(x))), function(x) foo(UQS(x)))
-  expect_equal(fn(x ~ foo(QUQE(x))), function(x) foo(UQE(x)))
+  expect_equal_(fn(x ~ foo(QUQ(x))), function(x) foo(UQ(x)))
+  expect_equal_(fn(x ~ foo(QUQS(x))), function(x) foo(UQS(x)))
+  expect_equal_(fn(x ~ foo(QUQE(x))), function(x) foo(UQE(x)))
 })
 
 context("as_fn()")
@@ -72,10 +72,10 @@ test_that("arguments can be unquoted, as symbols", {
 test_that("formals can be spliced in as arguments", {
   f <- function(x, y = 1, ..., z = x + y) x + y + z
   fmls <- formals(f)
-  expect_equal(foo(.(!!! fmls, ~ x + y + z)), f)
-  expect_equal(foo(.(UQS(fmls), ~ x + y + z)), f)
-  expect_equal(foo(.(!!! formals(f), ~ x + y + z)), f)
-  expect_equal(foo(.(UQS(formals(f)), ~ x + y + z)), f)
+  expect_equal_(foo(.(!!! fmls, ~ x + y + z)), f)
+  expect_equal_(foo(.(UQS(fmls), ~ x + y + z)), f)
+  expect_equal_(foo(.(!!! formals(f), ~ x + y + z)), f)
+  expect_equal_(foo(.(UQS(formals(f)), ~ x + y + z)), f)
 })
 
 test_that("function body can be unquoted", {
