@@ -37,7 +37,7 @@ make_fn_aware <- function(f, ...) {
       env_call <- parent.frame()
       call <- interpret_anon_fns(match.call(), env_call)
       call[[1]] <- env_encl$f
-      eval_bare(call, env_call)
+      eval(call, env_call)
     },
     value = fmls
   )

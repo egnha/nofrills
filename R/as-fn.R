@@ -53,14 +53,14 @@
 #' @export
 as_fn <- function(.f) {
   x <- enexpr(.f)
-  x <- eval_bare(substitute(substitute(x)), parent.frame())
+  x <- eval(substitute(substitute(x)), parent.frame())
   interpret_fn(x, match.fun(.f), parent.frame(2))
 }
 
 interpret_fn <- function(x, f = x, env) {
   if (is_anon_fn_expr(x)) {
     x[[1]] <- fn
-    eval_bare(x, env)
+    eval(x, env)
   } else
     f
 }
