@@ -169,13 +169,6 @@ fn <- function(..., ..env = parent.frame()) {
   d <- get_fn_declaration(...)
   new_function(d$args, d$body, ..env)
 }
-#' @rdname fn
-#' @export
-#' @usage NULL
-.. <- function(..., ..env = parent.frame()) {
-  warn("`..()` is deprecated. Please use `fn()` instead.")
-  fn(..., ..env = ..env)
-}
 
 get_fn_declaration <- function(...) {
   xs <- get_exprs(...)

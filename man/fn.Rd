@@ -2,7 +2,6 @@
 % Please edit documentation in R/fn.R
 \name{fn}
 \alias{fn}
-\alias{..}
 \title{Low-cost anonymous functions}
 \usage{
 fn(..., ..env = parent.frame())

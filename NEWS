@@ -1,5 +1,9 @@
 # nofrills
 
+## 0.2.1
+
+  * Alias `..()` is removed.
+
 ## 0.2.0
 
   * `fn()` now comprehends literal unquoting operators via the use of `QUQ()`,
