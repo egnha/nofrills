@@ -137,7 +137,18 @@ my_summarise
 Pure functions via quasiquotation
 ---------------------------------
 
-Functions in R are generally [impure](https://en.wikipedia.org/wiki/Pure_function), i.e., the return value of a function will *not* in general be determined by the value of its inputs alone. This is because a function may depend on mutable objects in its [lexical scope](http://adv-r.hadley.nz/functions.html#lexical-scoping). Normally this isn’t an issue. But if you are working interactively and sourcing files into the global environment, say, it can be tricky to ensure that you haven’t unwittingly mutated an object that an earlier function depends upon.
+Functions in R are generally
+[impure](https://en.wikipedia.org/wiki/Pure_function), i.e., the return
+value of a function will *not* in general be determined by the value of
+its inputs alone. This is because a function may depend on mutable
+objects in its [lexical
+scope](http://adv-r.hadley.nz/functions.html#lexical-scoping). Normally
+this isn’t an issue. But if you are working interactively and sourcing
+files into the global environment, say, or using a notebook interface
+(like [Jupyter](https://jupyter.org) or [R
+Notebook](http://rmarkdown.rstudio.com/r_notebooks.html)), it can be
+tricky to ensure that you haven’t unwittingly mutated an object that an
+earlier function depends upon.
 
 -   Consider the following function:
 

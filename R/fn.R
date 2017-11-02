@@ -86,9 +86,12 @@
 #'   its
 #'   [lexical scope](http://adv-r.hadley.nz/functions.html#lexical-scoping).
 #'   Normally this isn’t an issue. But if you are working interactively and
-#'   sourcing files into the global environment, say, it can be tricky to ensure
-#'   that you haven’t unwittingly mutated an object that an earlier function
-#'   depends upon.
+#'   sourcing files into the global environment, say, or using a notebook
+#'   interface
+#'   (like [Jupyter](https://jupyter.org) or
+#'   [R Notebook](http://rmarkdown.rstudio.com/r_notebooks.html)),
+#'   it can be tricky to ensure that you haven’t unwittingly mutated an object
+#'   that an earlier function depends upon.
 #'
 #'   **Example** — Consider the following function:
 #'   ```
