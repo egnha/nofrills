@@ -64,7 +64,6 @@ interpret_fn <- function(x, f = x, env) {
   } else
     f
 }
-
 is_anon_fn_expr <- local({
   sym_dot <- as.name(".")
   function(x)
