@@ -1,14 +1,17 @@
+In response to a notification from CRAN admin (KH), this minor update repairs
+spurious test failures introduced by the 2.0.0 update of testthat.
+
 ## Test environments
 
-* OS X 10.12.6 (local): R 3.4.1
-* Ubuntu 14.04.5 LTS (on Travis CI): R 3.3.3, 3.4.1
-* Windows (on win-builder): R 3.3.3, 3.4.1, devel (2017-09-12 r73242)
+* OS X 10.12.6 (local): R 3.4.3
+* Ubuntu 14.04.5 LTS (on Travis CI): R 3.3.3, 3.4.2, devel (2017-12-15 r73917)
+* Windows (on win-builder): R 3.3.3
 
-## R CMD check results
+## `R CMD check` results
 
-There were no ERRORs or WARNINGSs.
+On Mac OS and Linux (Ubuntu), there were no ERRORs, WARNINGSs or NOTEs.
 
-There was one NOTE:
+On Windows, there were no ERRORs or WARNINGSs, and one NOTE:
 
 > * checking CRAN incoming feasibility ... NOTE
 > Maintainer: 'Eugene Ha <eha@posteo.de>'
