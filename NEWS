@@ -2,6 +2,8 @@
 
 ## 0.2.1
 
+  * Tests are now compatible with testthat 2.0.0.
+
   * Alias `..()` is removed.
 
 ## 0.2.0
