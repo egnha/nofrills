@@ -170,7 +170,7 @@ fn <- function(..., ..env = parent.frame()) {
   if (!is.environment(..env))
     abort("'..env' must be an environment")
   d <- get_fn_declaration(...)
-  new_function(d$args, d$body, ..env)
+  make_function(d$args, d$body, ..env)
 }
 
 get_fn_declaration <- function(...) {
