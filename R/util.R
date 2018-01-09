@@ -8,8 +8,8 @@
 #' @return Function.
 #'
 #' @noRd
-make_function <- function(args, body, env = caller_env()) {
-  stopifnot(all(have_name(args)), is_env(env))
+make_function <- function(args, body, env = parent.frame()) {
+  stopifnot(all(have_name(args)), is.environment(env))
   if (is_closure(body)) {
     body <- call("function", formals(body), base::body(body))
   } else if (!is_expr(body)) {
