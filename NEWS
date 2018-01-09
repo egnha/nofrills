@@ -1,5 +1,11 @@
 # nofrills
 
+## 0.2.1.9000
+
+  * `fn()` now accepts closures as part of the body. In particular, nested calls
+    of `fn()` can be unquoted, e.g., `fn(x ~ !!fn(y ~ !!fn(z ~ x + y + z)))`
+    yields `function(x) function(y) function(z) x + y + z`.
+
 ## 0.2.1
 
   * Tests are now compatible with testthat 2.0.0.
