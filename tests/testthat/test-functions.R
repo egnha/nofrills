@@ -43,6 +43,13 @@ test_that("can accept a separating comma, between the arguments and body", {
   expect_equal(fn(x = 1, ~ NULL), function(x = 1) NULL)
 })
 
+test_that("body can be a closure", {
+  foo <- function(x) function(y) x + y
+  expect_equal(fn(x ~ function(y) x + y), foo)
+  expect_equal(fn(x ~ !! function(y) x + y), foo)
+  expect_equal(fn(x ~ !! fn(y ~ x + y)), foo)
+})
+
 context("as_fn()")
 
 foo <- function(x) as_fn(x)
