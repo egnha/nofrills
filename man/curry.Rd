@@ -31,9 +31,12 @@ Curry a function
 \examples{
 curry(`*`)
 curry(function(x, y, z = 0) x + y + z)
+
 curry_fn(x, y, z = 0 ~ x + y + z)
 curry_fn(target, ... ~ identical(target, ...))
-compare_to <- curry_fn(target, x ~ identical(QUQ(target), x))
+
+# Delay unquoting to embed initial-argument values into terminal function
+compare_to <- curry_fn(target, x ~ identical(x, QUQ(target)))
 is_this <- compare_to("this")
 is_this("that")  # FALSE
 is_this("this")  # TRUE

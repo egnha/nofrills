@@ -12,12 +12,6 @@
 #' @examples
 #' curry(`*`)
 #' curry(function(x, y, z = 0) x + y + z)
-#' curry_fn(x, y, z = 0 ~ x + y + z)
-#' curry_fn(target, ... ~ identical(target, ...))
-#' compare_to <- curry_fn(target, x ~ identical(QUQ(target), x))
-#' is_this <- compare_to("this")
-#' is_this("that")  # FALSE
-#' is_this("this")  # TRUE
 #'
 #' @export
 curry <- function(f, env = environment(f)) {
@@ -58,6 +52,16 @@ make_curried_function <- local({
 #'   [quasiquotation][rlang::quasiquotation].
 #' @param ..env Environment in which to create the function (i.e., the
 #'   function’s [enclosing environment][base::environment]).
+#'
+#' @examples
+#' curry_fn(x, y, z = 0 ~ x + y + z)
+#' curry_fn(target, ... ~ identical(target, ...))
+#'
+#' # Delay unquoting to embed initial-argument values into terminal function
+#' compare_to <- curry_fn(target, x ~ identical(x, QUQ(target)))
+#' is_this <- compare_to("this")
+#' is_this("that")  # FALSE
+#' is_this("this")  # TRUE
 #'
 #' @rdname curry
 #' @export
