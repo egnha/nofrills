@@ -38,7 +38,7 @@ curry_ <- local({
 
 make_curried_function <- local({
   fn_call <- function(arg, body)
-    as.call(c(quote(fn), as.pairlist(arg), bquote(~.(body))))
+    as.call(c(quote(nofrills::fn), as.pairlist(arg), bquote(~.(body))))
 
   function(args, body, env) {
     n <- length(args)
