@@ -33,9 +33,9 @@ curry(`*`)
 curry(function(x, y, z = 0) x + y + z)
 curry_fn(x, y, z = 0 ~ x + y + z)
 curry_fn(target, ... ~ identical(target, ...))
-compare_to <- curry_fn(target, x ~ identical(target, x))
+compare_to <- curry_fn(target, x ~ identical(QUQ(target), x))
 is_this <- compare_to("this")
-is_this("that")
-is_this("this")
+is_this("that")  # FALSE
+is_this("this")  # TRUE
 
 }
