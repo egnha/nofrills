@@ -3,24 +3,23 @@
 \name{curry}
 \alias{curry}
 \alias{curry_fn}
-\alias{curry}
 \title{Curry a function}
 \usage{
-curry_fn(..., ..env = parent.frame())
-
 curry(f, env = environment(f))
+
+curry_fn(..., ..env = parent.frame())
 }
 \arguments{
+\item{f}{Function.}
+
+\item{env}{Environment of the curried function or \code{NULL}. If \code{NULL}, the
+environment of the curried function is the calling environment.}
+
 \item{...}{Function declaration, which supports
 \link[rlang:quasiquotation]{quasiquotation}.}
 
 \item{..env}{Environment in which to create the function (i.e., the
 function’s \link[base:environment]{enclosing environment}).}
-
-\item{f}{Function.}
-
-\item{env}{Environment of the curried function or \code{NULL}. If \code{NULL}, the
-environment of the curried function is the calling environment.}
 }
 \value{
 The original function as nested calls of functions of successive

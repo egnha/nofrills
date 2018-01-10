@@ -1,5 +1,9 @@
 #' Curry a function
 #'
+#' @param f Function.
+#' @param env Environment of the curried function or `NULL`. If `NULL`, the
+#'   environment of the curried function is the calling environment.
+#'
 #' @return The original function as nested calls of functions of successive
 #'   arguments.
 #'
@@ -13,8 +17,40 @@
 #' is_this("that")
 #' is_this("this")
 #'
-#' @name curry
-NULL
+#' @export
+curry <- function(f, env = environment(f)) {
+  stopifnot(is.function(f), is.environment(env) || is.null(env))
+  f <- as_closure(f)
+  fmls <- formals(f)
+  if (length(fmls) < 2)
+    return(f)
+  curry_(fmls, body(f), env %||% parent.frame())
+}
+
+curry_ <- local({
+  each <- function(xs)
+    lapply(seq_along(xs), function(i) xs[i])
+  lambda <- function(x, body)
+    call("function", as.pairlist(x), body)
+
+  function(args, body, env) {
+    curry_expr <- Reduce(lambda, each(args), body, right = TRUE)
+    eval(curry_expr, env)
+  }
+})
+
+make_curried_function <- local({
+  fn_call <- function(arg, body)
+    as.call(c(quote(fn), as.pairlist(arg), bquote(~.(body))))
+
+  function(args, body, env) {
+    n <- length(args)
+    if (n < 2)
+      return(make_function(args, body, env))
+    terminal_body <- fn_call(args[n], body)
+    curry_(args[-n], terminal_body, env)
+  }
+})
 
 #' @param ... Function declaration, which supports
 #'   [quasiquotation][rlang::quasiquotation].
@@ -23,30 +59,4 @@ NULL
 #'
 #' @rdname curry
 #' @export
-curry_fn <- function(..., ..env = parent.frame()) {
-  curry(fn(..., ..env = ..env))
-}
-
-#' @param f Function.
-#' @param env Environment of the curried function or `NULL`. If `NULL`, the
-#'   environment of the curried function is the calling environment.
-#'
-#' @rdname curry
-#' @export
-curry <- local({
-  each <- function(xs)
-    lapply(seq_along(xs), function(i) xs[i])
-  lambda <- function(x, body)
-    call("function", as.pairlist(x), body)
-
-  function(f, env = environment(f)) {
-    stopifnot(is.function(f), is.environment(env) || is.null(env))
-    f <- as_closure(f)
-    fmls <- formals(f)
-    if (length(fmls) < 2)
-      return(f)
-    curry_expr <- Reduce(lambda, each(fmls), body(f), right = TRUE)
-    env <- env %||% parent.frame()
-    eval(curry_expr, env)
-  }
-})
+curry_fn <- fn_factory(make_curried_function)
