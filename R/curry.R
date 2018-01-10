@@ -7,6 +7,8 @@
 #' @return The original function as nested calls of functions of successive
 #'   arguments.
 #'
+#' @seealso [fn()]
+#'
 #' @examples
 #' curry(`*`)
 #' curry(function(x, y, z = 0) x + y + z)

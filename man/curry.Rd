@@ -39,3 +39,6 @@ is_this("that")  # FALSE
 is_this("this")  # TRUE
 
 }
+\seealso{
+\code{\link[=fn]{fn()}}
+}

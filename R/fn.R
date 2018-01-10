@@ -210,7 +210,7 @@ make_function <- function(args, body, env) {
 #'       foo(1)  #> [1] 2
 #'   ```
 #'
-#' @seealso [as_fn()], [make_fn_aware()]
+#' @seealso [as_fn()], [make_fn_aware()], [curry_fn()]
 #'
 #' @examples
 #' fn(x ~ x + 1)
