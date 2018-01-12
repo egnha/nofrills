@@ -1,11 +1,32 @@
 #' Curry a function
 #'
+#' `curry()` [curries](https://en.wikipedia.org/wiki/Currying) functions—it
+#' reconstitutes a function as a succession of single-argument functions. For
+#' example, `curry()` produces the the function
+#' ```
+#' function(x) {
+#'   function(y) {
+#'     function(z) {
+#'       x * y * z
+#'     }
+#'   }
+#' }
+#' ```
+#' from the function `function(x, y, z) x * y * z`.
+#' \cr\cr
+#' `curry_fn()` produces a curried function from an [fn()]-style function
+#' declaration, which supports [quasiquotation][rlang::quasiquotation] of a
+#' function’s body and (default) argument values.
+#'
+#' @details Dots (`...`) are treated as a unit when currying. For example,
+#'   `curry()` transforms `function(x, ...) list(x, ...)` to
+#'   `function(x) { function(...) list(x, ...) }`.
+#'
 #' @param f Function.
 #' @param env Environment of the curried function or `NULL`. If `NULL`, the
 #'   environment of the curried function is the calling environment.
 #'
-#' @return The original function as nested calls of functions of successive
-#'   arguments.
+#' @return A function of nested single-argument functions.
 #'
 #' @seealso [fn()]
 #'
@@ -58,7 +79,7 @@ make_curried_function <- local({
 #' curry_fn(x, y, z = 0 ~ x + y + z)
 #' curry_fn(target, ... ~ identical(target, ...))
 #'
-#' ## Delay unquoting to embed initial-argument values into terminal function
+#' ## Delay unquoting to embed argument values into the innermost function
 #' compare_to <- curry_fn(target, x ~ identical(x, QUQ(target)))
 #' is_this <- compare_to("this")
 #' is_this("that")  # FALSE

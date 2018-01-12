@@ -22,11 +22,30 @@ environment of the curried function is the calling environment.}
 function’s \link[base:environment]{enclosing environment}).}
 }
 \value{
-The original function as nested calls of functions of successive
-arguments.
+A function of nested single-argument functions.
 }
 \description{
-Curry a function
+\code{curry()} \href{https://en.wikipedia.org/wiki/Currying}{curries} functions—it
+reconstitutes a function as a succession of single-argument functions. For
+example, \code{curry()} produces the the function\preformatted{function(x) {
+  function(y) {
+    function(z) {
+      x * y * z
+    }
+  }
+}
+}
+
+from the function \code{function(x, y, z) x * y * z}.
+\cr\cr
+\code{curry_fn()} produces a curried function from an \code{\link[=fn]{fn()}}-style function
+declaration, which supports \link[rlang:quasiquotation]{quasiquotation} of a
+function’s body and (default) argument values.
+}
+\details{
+Dots (\code{...}) are treated as a unit when currying. For example,
+\code{curry()} transforms \code{function(x, ...) list(x, ...)} to
+\code{function(x) { function(...) list(x, ...) }}.
 }
 \examples{
 curry(function(x, y, z = 0) x + y + z)
@@ -36,7 +55,7 @@ double(3)  # 6
 curry_fn(x, y, z = 0 ~ x + y + z)
 curry_fn(target, ... ~ identical(target, ...))
 
-## Delay unquoting to embed initial-argument values into terminal function
+## Delay unquoting to embed argument values into the innermost function
 compare_to <- curry_fn(target, x ~ identical(x, QUQ(target)))
 is_this <- compare_to("this")
 is_this("that")  # FALSE

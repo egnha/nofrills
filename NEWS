@@ -2,6 +2,16 @@
 
 ## 0.2.1.9000
 
+  * Currying operators `curry()` and `curry_fn()` are introduced (#10). Notably,
+    `curry_fn()` supports quasiquotation, which enables more easily inspectable
+    functions. For example:
+    ```
+    compare_to <- curry_fn(target, x ~ identical(x, QUQ(target)))
+    print(compare_to("this"))
+    #> function (x)
+    #> identical(x, "this")
+    ```
+
   * `fn()` now accepts closures as part of the body. In particular, nested calls
     of `fn()` can be unquoted, e.g., `fn(x ~ !!fn(y ~ !!fn(z ~ x + y + z)))`
     yields `function(x) function(y) function(z) x + y + z`.
