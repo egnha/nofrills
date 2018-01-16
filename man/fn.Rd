@@ -163,7 +163,7 @@ if (suppressWarnings(require(dplyr))) {
     group_by <- quos(...)
     df \%>\%
       group_by(QUQS(group_by)) \%>\%
-      summarise(a = (!!summariser)(a))
+      summarise(a = `!!`(summariser)(a))
   })
 
   my_summarise
