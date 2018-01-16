@@ -42,7 +42,8 @@ or\preformatted{    arg1, arg2, ..., argN, ~ body
 }
 
 (Note in the second form that the body is a one-sided formula. This
-distinction is relevant for argument \link[rlang:UQS]{splicing}, see below.)
+distinction is relevant for argument \link[rlang:quasiquotation]{splicing}, see
+below.)
 \itemize{
 \item To the left of \code{~}, you write a conventional function-argument
 declaration, just as in \code{function(<arguments>)}: each of \code{arg1}, \code{arg2},
@@ -56,24 +57,22 @@ i.e., an expression of the arguments.
 All parts of a function declaration support tidyverse
 \link[rlang:quasiquotation]{quasiquotation}:
 \itemize{
-\item To unquote values (of arguments or parts of the body), use \code{!!}
-or \code{UQ()}:
+\item To unquote values (of arguments or parts of the body), use \code{!!}:
 \preformatted{
     z <- 0
-    fn(x, y = !! z ~ x + y)
-    fn(x ~ x > !! z)}
+    fn(x, y = !!z ~ x + y)
+    fn(x ~ x > !!z)}
 \item To unquote argument names (with default value), use \code{:=}
 (definition operator):
 \preformatted{
     arg <- "y"
-    fn(x, !! arg := 0 ~ x + !! as.name(arg))}
-\item To splice in a (formal) list of arguments, use \code{!!!} or \code{UQS()}:
+    fn(x, !!arg := 0 ~ x + !!as.name(arg))}
+\item To splice in a (formal) list of arguments, use \code{!!!}:
 \preformatted{
-    fn(!!! alist(x, y = 0), ~ x + y)}
+    fn(!!!alist(x, y = 0), ~ x + y)}
 (Note that the body, in this case, must be given as a one-sided
 formula.)
-\item To write literal unquoting operators, use \code{QUQ()}, \code{QUQS()},
-\code{QUQE()}:
+\item To write literal unquoting operators, use \code{QUQ()}, \code{QUQS()}:
 \preformatted{
     library(dplyr)
 
@@ -124,7 +123,7 @@ to eliminate such indeterminacy.
 
 \strong{Example} — With \code{fn()}, you can unquote \code{a} to \dQuote{burn in} its
 value at the point of creation:\preformatted{    a <- 1
-    foo <- fn(x ~ x + !! a)
+    foo <- fn(x ~ x + !!a)
 }
 
 Now \code{foo()} is a pure function, unaffected by changes in its lexical scope:\preformatted{    foo(1)  #> [1] 2
@@ -146,14 +145,14 @@ fn(x, ... = , y ~ log(x + y, ...))
 fn(~ NA)
 fn(~ message("!"))
 
-## unquoting is supported (using `!!` or UQ() from rlang)
+## unquoting is supported (using `!!` from rlang)
 zero <- 0
-fn(x = UQ(zero) ~ x > !! zero)
+fn(x = !!zero ~ x > !!zero)
 
 ## formals and function bodies can also be spliced in
 f <- function(x, y) x + y
 g <- function(y, x, ...) x - y
-frankenstein <- fn(!!! formals(f), ~ !! body(g))
+frankenstein <- fn(!!!formals(f), ~ !!body(g))
 stopifnot(identical(frankenstein, function(x, y) x - y))
 
 ## mixing unquoting and literal unquoting is possible
@@ -164,7 +163,7 @@ if (suppressWarnings(require(dplyr))) {
     group_by <- quos(...)
     df \%>\%
       group_by(QUQS(group_by)) \%>\%
-      summarise(a = UQ(summariser)(a))
+      summarise(a = (!!summariser)(a))
   })
 
   my_summarise

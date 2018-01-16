@@ -5,7 +5,7 @@
 #'
 #' @param f Function, or symbol or name of a function.
 #' @param ... Name(s) of functional argument(s) of `f` (strings) or `NULL`.
-#'   Unsplicing of lists of strings is supported via `!!!` or `UQS()`.
+#'   Unsplicing of lists of strings is supported via `!!!`.
 #'
 #' @return A function with the same call signature as `f`, but whose function
 #'   arguments, as designated by `...`, may be specified using an abbreviated

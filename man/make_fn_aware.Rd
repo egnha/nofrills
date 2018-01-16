@@ -10,7 +10,7 @@ make_fn_aware(f, ...)
 \item{f}{Function, or symbol or name of a function.}
 
 \item{...}{Name(s) of functional argument(s) of \code{f} (strings) or \code{NULL}.
-Unsplicing of lists of strings is supported via \code{!!!} or \code{UQS()}.}
+Unsplicing of lists of strings is supported via \code{!!!}.}
 }
 \value{
 A function with the same call signature as \code{f}, but whose function

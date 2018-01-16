@@ -16,6 +16,11 @@
     of `fn()` can be unquoted, e.g., `fn(x ~ !!fn(y ~ !!fn(z ~ x + y + z)))`
     yields `function(x) function(y) function(z) x + y + z`.
 
+  * Literal unquoting operators `QUQ()`, `QUQS()` now resolve to their
+    bang-operator forms (`!!`, `!!!`), rather than their functional aliases
+    (`UQ()`, `UQS()`), as these aliases are slated for potential deprecation in
+    rlang (#9). `rlang::UQE()` has already been axed, so `QUQE()` is gone too.
+
 ## 0.2.1
 
   * Tests are now compatible with testthat 2.0.0.

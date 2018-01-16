@@ -36,7 +36,7 @@ call_fn(log, 1)
 call_fn(.(. ~ sin(.) ^ 2), 1)
 # simplified function expressions support quasiquotation
 f <- sin
-call_fn(.(. ~ UQ(f)(.) ^ 2), 1)
+call_fn(.(. ~ (!!f)(.) ^ 2), 1)
 
 ## wrap Map() to accept abbreviated anonymous function expressions
 Map_ <- function (f, ...) {

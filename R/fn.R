@@ -117,7 +117,8 @@ make_function <- function(args, body, env) {
 #'       arg1, arg2, ..., argN, ~ body
 #'   ```
 #'   (Note in the second form that the body is a one-sided formula. This
-#'   distinction is relevant for argument [splicing][rlang::UQS()], see below.)
+#'   distinction is relevant for argument [splicing][rlang::quasiquotation], see
+#'   below.)
 #'
 #'   - To the left of `~`, you write a conventional function-argument
 #'     declaration, just as in `function(<arguments>)`: each of `arg1`, `arg2`,
@@ -131,24 +132,22 @@ make_function <- function(args, body, env) {
 #'     All parts of a function declaration support tidyverse
 #'     [quasiquotation][rlang::quasiquotation]:
 #'     \itemize{
-#'       \item To unquote values (of arguments or parts of the body), use `!!`
-#'         or `UQ()`:
+#'       \item To unquote values (of arguments or parts of the body), use `!!`:
 #'         \preformatted{
 #'     z <- 0
-#'     fn(x, y = !! z ~ x + y)
-#'     fn(x ~ x > !! z)}
+#'     fn(x, y = !!z ~ x + y)
+#'     fn(x ~ x > !!z)}
 #'       \item To unquote argument names (with default value), use `:=`
 #'         (definition operator):
 #'         \preformatted{
 #'     arg <- "y"
-#'     fn(x, !! arg := 0 ~ x + !! as.name(arg))}
-#'       \item To splice in a (formal) list of arguments, use `!!!` or `UQS()`:
+#'     fn(x, !!arg := 0 ~ x + !!as.name(arg))}
+#'       \item To splice in a (formal) list of arguments, use `!!!`:
 #'         \preformatted{
-#'     fn(!!! alist(x, y = 0), ~ x + y)}
+#'     fn(!!!alist(x, y = 0), ~ x + y)}
 #'         (Note that the body, in this case, must be given as a one-sided
 #'         formula.)
-#'       \item To write literal unquoting operators, use `QUQ()`, `QUQS()`,
-#'         `QUQE()`:
+#'       \item To write literal unquoting operators, use `QUQ()`, `QUQS()`:
 #'         \preformatted{
 #'     library(dplyr)
 #'
@@ -201,7 +200,7 @@ make_function <- function(args, body, env) {
 #'   value at the point of creation:
 #'   ```
 #'       a <- 1
-#'       foo <- fn(x ~ x + !! a)
+#'       foo <- fn(x ~ x + !!a)
 #'   ```
 #'   Now `foo()` is a pure function, unaffected by changes in its lexical scope:
 #'   ```
@@ -225,14 +224,14 @@ make_function <- function(args, body, env) {
 #' fn(~ NA)
 #' fn(~ message("!"))
 #'
-#' ## unquoting is supported (using `!!` or UQ() from rlang)
+#' ## unquoting is supported (using `!!` from rlang)
 #' zero <- 0
-#' fn(x = UQ(zero) ~ x > !! zero)
+#' fn(x = !!zero ~ x > !!zero)
 #'
 #' ## formals and function bodies can also be spliced in
 #' f <- function(x, y) x + y
 #' g <- function(y, x, ...) x - y
-#' frankenstein <- fn(!!! formals(f), ~ !! body(g))
+#' frankenstein <- fn(!!!formals(f), ~ !!body(g))
 #' stopifnot(identical(frankenstein, function(x, y) x - y))
 #'
 #' ## mixing unquoting and literal unquoting is possible
@@ -243,7 +242,7 @@ make_function <- function(args, body, env) {
 #'     group_by <- quos(...)
 #'     df %>%
 #'       group_by(QUQS(group_by)) %>%
-#'       summarise(a = UQ(summariser)(a))
+#'       summarise(a = (!!summariser)(a))
 #'   })
 #'
 #'   my_summarise
