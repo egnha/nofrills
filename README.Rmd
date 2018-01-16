@@ -86,9 +86,9 @@ fn(~ NA)
 ```{r}
 z <- 0
 
-fn(x, y = !! z ~ x + y)
+fn(x, y = !!z ~ x + y)
 
-fn(x ~ x > !! z)
+fn(x ~ x > !!z)
 ```
 
 #### Unquoting argument names
@@ -96,7 +96,7 @@ fn(x ~ x > !! z)
 ```{r}
 arg <- "y"
 
-fn(x, !! arg := 0 ~ x + !! as.name(arg))
+fn(x, !!arg := 0 ~ x + !!as.name(arg))
 ```
 
 #### Splicing in argument lists
@@ -104,10 +104,10 @@ fn(x, !! arg := 0 ~ x + !! as.name(arg))
 ```{r}
 args <- alist(x, y = 0)
 
-fn(!!! args, ~ x + y)  # note the one-sided formula
+fn(!!!args, ~ x + y)  # note the one-sided formula
 ```
 
-#### Literal unquoting via `QUQ()`, `QUQS()`, `QUQE()`
+#### Literal unquoting via `QUQ()`, `QUQS()`
 
 ```{r}
 library(dplyr, warn.conflicts = FALSE)
@@ -118,7 +118,7 @@ my_summarise <- fn(df, ... ~ {
   group_by <- quos(...)
   df %>%
     group_by(QUQS(group_by)) %>%
-    summarise(a = UQ(summariser)(a))
+    summarise(a = `!!`(summariser)(a))
 })
 
 my_summarise
@@ -166,7 +166,7 @@ to eliminate such indeterminacy.
     creation:
     ```{r}
     a <- 1
-    foo <- fn(x ~ x + !! a)
+    foo <- fn(x ~ x + !!a)
     ```
     Now `foo()` is a pure function, unaffected by changes in its lexical scope:
     ```{r}

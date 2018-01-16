@@ -13,11 +13,16 @@ nofrills <img src="inst/logo.png" align="right" />
 Overview
 --------
 
-*nofrills* is a lightweight R package that provides `fn()`, a more powerful variation of `function()` that:
+*nofrills* is a lightweight R package that provides `fn()`, a more
+powerful variation of `function()` that:
 
--   **costs less** — enables tidyverse [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html) so you don’t pay the price of [functional impurity](#pure-functions-via-quasiquotation)
+-   **costs less** — enables tidyverse
+    [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html)
+    so you don’t pay the price of [functional
+    impurity](#pure-functions-via-quasiquotation)
 
--   has the **same great taste** — supports a superset of `function()`’s syntax and capabilities
+-   has the **same great taste** — supports a superset of `function()`’s
+    syntax and capabilities
 
 -   is **less filling** —
 
@@ -84,11 +89,11 @@ fn(~ NA)
 ``` r
 z <- 0
 
-fn(x, y = !! z ~ x + y)
+fn(x, y = !!z ~ x + y)
 #> function (x, y = 0) 
 #> x + y
 
-fn(x ~ x > !! z)
+fn(x ~ x > !!z)
 #> function (x) 
 #> x > 0
 ```
@@ -98,7 +103,7 @@ fn(x ~ x > !! z)
 ``` r
 arg <- "y"
 
-fn(x, !! arg := 0 ~ x + !! as.name(arg))
+fn(x, !!arg := 0 ~ x + !!as.name(arg))
 #> function (x, y = 0) 
 #> x + y
 ```
@@ -108,12 +113,12 @@ fn(x, !! arg := 0 ~ x + !! as.name(arg))
 ``` r
 args <- alist(x, y = 0)
 
-fn(!!! args, ~ x + y)  # note the one-sided formula
+fn(!!!args, ~ x + y)  # note the one-sided formula
 #> function (x, y = 0) 
 #> x + y
 ```
 
-#### Literal unquoting via `QUQ()`, `QUQS()`, `QUQE()`
+#### Literal unquoting via `QUQ()`, `QUQS()`
 
 ``` r
 library(dplyr, warn.conflicts = FALSE)
@@ -124,18 +129,19 @@ my_summarise <- fn(df, ... ~ {
   group_by <- quos(...)
   df %>%
     group_by(QUQS(group_by)) %>%
-    summarise(a = UQ(summariser)(a))
+    summarise(a = `!!`(summariser)(a))
 })
 
 my_summarise
 #> function (df, ...) 
 #> {
 #>     group_by <- quos(...)
-#>     df %>% group_by(UQS(group_by)) %>% summarise(a = mean(a))
+#>     df %>% group_by(`!!!`(group_by)) %>% summarise(a = mean(a))
 #> }
 ```
 
-(Source: [*Programming with dplyr*](http://dplyr.tidyverse.org/articles/programming.html#capturing-multiple-variables))
+(Source: [*Programming with
+dplyr*](http://dplyr.tidyverse.org/articles/programming.html#capturing-multiple-variables))
 
 Pure functions via quasiquotation
 ---------------------------------
@@ -160,7 +166,9 @@ earlier function depends upon.
     foo <- function(x) x + a
     ```
 
-    What is the value of `foo(1)`? It is not necessarily `2` because the value of `a` may have changed between the *creation* of `foo()` and the *calling* of `foo(1)`:
+    What is the value of `foo(1)`? It is not necessarily `2` because the
+    value of `a` may have changed between the *creation* of `foo()` and
+    the *calling* of `foo(1)`:
 
     ``` r
     foo(1)
@@ -172,18 +180,24 @@ earlier function depends upon.
     #> [1] 1
     ```
 
-    In other words, `foo()` is impure because the value of `foo(x)` depends not only on the value of `x` but also on the *externally mutable* value of `a`.
+    In other words, `foo()` is impure because the value of `foo(x)`
+    depends not only on the value of `x` but also on the *externally
+    mutable* value of `a`.
 
-`fn()` enables you to write **pure** functions by using [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html) to eliminate such indeterminacy.
+`fn()` enables you to write **pure** functions by using
+[quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html)
+to eliminate such indeterminacy.
 
--   With `fn()`, you can unquote `a` to “burn in” its value at the point of creation:
+-   With `fn()`, you can unquote `a` to “burn in” its value at the point
+    of creation:
 
     ``` r
     a <- 1
-    foo <- fn(x ~ x + !! a)
+    foo <- fn(x ~ x + !!a)
     ```
 
-    Now `foo()` is a pure function, unaffected by changes in its lexical scope:
+    Now `foo()` is a pure function, unaffected by changes in its lexical
+    scope:
 
     ``` r
     foo(1)
@@ -198,7 +212,9 @@ earlier function depends upon.
 Alternatives to *nofrills*
 --------------------------
 
-Here are some alternative anonymous-function constructors (which don’t support quasiquotation), ordered by increasing concision and specialization:
+Here are some alternative anonymous-function constructors (which don’t
+support quasiquotation), ordered by increasing concision and
+specialization:
 
 -   [`pryr::f()`](https://github.com/hadley/pryr)
 -   [`lambda::f()`](https://github.com/jimhester/lambda)
@@ -207,7 +223,11 @@ Here are some alternative anonymous-function constructors (which don’t support
 Acknowledgement
 ---------------
 
-The [rlang](https://github.com/tidyverse/rlang) package by [Lionel Henry](https://github.com/lionel-) and [Hadley Wickham](https://github.com/hadley) makes *nofrills* possible. Crucially, rlang provides the engine for quasiquotation and expression capture.
+The [rlang](https://github.com/tidyverse/rlang) package by [Lionel
+Henry](https://github.com/lionel-) and [Hadley
+Wickham](https://github.com/hadley) makes *nofrills* possible.
+Crucially, rlang provides the engine for quasiquotation and expression
+capture.
 
 License
 -------
