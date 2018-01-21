@@ -1,5 +1,7 @@
 # nofrills
 
+## 0.3.0.9000
+
 ## 0.3.0
 
   * Currying operators `curry()` and `curry_fn()` are introduced (#10). Notably,
