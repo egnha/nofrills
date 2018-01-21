@@ -232,4 +232,4 @@ capture.
 License
 -------
 
-MIT Copyright © 2017 [Eugene Ha](https://github.com/egnha)
+MIT Copyright © 2017–18 [Eugene Ha](https://github.com/egnha)
