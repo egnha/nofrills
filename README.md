@@ -184,11 +184,11 @@ earlier function depends upon.
     depends not only on the value of `x` but also on the *externally
     mutable* value of `a`.
 
-`fn()` enables you to write **pure** functions by using
+`fn()` enables you to write **pure(r)** functions by using
 [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html)
 to eliminate such indeterminacy.
 
--   With `fn()`, you can unquote `a` to “burn in” its value at the point
+-   With `fn()`, you can unquote `a` to capture its value at the point
     of creation:
 
     ``` r
@@ -212,9 +212,8 @@ to eliminate such indeterminacy.
 Alternatives to *nofrills*
 --------------------------
 
-Here are some alternative anonymous-function constructors (which don’t
-support quasiquotation), ordered by increasing concision and
-specialization:
+Alternative anonymous-function constructors (which don’t support
+quasiquotation) include:
 
 -   [`pryr::f()`](https://github.com/hadley/pryr)
 -   [`lambda::f()`](https://github.com/jimhester/lambda)
