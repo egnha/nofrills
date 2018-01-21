@@ -1,6 +1,6 @@
 # nofrills
 
-## 0.2.1.9000
+## 0.3.0
 
   * Currying operators `curry()` and `curry_fn()` are introduced (#10). Notably,
     `curry_fn()` supports quasiquotation, which enables more easily inspectable
