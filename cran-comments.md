@@ -1,17 +1,14 @@
-In response to a notification from CRAN admin (KH), this minor update repairs
-spurious test failures introduced by the 2.0.0 update of testthat.
-
 ## Test environments
 
-* OS X 10.12.6 (local): R 3.4.3
-* Ubuntu 14.04.5 LTS (on Travis CI): R 3.3.3, 3.4.2, devel (2017-12-15 r73917)
-* Windows (on win-builder): R 3.3.3
+* macOS 10.12.6: R 3.4.3
+* Ubuntu 14.04.5 LTS (Travis CI): R 3.3.3, 3.4.2, devel (2018-01-20 r74146)
+* Windows (win-builder): R 3.3.3, 3.4.3, devel (2018-01-19 r74138)
 
 ## `R CMD check` results
 
-On Mac OS and Linux (Ubuntu), there were no ERRORs, WARNINGSs or NOTEs.
+On macOS, Linux, and Windows (R-devel) there were no ERRORs, WARNINGSs or NOTEs.
 
-On Windows, there were no ERRORs or WARNINGSs, and one NOTE:
+On Windows R 3.3.3, 3.4.3, there were no ERRORs or WARNINGSs, and one NOTE:
 
 > * checking CRAN incoming feasibility ... NOTE
 > Maintainer: 'Eugene Ha <eha@posteo.de>'
@@ -19,7 +16,7 @@ On Windows, there were no ERRORs or WARNINGSs, and one NOTE:
 > License components with restrictions and base license permitting such:
 >   MIT + file LICENSE
 > File 'LICENSE':
->   YEAR: 2017
+>   YEAR: 2017, 2018
 >   COPYRIGHT HOLDER: Eugene Ha
 > 
 > Possibly mis-spelled words in DESCRIPTION:
