@@ -84,7 +84,7 @@ fn(~ NA)
 
 ### Supports quasiquotation
 
-#### Unquoting values
+#### Unquote values
 
 ``` r
 z <- 0
@@ -98,7 +98,7 @@ fn(x ~ x > !!z)
 #> x > 0
 ```
 
-#### Unquoting argument names
+#### Unquote argument names
 
 ``` r
 arg <- "y"
@@ -108,7 +108,7 @@ fn(x, !!arg := 0 ~ x + !!as.name(arg))
 #> x + y
 ```
 
-#### Splicing in argument lists
+#### Splice in argument lists
 
 ``` r
 args <- alist(x, y = 0)
@@ -118,7 +118,7 @@ fn(!!!args, ~ x + y)  # note the one-sided formula
 #> x + y
 ```
 
-#### Literal unquoting via `QUQ()`, `QUQS()`
+#### Literally unquote with `QUQ()`, `QUQS()`
 
 ``` r
 library(dplyr, warn.conflicts = FALSE)

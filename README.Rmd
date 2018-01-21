@@ -42,7 +42,6 @@ variation of `function()` that:
     function(x, y = 1) x + y
     ```
 
-
 ## Installation
 
 ```{r, eval = FALSE}
@@ -81,7 +80,7 @@ fn(~ NA)
 
 ### Supports quasiquotation
 
-#### Unquoting values
+#### Unquote values
 
 ```{r}
 z <- 0
@@ -91,7 +90,7 @@ fn(x, y = !!z ~ x + y)
 fn(x ~ x > !!z)
 ```
 
-#### Unquoting argument names
+#### Unquote argument names
 
 ```{r}
 arg <- "y"
@@ -99,7 +98,7 @@ arg <- "y"
 fn(x, !!arg := 0 ~ x + !!as.name(arg))
 ```
 
-#### Splicing in argument lists
+#### Splice in argument lists
 
 ```{r}
 args <- alist(x, y = 0)
@@ -107,7 +106,7 @@ args <- alist(x, y = 0)
 fn(!!!args, ~ x + y)  # note the one-sided formula
 ```
 
-#### Literal unquoting via `QUQ()`, `QUQS()`
+#### Literally unquote with `QUQ()`, `QUQS()`
 
 ```{r}
 library(dplyr, warn.conflicts = FALSE)
