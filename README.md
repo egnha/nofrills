@@ -159,7 +159,6 @@ is_this <- compare_to("this")
 is_this
 #> function (x) 
 #> identical(x, "this")
-#> <environment: 0x7fec3ace47b8>
 ```
 
 #### Curry a function with `curry()`
@@ -240,8 +239,8 @@ to eliminate such indeterminacy.
     #> [1] 2
     ```
 
-Alternatives to *nofrills*
---------------------------
+Alternatives to nofrills
+------------------------
 
 Alternative anonymous-function constructors (which don’t support
 quasiquotation) include:
@@ -255,9 +254,8 @@ Acknowledgement
 
 The [rlang](https://github.com/tidyverse/rlang) package by [Lionel
 Henry](https://github.com/lionel-) and [Hadley
-Wickham](https://github.com/hadley) makes *nofrills* possible.
-Crucially, rlang provides the engine for quasiquotation and expression
-capture.
+Wickham](https://github.com/hadley) makes nofrills possible. Crucially,
+rlang provides the engine for quasiquotation and expression capture.
 
 License
 -------
