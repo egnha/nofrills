@@ -149,16 +149,20 @@ dplyr*](http://dplyr.tidyverse.org/articles/programming.html#capturing-multiple-
 
 The syntax is the same as `fn()`. Using the literal unquoting operators
 `QUQ()`, `QUQS()`, you can “delay” unquoting to embed argument values in
-the innermost function:
+the innermost function. This makes generated source code readily
+comprehensible.
 
 ``` r
-compare_to <- curry_fn(target, x ~ identical(x, QUQ(target)))
-is_this <- compare_to("this")
-
-# The embedded value "this" renders the source comprehensible
-is_this
+classify_as <- curry_fn(class, x ~ `class<-`(x, QUQ(class)))
+as_this <- classify_as("this")
+as_this
 #> function (x) 
-#> identical(x, "this")
+#> `class<-`(x, "this")
+
+do_call <- curry_fn(... = , f ~ f(QUQS(list(...))))
+do_call(x = 1, 2)
+#> function (f) 
+#> f(x = 1, 2)
 ```
 
 #### Curry a function with `curry()`
