@@ -68,5 +68,3 @@ departial <- function(..f) {
   assert(is.function(..f), because = "Only functions can be de-partialized")
   environment(..f)$.PartializedFunction %||% ..f
 }
-
-`%are%` <- function(lhs, rhs) all(lhs %in% rhs)

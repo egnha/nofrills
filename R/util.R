@@ -1,3 +1,8 @@
+`%are%` <- function(lhs, rhs) all(lhs %in% rhs)
+
+assert <- function(cond, because, env = parent.frame())
+  if (!cond) stop(interpolate(because, env), call. = FALSE)
+
 #' Ad hoc string interpolation
 #'
 #' @param text String of the form `"...{*}..."`. Anything appearing in braces is
