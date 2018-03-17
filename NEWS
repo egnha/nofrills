@@ -2,6 +2,11 @@
 
 ## 0.3.0.9000
 
+  * Partial function application is available via the operator `partial()`,
+    along with its inverse operator `unpartial()`. Quasiquotation and splicing
+    of arguments are supported, in addition to argument-wise lazy or eager
+    (tidy) evaluation.
+
 ## 0.3.0
 
   * Currying operators `curry()` and `curry_fn()` are introduced (#10). Notably,
