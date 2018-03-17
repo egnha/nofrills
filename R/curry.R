@@ -28,7 +28,7 @@
 #'
 #' @return A function of nested single-argument functions.
 #'
-#' @seealso [fn()]
+#' @seealso [fn()], [partial()]
 #'
 #' @examples
 #' curry(function(x, y, z = 0) x + y + z)

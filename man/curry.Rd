@@ -73,5 +73,5 @@ do_call(x = 1, 2)
 
 }
 \seealso{
-\code{\link[=fn]{fn()}}
+\code{\link[=fn]{fn()}}, \code{\link[=partial]{partial()}}
 }
