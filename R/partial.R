@@ -8,7 +8,8 @@
 #'
 #' @param ..f Function.
 #' @param ... Argument values of `..f` to fix, specified by name.
-#'   [Quasiquotation][rlang::quasiquotation] is supported; see _Examples_.
+#'   [Quasiquotation][rlang::quasiquotation] and splicing are supported; see
+#'   _Examples_.
 #' @param ..lazy Should the argument values be lazily evaluated? If `TRUE` (the
 #'   default), the argument values are captured as expressions; if `FALSE`, the
 #'   argument values are [tidily evaluated][rlang::eval_tidy].

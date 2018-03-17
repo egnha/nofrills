@@ -13,7 +13,8 @@ departial(..f)
 \item{..f}{Function.}
 
 \item{...}{Argument values of \code{..f} to fix, specified by name.
-\link[rlang:quasiquotation]{Quasiquotation} is supported; see \emph{Examples}.}
+\link[rlang:quasiquotation]{Quasiquotation} and splicing are supported; see
+\emph{Examples}.}
 
 \item{..lazy}{Should the argument values be lazily evaluated? If \code{TRUE} (the
 default), the argument values are captured as expressions; if \code{FALSE}, the
