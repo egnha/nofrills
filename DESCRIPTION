@@ -22,6 +22,7 @@ Collate:
     'as-fn.R'
     'make-fn-aware.R'
     'curry.R'
+    'partial.R'
     'assert.R'
     'string.R'
 RoxygenNote: 6.0.1

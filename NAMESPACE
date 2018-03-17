@@ -3,6 +3,8 @@
 export(as_fn)
 export(curry)
 export(curry_fn)
+export(departial)
 export(fn)
 export(make_fn_aware)
+export(partial)
 import(rlang)
