@@ -9,9 +9,9 @@
 #' @export
 compose <- function(...) {
   `__fns_composite` <- fns()  # '...' consumed here via call introspection
-  if (length(`__fns_composite`) <= 1)
-    return(`__fns_composite`[[1]])
   n <- length(`__fns_composite`)
+  if (n <= 1)
+    return(`__fns_composite`[[1]])
   fn_last <- as_closure(`__fns_composite`[[n]])
   `__call_fn_last` <- function() {
     call <- `[[<-`(sys.call(-1), 1, fn_last)
