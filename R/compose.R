@@ -52,9 +52,9 @@ decompose <- function(f) {
 #' @export
 print.CompositeFunction <- function(x, ...) {
   fns <- rev(decompose(x))
-  cat("Composition of functions, listed in calling order:\n\n")
-  for (i in seq_along(rev(decompose(x)))) {
-    cat(i, ": ", sep = "")
+  cat("Composition of functions, listed in calling order:\n")
+  for (i in seq_along(fns)) {
+    cat("\n", i, ": ", sep = "")
     print(fns[[i]])
   }
   cat("\n(Use 'decompose()' to recover the list of composite functions.)")
