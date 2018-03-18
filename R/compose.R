@@ -8,7 +8,7 @@
 #'
 #' @export
 compose <- function(...) {
-  `__fns_composite` <- fns(...)
+  `__fns_composite` <- fns()  # '...' consumed here via call introspection
   if (length(`__fns_composite`) <= 1)
     return(`__fns_composite`[[1]])
   n <- length(`__fns_composite`)
@@ -28,6 +28,17 @@ compose <- function(...) {
   structure(fn_comp, class = c("CompositeFunction", "function"))
 }
 
+fns <- local({
+  compose_as_list2 <- list(compose = list2)
+  function() {
+    dots <- eval(sys.call(-1), compose_as_list2, parent.frame(2))
+    unlist(lapply(dots, decompose_))
+  }
+})
+
+decompose_ <- function(f)
+  environment(f)$`__fns_composite` %||% f
+
 #' @param f,g Functions.
 #' @rdname compose
 #' @export
@@ -37,16 +48,11 @@ compose <- function(...) {
 #' @export
 `%>>>%` <- opposite(`%<<<%`)
 
-fns <- function(...) {
-  fns <- lapply(dots_list(...), decompose)
-  unlist(fns)
-}
-
 #' @rdname compose
 #' @export
 decompose <- function(f) {
   is.function(f) %because% "Only functions can be (de)composed"
-  environment(f)$`__fns_composite` %||% f
+  decompose_(f)
 }
 
 #' @export
