@@ -2,8 +2,7 @@
 
 fn_factory <- function(function_) {
   function(..., ..env = parent.frame()) {
-    if (!is.environment(..env))
-      abort("'..env' must be an environment")
+    is.environment(..env) %because% "'..env' must be an environment"
     d <- get_fn_declaration(...)
     function_(d$args, d$body, ..env)
   }
@@ -22,14 +21,11 @@ get_exprs <- function(...) {
   list(front = xs[-n], back = xs[n])
 }
 validate <- function(xs, n) {
-  if (is_empty(xs))
-    abort("No function specified")
+  (!is_empty(xs)) %because% "Function must be declared"
   n <- length(xs)
   is_fml <- vapply(xs, is_formula, logical(1))
-  if (any(is_fml[-n]))
-    abort("Only the body (as last argument) should be a formula")
-  if (!is_fml[n])
-    abort("Final argument must be a formula (specifying the body)")
+  all(!is_fml[-n]) %because% "Only the body (as last argument) should be a formula"
+  is_fml[n] %because% "Final argument must be a formula (specifying the body)"
   xs
 }
 
@@ -60,8 +56,7 @@ is_onesided <- function(x) {
   length(x) == 2
 }
 get_empty_head <- function(nm) {
-  if (nzchar(nm))
-    abort("Default value of final argument is missing")
+  (!nzchar(nm)) %because% "Default value of final argument expected"
   NULL
 }
 get_nonempty_head <- function(arg, nm) {
@@ -73,11 +68,10 @@ get_nonempty_head <- function(arg, nm) {
 
 make_function <- function(args, body, env) {
   stopifnot(all(have_name(args)), is.environment(env))
-  if (is_closure(body)) {
+  if (is_closure(body))
     body <- call("function", formals(body), base::body(body))
-  } else if (!is_expr(body)) {
-    abort("Body must be an expression or closure.")
-  }
+  else
+    is_expr(body) %because% "Body must be an expression or closure"
   args <- as.pairlist(args)
   eval(call("function", args, body), env)
 }

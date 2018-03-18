@@ -92,7 +92,7 @@ test_that("error is signaled if ... are neither strings nor empty", {
 })
 
 test_that("error is signaled if ... are not names of arguments of f", {
-  msg <- "Invalid argument name\\(s\\)"
+  msg <- "Name\\(s\\) must be those of argument\\(s\\)"
   expect_error(make_fn_aware(foo, "a"), msg)
   expect_error(make_fn_aware(foo, "a", "f"), msg)
   expect_error(make_fn_aware(foo, "f", "a"), msg)

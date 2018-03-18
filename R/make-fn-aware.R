@@ -48,8 +48,7 @@ anon_fn_interpreter <- function(nms, ...) {
   # detect emptiness here, rather than in caller, so that empty splice is empty
   if (is_empty(nms_fn))
     return(NULL)
-  if (any(!nms_fn %in% nms))
-    abort("Invalid argument name(s)")
+  nms_fn %are% nms %because% "Name(s) must be those of argument(s)"
   function(call, env) {
     call[nms_fn] <- lapply(call[nms_fn], interpret_fn, env = env)
     call

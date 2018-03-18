@@ -3,7 +3,7 @@ context("Error handling")
 context("fn()")
 
 test_that("error signaled if fn() is called without any arguments", {
-  expect_error(fn(), "No function specified")
+  expect_error(fn(), "Function must be declared")
 })
 
 test_that("error signaled if any formuals appear before the body-formula", {
@@ -20,7 +20,7 @@ test_that("error signaled if final argument is not a formula", {
 })
 
 test_that("error signaled if final argument has = but no default value", {
-  msg <- "Default value of final argument is missing"
+  msg <- "Default value of final argument expected"
   expect_error(fn(x = ~ NULL), msg)
   expect_error(fn(x, y = ~ NULL), msg)
 })

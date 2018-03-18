@@ -55,8 +55,8 @@ partial <- function(..f, ..., ..lazy = TRUE, ..env = parent.frame()) {
   if (is_empty(args))
     return(..f)
   f <- as_closure(..f)
-  assert(names(args) %are% names(formals(f)),
-         because = "Values to fix must be named by arguments of {..f}")
+  names(args) %are% names(formals(f)) %because%
+    "Values to fix must be named by arguments of {..f}"
   env <- new.env(parent = ..env)
   env$.PartializedFunction <- f
   fn(... ~ .PartializedFunction(!!! args, ...), ..env = env)
@@ -65,6 +65,6 @@ partial <- function(..f, ..., ..lazy = TRUE, ..env = parent.frame()) {
 #' @rdname partial
 #' @export
 departial <- function(..f) {
-  assert(is.function(..f), because = "Only functions can be de-partialized")
+  is.function(..f) %because% "Only functions can be de-partialized"
   environment(..f)$.PartializedFunction %||% ..f
 }
