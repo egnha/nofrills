@@ -1,3 +1,8 @@
+opposite <- function(f) {
+  formals(f) <- rev(formals(f))
+  f
+}
+
 `%are%` <- function(lhs, rhs) all(lhs %in% rhs)
 
 `%because%` <- function(cond, reason)

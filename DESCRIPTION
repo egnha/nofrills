@@ -24,5 +24,6 @@ Collate:
     'make-fn-aware.R'
     'curry.R'
     'partial.R'
+    'compose.R'
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
