@@ -19,13 +19,18 @@ cmps <- list(
 
 context("Composing functions")
 
-test_that("NULL is returned when no functions are composed", {
-  expect_identical(compose(), NULL)
+test_that("for a single function, composition is identity", {
+  for (f in list(closure = identity, special = log, builtin = c))
+    expect_identical(compose(f), f)
 })
 
-test_that("single function is returned, unchanged, when composing", {
-  f <- function() NULL
-  expect_identical(compose(f), f)
+test_that("error is signalled when composing a non-function", {
+  errmsg <- "Only functions can be composed"
+  expect_error(compose(), errmsg)
+  expect_error(compose(NULL), errmsg)
+  expect_error(compose(list()), errmsg)
+  expect_error(compose(quote(function() {})), errmsg)
+  expect_error(compose(identity, quote(function() {})), errmsg)
 })
 
 test_that("composition is associative", {
@@ -47,6 +52,10 @@ test_that("nested compositions are flattened", {
 })
 
 test_that("list of functions can be spliced", {
+  expect_identical(compose(fs)(), cmp())
+})
+
+test_that("list of functions can be spliced using `!!!`", {
   expect_identical(compose(!!! fs)(), cmp())
 })
 

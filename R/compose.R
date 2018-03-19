@@ -1,7 +1,7 @@
 #' Compose functions
 #'
-#' @param ... Functions to compose. [Splicing][rlang::quasiquotation] of a list
-#'   of functions is supported.
+#' @param ... Functions to compose; lists of functions are automatically spliced
+#'   in. (Explicit [splicing][rlang::quasiquotation] is supported, via `!!!`.)
 #'
 #' @return Composition of functions. (`NULL` is returned when no functions are
 #'   given.)
@@ -10,7 +10,7 @@
 compose <- function(...) {
   `__fns_composite` <- flatten_fns()  # '...' consumed via call introspection
   n <- length(`__fns_composite`)
-  if (n <= 1)
+  if (n == 1)
     return(`__fns_composite`[[1]])
   fn_last <- as_closure(`__fns_composite`[[n]])
   `__call_fn_last` <- function() {
@@ -30,9 +30,14 @@ compose <- function(...) {
 
 flatten_fns <- local({
   compose_as_list2 <- list(compose = list2)
+  is_function_list <- function(xs)
+    !is_empty(xs) && all(vapply(xs, is.function, logical(1)))
+
   function() {
     dots <- eval(sys.call(-1), compose_as_list2, parent.frame(2))
-    unlist(lapply(dots, decompose_))
+    fns <- unlist(lapply(dots, decompose_))
+    is_function_list(fns) %because% "Only functions can be composed"
+    fns
   }
 })
 

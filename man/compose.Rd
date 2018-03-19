@@ -16,8 +16,8 @@ g \%>>>\% f
 decompose(f)
 }
 \arguments{
-\item{...}{Functions to compose. \link[rlang:quasiquotation]{Splicing} of a list
-of functions is supported.}
+\item{...}{Functions to compose; lists of functions are automatically spliced
+in. (Explicit \link[rlang:quasiquotation]{splicing} is supported, via \code{!!!}.)}
 
 \item{f, g}{Functions.}
 }
