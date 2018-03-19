@@ -8,7 +8,7 @@
 #'
 #' @export
 compose <- function(...) {
-  `__fns_composite` <- fns()  # '...' consumed here via call introspection
+  `__fns_composite` <- flatten_fns()  # '...' consumed via call introspection
   n <- length(`__fns_composite`)
   if (n <= 1)
     return(`__fns_composite`[[1]])
@@ -28,7 +28,7 @@ compose <- function(...) {
   structure(fn_comp, class = c("CompositeFunction", "function"))
 }
 
-fns <- local({
+flatten_fns <- local({
   compose_as_list2 <- list(compose = list2)
   function() {
     dots <- eval(sys.call(-1), compose_as_list2, parent.frame(2))
