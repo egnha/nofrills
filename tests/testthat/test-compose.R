@@ -16,6 +16,12 @@ cmps <- list(
   (fs[[3]] %>>>%  fs[[2]]) %>>>% fs[[1]],
    fs[[3]] %>>>% (fs[[2]]  %>>>% fs[[1]])
 )
+fn_kinds <- list(
+  closure     = identity,
+  special     = log,
+  builtin     = c,
+  composition = compose(fs)
+)
 
 context("Composing functions")
 
@@ -24,8 +30,8 @@ test_that("for a single function, composition is identity", {
     expect_identical(compose(f), f)
 })
 
-test_that("error is signalled when composing a non-function", {
-  errmsg <- "Only functions can be composed"
+test_that("error is signalled when composing a non-function (list)", {
+  errmsg <- "Only functions or lists thereof can be composed"
   expect_error(compose(), errmsg)
   expect_error(compose(NULL), errmsg)
   expect_error(compose(list()), errmsg)
@@ -41,14 +47,22 @@ test_that("composition is associative", {
 
 test_that("nested compositions are flattened", {
   gs <- make_funs(4)
+
+  # Test by call
   cmps <- list(
     compose(gs[[1]], gs[[2]], gs[[3]], gs[[4]]),
+    compose(compose(gs[[1]], gs[[2]], gs[[3]], gs[[4]])),
     compose(gs[[1]], compose(gs[[2]], gs[[3]], gs[[4]])),
     compose(gs[[1]], compose(gs[[2]], compose(gs[[3]], gs[[4]]))),
     compose(gs[[1]], compose(gs[[2]], compose(gs[[3]], compose(gs[[4]]))))
   )
   for (cmp in cmps)
     expect_equivalent(decompose(cmp), gs)
+
+  # Test by value
+  cmps <- Reduce(`%<<<%`, gs, accumulate = TRUE)
+  for (i in seq_along(gs))
+    expect_equivalent(decompose(cmps[[i]]), gs[seq_len(i)])
 })
 
 test_that("list of functions can be spliced", {
@@ -68,14 +82,16 @@ test_that("composition has formals of innermost function (as a closure)", {
 
 context("Decomposing compositions")
 
-test_that("decomposing a bare function wraps it in a list", {
-  for (f in list(closure = identity, special = log, builtin = c))
+test_that("decomposing a non-composite function wraps it in a list", {
+  for (f in fn_kinds[c("closure", "special", "builtin")])
     expect_identical(decompose(f), list(f))
 })
 
-test_that("error is signalled when decomposing a non-function", {
+test_that("error is signalled when decomposing a non-function (list)", {
   errmsg <- "Only functions can be decomposed"
   expect_error(decompose(NULL), errmsg)
+  expect_error(decompose(list()), errmsg)
+  expect_error(decompose(list(NULL)), errmsg)
   expect_error(decompose(list(identity)), errmsg)
   expect_error(decompose(quote(function() {})), errmsg)
 })
@@ -86,12 +102,17 @@ test_that("list of composite functions is flat", {
 })
 
 test_that("decompose() inverts compose()", {
-  expect_equivalent(decompose(compose(fs[[1]])), fs[[1]])
+  expect_equivalent(decompose(compose(fs)), fs)
   expect_equivalent(decompose(compose(fs[[1]], fs[[2]], fs[[3]])), fs)
+  expect_equivalent(decompose(compose(fs[[1]], fs[[2]])), fs[1:2])
+  expect_equivalent(decompose(compose(fs[[1]])), fs[1])
 })
 
 test_that("compose() inverts decompose()", {
-  expect_identical(compose(decompose(fs[[1]])), fs[[1]])
-  cmp <- compose(fs[[1]], fs[[2]], fs[[3]])
-  expect_equivalent(compose(!!! decompose(cmp)), cmp)
+  # Test by call
+  expect_equal(compose(decompose(compose(fs))), compose(fs))
+
+  # Test by value
+  for (f in fn_kinds)
+    expect_equal(compose(decompose(f)), f)
 })

@@ -3,6 +3,9 @@ opposite <- function(f) {
   f
 }
 
+wrap <- function(x)
+  if (is.list(x)) x else list(x)
+
 `%are%` <- function(lhs, rhs) all(lhs %in% rhs)
 
 `%because%` <- function(cond, reason)

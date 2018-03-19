@@ -16,16 +16,18 @@ g \%>>>\% f
 decompose(f)
 }
 \arguments{
-\item{...}{Functions to compose; lists of functions are automatically spliced
-in. (Explicit \link[rlang:quasiquotation]{splicing} is supported, via \code{!!!}.)}
+\item{...}{Functions or lists thereof to compose. (Lists of functions are
+automatically spliced in; explicit \link[rlang:quasiquotation]{splicing} via
+\code{!!!} is also supported.) Following convention, functions are composed from
+right to left.}
 
 \item{f, g}{Functions.}
 }
 \value{
 \code{compose()}, \code{\%<<<\%} and \code{\%>>>\%} return a function
-composition whose \link[=formals]{formals} match those of the initial function
-called. \code{decompose()} returns a list of composite functions of a function
-(composition).
+composition, whose \link[=formals]{formals} match those of the initial function
+called. \code{decompose()} returns the list of composite functions of a function
+composition, and wraps a non-composite function in a list.
 }
 \description{
 Compose functions

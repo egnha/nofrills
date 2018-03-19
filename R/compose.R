@@ -1,12 +1,14 @@
 #' Compose functions
 #'
-#' @param ... Functions to compose; lists of functions are automatically spliced
-#'   in. (Explicit [splicing][rlang::quasiquotation] is supported, via `!!!`.)
+#' @param ... Functions or lists thereof to compose. (Lists of functions are
+#'   automatically spliced in; explicit [splicing][rlang::quasiquotation] via
+#'   `!!!` is also supported.) Following convention, functions are composed from
+#'   right to left.
 #'
 #' @return `compose()`, \code{\%<<<\%} and \code{\%>>>\%} return a function
-#'   composition whose [formals][formals()] match those of the initial function
-#'   called. `decompose()` returns a list of composite functions of a function
-#'   (composition).
+#'   composition, whose [formals][formals()] match those of the initial function
+#'   called. `decompose()` returns the list of composite functions of a function
+#'   composition, and wraps a non-composite function in a list.
 #'
 #'
 #' @export
@@ -32,20 +34,23 @@ compose <- function(...) {
 }
 
 flatten_fns <- local({
-  compose_as_list2 <- list(compose = list2)
-  is_function_list <- function(xs)
+  flatten <- list(
+    compose = function(...) unlist(list2(...)),
+    decompose = identity
+  )
+  are_funcs <- function(xs)
     !is_empty(xs) && all(vapply(xs, is.function, logical(1)))
 
   function() {
-    dots <- eval(sys.call(-1), compose_as_list2, parent.frame(2))
+    dots <- eval(sys.call(-1), flatten, parent.frame(2))
     fns <- unlist(lapply(dots, decompose_))
-    is_function_list(fns) %because% "Only functions can be composed"
+    are_funcs(fns) %because% "Only functions or lists thereof can be composed"
     fns
   }
 })
 
-decompose_ <- function(f)
-  environment(f)$`__fns_composite` %||% list(f)
+decompose_ <- function(x)
+  environment(x)$`__fns_composite` %||% x
 
 #' @param f,g Functions.
 #' @rdname compose
@@ -60,7 +65,7 @@ decompose_ <- function(f)
 #' @export
 decompose <- function(f) {
   is.function(f) %because% "Only functions can be decomposed"
-  decompose_(f)
+  wrap(decompose_(f))
 }
 
 #' @export
