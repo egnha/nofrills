@@ -53,10 +53,11 @@ are implemented as the \emph{same function}. In other words, lists of functions
 are automatically \dQuote{flattened out} when they are composed, so there
 is no danger of piling up nested compositions.
 
-\code{decompose()} and \code{compose()} are \emph{mutually invertible}. If \code{f} is a
-function, \code{compose(decompose(f))} is the same as \code{f} (regardless of
-whether \code{f} is itself a composition), while if \code{fs} is a list of functions,
-\code{decompose(compose(fs))} is the same as \code{fs}.
+\code{decompose()} and \code{compose()} are \emph{mutually invertible}:
+\code{compose(decompose(f))} is the same as \code{f}, when \code{f} is a function
+(regardless of whether \code{f} is itself a composition), while
+\code{decompose(compose(fs))} is the same as \code{fs}, when \code{fs} is a list of
+functions.
 }
 
 \examples{

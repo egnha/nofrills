@@ -34,10 +34,11 @@
 #'   are automatically \dQuote{flattened out} when they are composed, so there
 #'   is no danger of piling up nested compositions.
 #'
-#'   `decompose()` and `compose()` are _mutually invertible_. If `f` is a
-#'   function, `compose(decompose(f))` is the same as `f` (regardless of
-#'   whether `f` is itself a composition), while if `fs` is a list of functions,
-#'   `decompose(compose(fs))` is the same as `fs`.
+#'   `decompose()` and `compose()` are _mutually invertible_:
+#'   `compose(decompose(f))` is the same as `f`, when `f` is a function
+#'   (regardless of whether `f` is itself a composition), while
+#'   `decompose(compose(fs))` is the same as `fs`, when `fs` is a list of
+#'   functions.
 #'
 #' @examples
 #' # Functions are composed from right to left (according to convention)
