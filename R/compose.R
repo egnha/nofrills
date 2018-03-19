@@ -51,7 +51,7 @@ decompose_ <- function(f)
 #' @rdname compose
 #' @export
 decompose <- function(f) {
-  is.function(f) %because% "Only functions can be (de)composed"
+  is.function(f) %because% "Only functions can be decomposed"
   decompose_(f)
 }
 

@@ -65,8 +65,9 @@ test_that("single function is returned, unchanged, when decomposing", {
 })
 
 test_that("error is signalled when decomposing a non-function", {
-  errmsg <- "Only functions can be \\(de\\)composed"
+  errmsg <- "Only functions can be decomposed"
   expect_error(decompose(NULL), errmsg)
+  expect_error(decompose(list(identity)), errmsg)
   expect_error(decompose(quote(function() {})), errmsg)
 })
 
@@ -76,7 +77,6 @@ test_that("list of composite functions is flat", {
 })
 
 test_that("decompose() inverts compose()", {
-  expect_error(decompose(compose()), "Only functions can be \\(de\\)composed")
   expect_equivalent(decompose(compose(fs[[1]])), fs[[1]])
   expect_equivalent(decompose(compose(fs[[1]], fs[[2]], fs[[3]])), fs)
 })
