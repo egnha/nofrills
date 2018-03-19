@@ -7,22 +7,28 @@ test_that("error signaled if fn() is called without any arguments", {
 })
 
 test_that("error signaled if any formuals appear before the body-formula", {
-  msg <- "Only the body \\(as last argument\\) should be a formula"
-  expect_error(fn(x ~ NULL, y), msg)
-  expect_error(fn(a, x ~ NULL, b), msg)
-  expect_error(fn(a ~ b, x ~ NULL), msg)
+  expect_errors_with_message(
+    "Only the body \\(as last argument\\) should be a formula",
+    fn(x ~ NULL, y),
+    fn(a, x ~ NULL, b),
+    fn(a ~ b, x ~ NULL)
+  )
 })
 
 test_that("error signaled if final argument is not a formula", {
-  msg <- "Final argument must be a formula \\(specifying the body\\)"
-  expect_error(fn(x), msg)
-  expect_error(fn(x, y), msg)
+  expect_errors_with_message(
+    "Final argument must be a formula \\(specifying the body\\)",
+    fn(x),
+    fn(x, y)
+  )
 })
 
 test_that("error signaled if final argument has = but no default value", {
-  msg <- "Default value of final argument expected"
-  expect_error(fn(x = ~ NULL), msg)
-  expect_error(fn(x, y = ~ NULL), msg)
+  expect_errors_with_message(
+    "Default value of final argument expected",
+    fn(x = ~ NULL),
+    fn(x, y = ~ NULL)
+  )
 })
 
 test_that("error signaled if '..env' is not an environment", {

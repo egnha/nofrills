@@ -34,12 +34,14 @@ test_that("for a single function, composition is identity", {
 })
 
 test_that("error is signalled when composing a non-function (list)", {
-  errmsg <- "Only functions or lists thereof can be composed"
-  expect_error(compose(), errmsg)
-  expect_error(compose(NULL), errmsg)
-  expect_error(compose(list()), errmsg)
-  expect_error(compose(quote(function() {})), errmsg)
-  expect_error(compose(identity, quote(function() {})), errmsg)
+  expect_errors_with_message(
+    "Only functions or lists thereof can be composed",
+    compose(),
+    compose(NULL),
+    compose(list()),
+    compose(quote(function() {})),
+    compose(identity, quote(function() {}))
+  )
 })
 
 test_that("composition is associative", {
@@ -95,12 +97,14 @@ test_that("decomposing a non-composite function wraps it in a list", {
 })
 
 test_that("error is signalled when decomposing a non-function", {
-  errmsg <- "Only functions can be decomposed"
-  expect_error(decompose(NULL), errmsg)
-  expect_error(decompose(list()), errmsg)
-  expect_error(decompose(list(NULL)), errmsg)
-  expect_error(decompose(list(identity)), errmsg)
-  expect_error(decompose(quote(function() {})), errmsg)
+  expect_errors_with_message(
+    "Only functions can be decomposed",
+    decompose(NULL),
+    decompose(list()),
+    decompose(list(NULL)),
+    decompose(list(identity)),
+    decompose(quote(function() {}))
+  )
 })
 
 test_that("list of composite functions is flat", {

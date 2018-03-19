@@ -81,9 +81,11 @@ test_that("can splice in argument names", {
 })
 
 test_that("error is signaled if f is not a function or abbreviation thereof", {
-  msg <- "object 'non_existent' of mode 'function' was not found"
-  expect_error(make_fn_aware("non_existent"), msg)
-  expect_error(make_fn_aware("non_existent", "f"), msg)
+  expect_errors_with_message(
+    "object 'non_existent' of mode 'function' was not found",
+    make_fn_aware("non_existent"),
+    make_fn_aware("non_existent", "f")
+  )
 })
 
 test_that("error is signaled if ... are neither strings nor empty", {
@@ -92,8 +94,10 @@ test_that("error is signaled if ... are neither strings nor empty", {
 })
 
 test_that("error is signaled if ... are not names of arguments of f", {
-  msg <- "Name\\(s\\) must be those of argument\\(s\\)"
-  expect_error(make_fn_aware(foo, "a"), msg)
-  expect_error(make_fn_aware(foo, "a", "f"), msg)
-  expect_error(make_fn_aware(foo, "f", "a"), msg)
+  expect_errors_with_message(
+    "Name\\(s\\) must be those of argument\\(s\\)",
+    make_fn_aware(foo, "a"),
+    make_fn_aware(foo, "a", "f"),
+    make_fn_aware(foo, "f", "a")
+  )
 })

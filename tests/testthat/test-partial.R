@@ -119,7 +119,9 @@ test_that("de-partializing a departialized function returns the function", {
 })
 
 test_that("error is signaled when attempting to de-partialize a non-function", {
-  errmsg <- "Only functions can be de-partialized"
-  expect_error(departial(NULL), errmsg)
-  expect_error(departial(quote(function(x) NULL)), errmsg)
+  expect_errors_with_message(
+    "Only functions can be de-partialized",
+    departial(NULL),
+    departial(quote(function(x) NULL))
+  )
 })
