@@ -61,21 +61,39 @@ functions.
 }
 
 \examples{
-# Functions are composed from right to left (according to convention)
+# Functions are composed from right to left (following convention)
 inv <- curry(`/`)(1)  # reciprocal
-f1 <- compose(inv, log, abs)
-stopifnot(isTRUE(all.equal(f1(-2), 1 / log(abs(-2)))))
+f <- compose(inv, log, abs)
+stopifnot(isTRUE(all.equal(f(-2), 1 / log(abs(-2)))))
 
 # "Backward" composition operator composes from right to left, like compose()
-f2 <- inv \%<<<\% log \%<<<\% abs
-stopifnot(isTRUE(all.equal(f2(-2), f1(-2))))
+f1 <- inv \%<<<\% log \%<<<\% abs
+stopifnot(isTRUE(all.equal(f1(-2), f(-2))))
 
 # Forward composition operator composes from left to right
-f3 <- abs \%>>>\% log \%>>>\% inv
-stopifnot(isTRUE(all.equal(f3(-2), f1(-2))))
+f2 <- abs \%>>>\% log \%>>>\% inv
+stopifnot(isTRUE(all.equal(f2(-2), f(-2))))
 
 # Argument signature of inner most function is preserved
-f <- function(a, b = 0) a + b
-stopifnot(identical(formals(compose(inv, f)), formals(f)))
+g <- function(a, b = 0) a + b
+stopifnot(identical(formals(compose(inv, g)), formals(g)))
+
+# Compositions can be provided by lists, in several equivalent ways
+f3 <- compose(list(inv, log, abs))
+f4 <- compose(!!! list(inv, log, abs))
+f5 <- compose(inv, list(log, abs))
+f6 <- compose(inv, !!! list(log, abs))
+stopifnot(
+  isTRUE(all.equal(f3, f)), isTRUE(all.equal(f3(-2), f(-2))),
+  isTRUE(all.equal(f4, f)), isTRUE(all.equal(f4(-2), f(-2))),
+  isTRUE(all.equal(f5, f)), isTRUE(all.equal(f5(-2), f(-2))),
+  isTRUE(all.equal(f6, f)), isTRUE(all.equal(f6(-2), f(-2)))
+)
+
+# compose() and decompose() are mutally invertible
+f7 <- compose(inv, decompose(compose(log, abs)))
+stopifnot(isTRUE(all.equal(f7, f)), isTRUE(all.equal(f7(-2), f(-2))))
+fs <- list(inv, log, abs)
+stopifnot(isTRUE(all.equal(decompose(compose(fs)), fs)))
 
 }
