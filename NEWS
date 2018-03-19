@@ -2,6 +2,13 @@
 
 ## 0.3.0.9000
 
+  * Compositions are available with the `compose()` function and its operator
+    forms `%<<<%` and `%>>>%` (forward composition). Crucially, `compose()`
+    is associative, both semantically and operationally, which prevents nested
+    compositions from piling up. `decompose()` inverts `compose()` by returning
+    the list of composite functions, enabling you to inspect and modify function
+    compositions.
+
   * Partial function application is available via the operator `partial()`,
     along with its inverse operator `departial()`. Quasiquotation and splicing
     of arguments are supported, in addition to argument-wise lazy or eager
