@@ -70,10 +70,12 @@ test_that("nested compositions are flattened", {
 })
 
 test_that("list of functions can be spliced", {
+  expect_equal(compose(fs), compose(fs[[1]], fs[[2]], fs[[3]]))
   expect_identical(compose(fs)(), cmp())
 })
 
 test_that("list of functions can be spliced using `!!!`", {
+  expect_equal(compose(!!! fs), compose(fs[[1]], fs[[2]], fs[[3]]))
   expect_identical(compose(!!! fs)(), cmp())
 })
 
