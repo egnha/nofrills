@@ -26,8 +26,8 @@ fn_kinds <- list(
 context("Composing functions")
 
 test_that("for a single function, composition is identity", {
-  for (f in list(closure = identity, special = log, builtin = c))
-    expect_identical(compose(f), f)
+  for (f in fn_kinds)
+    expect_equal(compose(f), f)
 })
 
 test_that("error is signalled when composing a non-function (list)", {
@@ -78,6 +78,7 @@ test_that("composition has formals of innermost function (as a closure)", {
   inner <- function(x, y, ..., z = "default") NULL
   expect_identical(formals(compose(outer, inner)), formals(inner))
   expect_identical(formals(compose(outer, log)), formals(rlang::as_closure(log)))
+  expect_identical(formals(compose(outer, c)), formals(rlang::as_closure(c)))
 })
 
 context("Decomposing compositions")
