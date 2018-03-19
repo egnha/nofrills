@@ -30,8 +30,35 @@ called. \code{decompose()} returns the list of composite functions of a function
 composition, and wraps a non-composite function in a list.
 }
 \description{
-Compose functions
+Compose functions in three ways:
+\itemize{
+\item Using \code{compose()}: \code{compose(f, g)} is the function that calls \code{g} followed
+by \code{f}. It has the \link[=formals]{formals} of \code{g}.
+\item Using \code{\%<<<\%} (\dQuote{backward} composition): \code{f \%<<<\% g}
+is another way to express \code{compose(f, g)}.
+\item Using \code{\%>>>\%} (\dQuote{forward} composition): \code{f \%>>>\% g}
+is another way to express \code{compose(g, f)}.
 }
+
+Use \code{decompose()} to recover the list of composite functions of a function
+composition.
+}
+\section{Properties}{
+ \code{compose()} is \emph{associative}, semantically and
+operationally. This means, for instance, that
+\code{compose(f, g, h)},
+\code{compose(f, compose(g, h))},
+\code{compose(compose(f, g), h)},
+are implemented as the \emph{same function}. In other words, lists of functions
+are automatically \dQuote{flattened out} when they are composed, so there
+is no danger of piling up nested compositions.
+
+\code{decompose()} and \code{compose()} are \emph{mutually invertible}. If \code{f} is a
+function, \code{compose(decompose(f))} is the same as \code{f} (regardless of
+whether \code{f} is itself a composition), while if \code{fs} is a list of functions,
+\code{decompose(compose(fs))} is the same as \code{fs}.
+}
+
 \examples{
 # Functions are composed from right to left (according to convention)
 inv <- curry(`/`)(1)  # reciprocal

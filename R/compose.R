@@ -1,5 +1,20 @@
 #' Compose functions
 #'
+#' @description
+#' Compose functions in three ways:
+#'
+#' - Using `compose()`: `compose(f, g)` is the function that calls `g` followed
+#'   by `f`. It has the [formals][formals()] of `g`.
+#'
+#' - Using \code{\%<<<\%} (\dQuote{backward} composition): \code{f \%<<<\% g}
+#'   is another way to express `compose(f, g)`.
+#'
+#' - Using \code{\%>>>\%} (\dQuote{forward} composition): \code{f \%>>>\% g}
+#'   is another way to express `compose(g, f)`.
+#'
+#' Use `decompose()` to recover the list of composite functions of a function
+#' composition.
+#'
 #' @param ... Functions or lists thereof to compose. (Lists of functions are
 #'   automatically spliced in; explicit [splicing][rlang::quasiquotation] via
 #'   `!!!` is also supported.) Following convention, functions are composed from
@@ -9,6 +24,20 @@
 #'   composition, whose [formals][formals()] match those of the initial function
 #'   called. `decompose()` returns the list of composite functions of a function
 #'   composition, and wraps a non-composite function in a list.
+#'
+#' @section Properties: `compose()` is _associative_, semantically and
+#'   operationally. This means, for instance, that
+#'   `compose(f, g, h)`,
+#'   `compose(f, compose(g, h))`,
+#'   `compose(compose(f, g), h)`,
+#'   are implemented as the _same function_. In other words, lists of functions
+#'   are automatically \dQuote{flattened out} when they are composed, so there
+#'   is no danger of piling up nested compositions.
+#'
+#'   `decompose()` and `compose()` are _mutually invertible_. If `f` is a
+#'   function, `compose(decompose(f))` is the same as `f` (regardless of
+#'   whether `f` is itself a composition), while if `fs` is a list of functions,
+#'   `decompose(compose(fs))` is the same as `fs`.
 #'
 #' @examples
 #' # Functions are composed from right to left (according to convention)
