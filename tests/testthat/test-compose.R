@@ -4,9 +4,12 @@ fs <- make_funs(3)
 cmp <- function() fs[[1]](fs[[2]](fs[[3]]()))
 cmps <- list(
   # Conventional composition
-  compose(fs[[1]], fs[[2]], fs[[3]]),
+  compose(fs[[1]], compose(fs[[2]], compose(fs[[3]]))),
+  compose(compose(fs[[1]], compose(fs[[2]])), fs[[3]]),
   compose(fs[[1]], compose(fs[[2]], fs[[3]])),
   compose(compose(fs[[1]], fs[[2]]), fs[[3]]),
+  compose(compose(fs[[1]], fs[[2]], fs[[3]])),
+  compose(fs[[1]], fs[[2]], fs[[3]]),
   # Backward composition
    fs[[1]] %<<<%  fs[[2]]  %<<<% fs[[3]],
   (fs[[1]] %<<<%  fs[[2]]) %<<<% fs[[3]],
@@ -40,9 +43,10 @@ test_that("error is signalled when composing a non-function (list)", {
 })
 
 test_that("composition is associative", {
-  expect_identical(cmp(), 1:3)
+  value <- cmp()
+  expect_identical(value, 1:3)
   for (assoc in cmps)
-    expect_identical(assoc(), cmp())
+    expect_identical(assoc(), value)
 })
 
 test_that("nested compositions are flattened", {
