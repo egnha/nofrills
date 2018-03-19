@@ -32,3 +32,22 @@ composition, and wraps a non-composite function in a list.
 \description{
 Compose functions
 }
+\examples{
+# Functions are composed from right to left (according to convention)
+inv <- curry(`/`)(1)  # reciprocal
+f1 <- compose(inv, log, abs)
+stopifnot(isTRUE(all.equal(f1(-2), 1 / log(abs(-2)))))
+
+# "Backward" composition operator composes from right to left, like compose()
+f2 <- inv \%<<<\% log \%<<<\% abs
+stopifnot(isTRUE(all.equal(f2(-2), f1(-2))))
+
+# Forward composition operator composes from left to right
+f3 <- abs \%>>>\% log \%>>>\% inv
+stopifnot(isTRUE(all.equal(f3(-2), f1(-2))))
+
+# Argument signature of inner most function is preserved
+f <- function(a, b = 0) a + b
+stopifnot(identical(formals(compose(inv, f)), formals(f)))
+
+}
