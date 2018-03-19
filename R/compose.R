@@ -82,7 +82,7 @@ decompose_ <- function(x)
 #' @export
 decompose <- function(f) {
   is.function(f) %because% "Only functions can be decomposed"
-  wrap(decompose_(f))
+  box(decompose_(f))
 }
 
 #' @export

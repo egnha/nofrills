@@ -3,13 +3,16 @@ opposite <- function(f) {
   f
 }
 
-wrap <- function(x)
+box <- function(x)
   if (is.list(x)) x else list(x)
 
-`%are%` <- function(lhs, rhs) all(lhs %in% rhs)
+`%are%` <- function(lhs, rhs)
+  all(lhs %in% rhs)
 
-`%because%` <- function(cond, reason)
-  if (!cond) stop(interpolate(reason, parent.frame()), call. = FALSE)
+`%because%` <- function(assertion, reason) {
+  if (!assertion)
+    stop(interpolate_string(reason, parent.frame()), call. = FALSE)
+}
 
 #' Ad hoc string interpolation
 #'
@@ -18,7 +21,7 @@ wrap <- function(x)
 #' @param env Environment in which to interpolate `text`.
 #'
 #' @noRd
-interpolate <- function(text, env) {
+interpolate_string <- function(text, env) {
   matches <- gregexpr("\\{.*?\\}", text)
   if (none(matches))
     return(text)
