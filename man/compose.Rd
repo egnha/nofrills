@@ -22,8 +22,10 @@ in. (Explicit \link[rlang:quasiquotation]{splicing} is supported, via \code{!!!}
 \item{f, g}{Functions.}
 }
 \value{
-Composition of functions. (\code{NULL} is returned when no functions are
-given.)
+\code{compose()}, \code{\%<<<\%} and \code{\%>>>\%} return a function
+composition whose \link[=formals]{formals} match those of the initial function
+called. \code{decompose()} returns a list of composite functions of a function
+(composition).
 }
 \description{
 Compose functions

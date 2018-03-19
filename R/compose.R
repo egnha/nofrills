@@ -3,8 +3,11 @@
 #' @param ... Functions to compose; lists of functions are automatically spliced
 #'   in. (Explicit [splicing][rlang::quasiquotation] is supported, via `!!!`.)
 #'
-#' @return Composition of functions. (`NULL` is returned when no functions are
-#'   given.)
+#' @return `compose()`, \code{\%<<<\%} and \code{\%>>>\%} return a function
+#'   composition whose [formals][formals()] match those of the initial function
+#'   called. `decompose()` returns a list of composite functions of a function
+#'   (composition).
+#'
 #'
 #' @export
 compose <- function(...) {
@@ -42,7 +45,7 @@ flatten_fns <- local({
 })
 
 decompose_ <- function(f)
-  environment(f)$`__fns_composite` %||% f
+  environment(f)$`__fns_composite` %||% list(f)
 
 #' @param f,g Functions.
 #' @rdname compose

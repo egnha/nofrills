@@ -68,9 +68,9 @@ test_that("composition has formals of innermost function (as a closure)", {
 
 context("Decomposing compositions")
 
-test_that("single function is returned, unchanged, when decomposing", {
-  expect_identical(decompose(sin), sin)
-  expect_identical(decompose(function() NULL), function() NULL)
+test_that("decomposing a bare function wraps it in a list", {
+  for (f in list(closure = identity, special = log, builtin = c))
+    expect_identical(decompose(f), list(f))
 })
 
 test_that("error is signalled when decomposing a non-function", {
