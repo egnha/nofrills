@@ -1,4 +1,6 @@
-fs <- lapply(1:3, function(i) function(. = NULL) c(i, .))
+make_funs <- function(n)
+  lapply(seq_len(n), function(i) function(. = NULL) c(i, .))
+fs <- make_funs(3)
 cmp <- function() fs[[1]](fs[[2]](fs[[3]]()))
 cmps <- list(
   # Conventional composition
@@ -30,6 +32,18 @@ test_that("composition is associative", {
   expect_identical(cmp(), 1:3)
   for (assoc in cmps)
     expect_identical(assoc(), cmp())
+})
+
+test_that("nested compositions are flattened", {
+  gs <- make_funs(4)
+  cmps <- list(
+    compose(gs[[1]], gs[[2]], gs[[3]], gs[[4]]),
+    compose(gs[[1]], compose(gs[[2]], gs[[3]], gs[[4]])),
+    compose(gs[[1]], compose(gs[[2]], compose(gs[[3]], gs[[4]]))),
+    compose(gs[[1]], compose(gs[[2]], compose(gs[[3]], compose(gs[[4]]))))
+  )
+  for (cmp in cmps)
+    expect_equivalent(decompose(cmp), gs)
 })
 
 test_that("list of functions can be spliced", {
