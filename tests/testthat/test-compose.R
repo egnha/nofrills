@@ -94,7 +94,7 @@ test_that("decomposing a non-composite function wraps it in a list", {
     expect_identical(decompose(f), list(f))
 })
 
-test_that("error is signalled when decomposing a non-function (list)", {
+test_that("error is signalled when decomposing a non-function", {
   errmsg <- "Only functions can be decomposed"
   expect_error(decompose(NULL), errmsg)
   expect_error(decompose(list()), errmsg)
