@@ -16,8 +16,8 @@ g \%>>>\% f
 decompose(f)
 }
 \arguments{
-\item{...}{Functions or lists thereof to compose. (Lists of functions are
-automatically spliced in; explicit \link[rlang:quasiquotation]{splicing} via
+\item{...}{Functions or lists thereof to compose. Lists of functions are
+automatically spliced in. (Explicit \link[rlang:quasiquotation]{splicing} via
 \code{!!!} is also supported.) Following convention, functions are composed from
 right to left.}
 
@@ -50,12 +50,11 @@ operationally. This means, for instance, that
 \code{compose(f, compose(g, h))},
 \code{compose(compose(f, g), h)},
 are implemented as the \emph{same function}. In other words, lists of functions
-are automatically \dQuote{flattened out} when they are composed, so there
-is no danger of piling up nested compositions.
+are automatically \dQuote{flattened out} when they are composed, so nested
+compositions do not pile up.
 
-\code{decompose()} and \code{compose()} are \emph{mutually invertible}:
-\code{compose(decompose(f))} is the same as \code{f}, when \code{f} is a function
-(regardless of whether \code{f} is itself a composition), while
+\code{decompose()} and \code{compose()} are \emph{mutually invertible}.
+\code{compose(decompose(f))} is the same as \code{f}, when \code{f} is a function.
 \code{decompose(compose(fs))} is the same as \code{fs}, when \code{fs} is a list of
 functions.
 }

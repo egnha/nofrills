@@ -15,8 +15,8 @@
 #' Use `decompose()` to recover the list of composite functions of a function
 #' composition.
 #'
-#' @param ... Functions or lists thereof to compose. (Lists of functions are
-#'   automatically spliced in; explicit [splicing][rlang::quasiquotation] via
+#' @param ... Functions or lists thereof to compose. Lists of functions are
+#'   automatically spliced in. (Explicit [splicing][rlang::quasiquotation] via
 #'   `!!!` is also supported.) Following convention, functions are composed from
 #'   right to left.
 #'
@@ -31,12 +31,11 @@
 #'   `compose(f, compose(g, h))`,
 #'   `compose(compose(f, g), h)`,
 #'   are implemented as the _same function_. In other words, lists of functions
-#'   are automatically \dQuote{flattened out} when they are composed, so there
-#'   is no danger of piling up nested compositions.
+#'   are automatically \dQuote{flattened out} when they are composed, so nested
+#'   compositions do not pile up.
 #'
-#'   `decompose()` and `compose()` are _mutually invertible_:
-#'   `compose(decompose(f))` is the same as `f`, when `f` is a function
-#'   (regardless of whether `f` is itself a composition), while
+#'   `decompose()` and `compose()` are _mutually invertible_.
+#'   `compose(decompose(f))` is the same as `f`, when `f` is a function.
 #'   `decompose(compose(fs))` is the same as `fs`, when `fs` is a list of
 #'   functions.
 #'

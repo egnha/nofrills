@@ -1,5 +1,6 @@
 #' Curry a function
 #'
+#' @description
 #' `curry()` [curries](https://en.wikipedia.org/wiki/Currying) functions—it
 #' reconstitutes a function as a succession of single-argument functions. For
 #' example, `curry()` produces the the function
@@ -13,7 +14,7 @@
 #' }
 #' ```
 #' from the function `function(x, y, z) x * y * z`.
-#' \cr\cr
+#'
 #' `curry_fn()` produces a curried function from an [fn()]-style function
 #' declaration, which supports [quasiquotation][rlang::quasiquotation] of a
 #' function’s body and (default) argument values.
