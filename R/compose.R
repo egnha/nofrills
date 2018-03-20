@@ -22,8 +22,11 @@
 #'
 #' @return `compose()`, \code{\%<<<\%} and \code{\%>>>\%} return a function
 #'   composition, whose [formals][formals()] match those of the initial function
-#'   called. `decompose()` returns the list of composite functions of a function
-#'   composition, and wraps a non-composite function in a list.
+#'   called (as a closure).
+#'
+#'   `decompose()` returns the list of composite functions of a function
+#'   composition (in reverse calling order), and wraps a non-composite function
+#'   in a list.
 #'
 #' @section Properties: `compose()` is _associative_, semantically and
 #'   operationally. This means, for instance, that

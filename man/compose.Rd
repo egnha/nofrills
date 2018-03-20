@@ -26,8 +26,11 @@ right to left.}
 \value{
 \code{compose()}, \code{\%<<<\%} and \code{\%>>>\%} return a function
 composition, whose \link[=formals]{formals} match those of the initial function
-called. \code{decompose()} returns the list of composite functions of a function
-composition, and wraps a non-composite function in a list.
+called (as a closure).
+
+\code{decompose()} returns the list of composite functions of a function
+composition (in reverse calling order), and wraps a non-composite function
+in a list.
 }
 \description{
 Compose functions in three ways:
