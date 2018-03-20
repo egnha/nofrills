@@ -90,7 +90,7 @@ compose <- function(...) {
   n <- length(`__fns_composite`)
   if (n == 1)
     return(`__fns_composite`[[1]])
-  fn_last <- as_closure(`__fns_composite`[[n]])
+  fn_last <- `__fns_composite`[[n]]
   `__call_fn_last` <- function() {
     call <- `[[<-`(sys.call(-1), 1, fn_last)
     eval(call, parent.frame(2))
@@ -102,7 +102,7 @@ compose <- function(...) {
       out <- f(out)
     out
   }
-  formals(fn_comp) <- formals(fn_last)
+  formals(fn_comp) <- formals(as_closure(fn_last))
   structure(fn_comp, class = c("CompositeFunction", "function"))
 }
 
