@@ -23,9 +23,9 @@ argument values are \link[rlang:eval_tidy]{tidily evaluated}.}
 \item{..env}{Environment in which to evaluate the argument values to fix.}
 }
 \value{
-\code{partial()} returns a function of argument signature \code{function(...)},
-which calls \code{..f()} on the fixed argument values followed by the dots. When
-no arguments are specified, \code{partial()} returns \code{..f}.
+\code{partial()} returns a function whose \link[=formals]{formals} are a
+contraction of the formals of \code{..f()} (as a closure) by the fixed
+arguments. \code{partial(..f)} is identical to \code{..f}.
 }
 \description{
 \code{partial()} enables
@@ -61,6 +61,14 @@ replicate(4, rnd_eager3(), simplify = FALSE)
 args_mixed <- rlang::exprs(n = !! rpois(1, 5), max = sample(10, 1))
 rnd2 <- partial(runif, !!! args_mixed)
 replicate(4, rnd2(), simplify = FALSE)
+
+# partial() contracts formals (i.e., argument signature)
+foo <- function(x, y = x, ..., z = "z") list(x = x, y = y, z = z, ...)
+args(foo)
+args(partial(foo))
+args(partial(foo, x = 1))
+args(partial(foo, x = 1, y = 2))
+args(partial(foo, x = 1, y = 2, z = 3))
 
 }
 \seealso{

@@ -17,9 +17,9 @@
 #'   argument values are [tidily evaluated][rlang::eval_tidy].
 #' @param ..env Environment in which to evaluate the argument values to fix.
 #'
-#' @return `partial()` returns a function of argument signature `function(...)`,
-#'   which calls `..f()` on the fixed argument values followed by the dots. When
-#'   no arguments are specified, `partial()` returns `..f`.
+#' @return `partial()` returns a function whose [formals][formals()] are a
+#'   contraction of the formals of `..f()` (as a closure) by the fixed
+#'   arguments. `partial(..f)` is identical to `..f`.
 #'
 #' @seealso [curry()]
 #'
@@ -49,6 +49,14 @@
 #' args_mixed <- rlang::exprs(n = !! rpois(1, 5), max = sample(10, 1))
 #' rnd2 <- partial(runif, !!! args_mixed)
 #' replicate(4, rnd2(), simplify = FALSE)
+#'
+#' # partial() contracts formals (i.e., argument signature)
+#' foo <- function(x, y = x, ..., z = "z") list(x = x, y = y, z = z, ...)
+#' args(foo)
+#' args(partial(foo))
+#' args(partial(foo, x = 1))
+#' args(partial(foo, x = 1, y = 2))
+#' args(partial(foo, x = 1, y = 2, z = 3))
 #'
 #' @export
 partial <- function(..f, ..., ..lazy = TRUE, ..env = parent.frame()) {
