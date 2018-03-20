@@ -20,8 +20,7 @@ departial(..f)
 default), the argument values are captured as expressions; if \code{FALSE}, the
 argument values are \link[rlang:eval_tidy]{tidily evaluated}.}
 
-\item{..env}{Environment in which to create the partialized function (i.e.,
-the function’s \link[base:environment]{enclosing environment}).}
+\item{..env}{Environment in which to evaluate the argument values to fix.}
 }
 \value{
 \code{partial()} returns a function of argument signature \code{function(...)},
@@ -32,8 +31,9 @@ no arguments are specified, \code{partial()} returns \code{..f}.
 \code{partial()} enables
 \href{https://en.wikipedia.org/wiki/Partial_application}{partial function application}:
 given a function, it fixes the value of selected arguments to produce a
-function of the remaining arguments. \code{departial()} inverts the application of
-\code{partial()}.
+function of the remaining arguments.
+
+\code{departial()} inverts the application of \code{partial()}.
 }
 \examples{
 draw3 <- partial(sample, size = 3)

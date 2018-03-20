@@ -1,10 +1,12 @@
 #' Fix a number of arguments to a function
 #'
+#' @description
 #' `partial()` enables
 #' [partial function application](https://en.wikipedia.org/wiki/Partial_application):
 #' given a function, it fixes the value of selected arguments to produce a
-#' function of the remaining arguments. `departial()` inverts the application of
-#' `partial()`.
+#' function of the remaining arguments.
+#'
+#' `departial()` inverts the application of `partial()`.
 #'
 #' @param ..f Function.
 #' @param ... Argument values of `..f` to fix, specified by name.
@@ -13,8 +15,7 @@
 #' @param ..lazy Should the argument values be lazily evaluated? If `TRUE` (the
 #'   default), the argument values are captured as expressions; if `FALSE`, the
 #'   argument values are [tidily evaluated][rlang::eval_tidy].
-#' @param ..env Environment in which to create the partialized function (i.e.,
-#'   the function’s [enclosing environment][base::environment]).
+#' @param ..env Environment in which to evaluate the argument values to fix.
 #'
 #' @return `partial()` returns a function of argument signature `function(...)`,
 #'   which calls `..f()` on the fixed argument values followed by the dots. When
