@@ -51,20 +51,36 @@
 #'
 #' @export
 partial <- function(..f, ..., ..lazy = TRUE, ..env = parent.frame()) {
-  args <- if (..lazy) exprs(...) else lapply(quos(...), eval_tidy)
-  if (is_empty(args))
+  vals <- if (..lazy) exprs(...) else lapply(quos(...), eval_tidy)
+  if (is_empty(vals))
     return(..f)
   f <- as_closure(..f)
-  names(args) %are% names(formals(f)) %because%
+  fmls <- formals(f)
+  names(vals) %are% names(fmls) %because%
     "Values to fix must be named by arguments of {..f}"
   env <- new.env(parent = ..env)
-  env$.PartializedFunction <- f
-  fn(... ~ .PartializedFunction(!!! args, ...), ..env = env)
+  env$`__function__` <- f
+  fmls <- collapse(fmls, at = vals)
+  vals <- c(vals, as_names(fmls))
+  fn(!!! fmls, ~ `__function__`(!!! vals), ..env = env)
 }
+
+collapse <- local({
+  subst <- curry_fn(vals, expr ~ do.call("substitute", list(expr, vals)))
+  function(fmls, at) {
+    fmls <- fmls[!(names(fmls) %in% names(at))]
+    fmls <- lapply(fmls, subst(at))
+    as.pairlist(fmls)
+  }
+})
+
+#' @importFrom stats setNames
+as_names <- function(fmls)
+  lapply(setNames(nm = names(fmls)), as.name)
 
 #' @rdname partial
 #' @export
 departial <- function(..f) {
   is.function(..f) %because% "Only functions can be de-partialized"
-  environment(..f)$.PartializedFunction %||% ..f
+  environment(..f)$`__function__` %||% ..f
 }
