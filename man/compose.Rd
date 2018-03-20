@@ -85,9 +85,9 @@ json_out <- transform_out(to_json)   # transforms function to produce JSON
 json_in  <- transform_in(from_json)  # transforms function to consume JSON
 jsonify  <- json_in \%>>>\% json_out   # transforms function to JSON function
 
-# Argument signature of inner most function is preserved
-g <- function(a, b = 0) a + b
-stopifnot(identical(formals(compose(inv, g)), formals(g)))
+# Formals of initial function are preserved
+first <- function(a, b = 0) a + b
+stopifnot(identical(formals(compose(inv, first)), formals(first)))
 
 # Compositions can be provided by lists, in several equivalent ways
 f3 <- compose(list(inv, log, abs))
