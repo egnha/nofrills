@@ -56,11 +56,11 @@
 #' f2 <- abs %>>>% log %>>>% inv
 #' stopifnot(isTRUE(all.equal(f2(-2), f(-2))))
 #'
-#' # Combine composition with curry() to create input/output transformers
+#' # Curry composition to create input/output transformers
 #' transform_in  <- curry(`%>>>%`)
 #' transform_out <- curry(`%<<<%`)
 #'
-#' # Presuming to_json()/from_json() convert to/from JSON
+#' # Presume to_json()/from_json() convert to/from JSON
 #' json_out <- transform_out(to_json)   # transforms function to produce JSON
 #' json_in  <- transform_in(from_json)  # transforms function to consume JSON
 #' jsonify  <- json_in %>>>% json_out   # transforms function to JSON function
