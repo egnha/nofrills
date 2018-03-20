@@ -3,7 +3,7 @@
 #' @description
 #' `curry()` [curries](https://en.wikipedia.org/wiki/Currying) functions—it
 #' reconstitutes a function as a succession of single-argument functions. For
-#' example, `curry()` produces the the function
+#' example, `curry()` produces the function
 #' ```
 #' function(x) {
 #'   function(y) {

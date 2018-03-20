@@ -27,7 +27,7 @@ A function of nested single-argument functions.
 \description{
 \code{curry()} \href{https://en.wikipedia.org/wiki/Currying}{curries} functions—it
 reconstitutes a function as a succession of single-argument functions. For
-example, \code{curry()} produces the the function\preformatted{function(x) {
+example, \code{curry()} produces the function\preformatted{function(x) {
   function(y) {
     function(z) {
       x * y * z
