@@ -60,19 +60,18 @@ partial <- function(..f, ..., ..lazy = TRUE, ..env = parent.frame()) {
     "Values to fix must be named by arguments of {..f}"
   env <- new.env(parent = ..env)
   env$`__function__` <- f
-  fmls <- collapse(fmls, at = vals)
+  fmls <- contract(fmls, vals)
   vals <- c(vals, as_names(fmls))
   fn(!!! fmls, ~ `__function__`(!!! vals), ..env = env)
 }
 
-collapse <- local({
-  subst <- curry_fn(vals, expr ~ do.call("substitute", list(expr, vals)))
-  function(fmls, at) {
-    fmls <- fmls[!(names(fmls) %in% names(at))]
-    fmls <- lapply(fmls, subst(at))
-    as.pairlist(fmls)
-  }
-})
+contract <- function(fmls, vals) {
+  fmls <- fmls[!(names(fmls) %in% names(vals))]
+  fmls <- lapply(fmls, subst, vals = vals)
+  as.pairlist(fmls)
+}
+subst <- function(expr, vals)
+  do.call("substitute", list(expr, vals))
 
 #' @importFrom stats setNames
 as_names <- function(fmls)
