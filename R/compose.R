@@ -106,7 +106,8 @@ compose <- function(...) {
     out
   }
   formals(fn_comp) <- formals(as_closure(fn_last))
-  structure(fn_comp, class = c("CompositeFunction", "function"))
+  class(fn_comp) <- c("CompositeFunction", "function")
+  fn_comp
 }
 
 flatten_fns <- local({
