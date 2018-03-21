@@ -171,5 +171,5 @@ if (suppressWarnings(require(dplyr))) {
 
 }
 \seealso{
-\code{\link[=as_fn]{as_fn()}}, \code{\link[=make_fn_aware]{make_fn_aware()}}, \code{\link[=curry_fn]{curry_fn()}}
+\code{\link[=curry_fn]{curry_fn()}}
 }

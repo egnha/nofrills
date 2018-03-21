@@ -16,6 +16,8 @@
     with generic formals `...`. Quasiquotation and splicing of arguments are
     supported, in addition to argument-wise lazy or eager (tidy) evaluation.
 
+  * `as_fn()` and `make_fn_aware()` are softly deprecated.
+
 ## 0.3.0
 
   * Currying operators `curry()` and `curry_fn()` are introduced (#10). Notably,

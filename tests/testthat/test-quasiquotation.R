@@ -41,7 +41,7 @@ test_that("unquoting operators can be literally expressed", {
 
 context("as_fn()")
 
-foo <- function(x) as_fn(x)
+foo <- function(x) suppressWarnings(as_fn(x))
 
 test_that("default values can be unquoted", {
   zero <- 0

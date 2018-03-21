@@ -1,5 +1,10 @@
 context("Functional abbreviation")
 
+make_fn_aware <- local({
+  make_fn_aware <- make_fn_aware
+  function(...) suppressWarnings(make_fn_aware(...))
+})
+
 foo <- function(f, g, x, ...) f(g(x), ...)
 bar <- function(...) list(...)
 

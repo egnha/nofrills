@@ -52,7 +52,7 @@ test_that("body can be a closure", {
 
 context("as_fn()")
 
-foo <- function(x) as_fn(x)
+foo <- function(x) suppressWarnings(as_fn(x))
 
 test_that("returns functions, unchanged", {
   expect_equal(foo(identity), identity)

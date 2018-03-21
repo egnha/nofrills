@@ -37,7 +37,7 @@ test_that("error signaled if '..env' is not an environment", {
 
 context("as_fn()")
 
-foo <- function(x) as_fn(x)
+foo <- function(x) suppressWarnings(as_fn(x))
 
 test_that("error signaled if '.f' is neither function nor anonymous function", {
   expect_error(foo(NULL), "mode 'function' was not found")

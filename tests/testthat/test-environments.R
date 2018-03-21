@@ -19,6 +19,6 @@ context("as_fn()")
 test_that("as_fn() creates a function in the caller's calling environment", {
   foo <- function(x) as_fn(x)
   env <- environment()
-  f <- foo(.(x ~ NULL))
+  f <- suppressWarnings(foo(.(x ~ NULL)))
   expect_identical(environment(f), env)
 })
