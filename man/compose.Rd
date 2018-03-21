@@ -25,8 +25,8 @@ right to left.}
 }
 \value{
 \code{compose()}, \code{\%<<<\%} and \code{\%>>>\%} return a function
-composition, whose \link[=formals]{formals} match those of the initial function
-called (as a closure).
+composition, whose \link[base:formals]{formals} match those of the initial
+function called (as a closure).
 
 \code{decompose()} returns the list of composite functions of a function
 composition (in reverse calling order), and wraps a non-composite function
@@ -36,7 +36,7 @@ in a list.
 Compose functions in three ways:
 \itemize{
 \item Using \code{compose()}: \code{compose(f, g)} is the function that calls \code{g} followed
-by \code{f}. It has the \link[=formals]{formals} of \code{g}.
+by \code{f}. It has the \link[base:formals]{formals} of \code{g}.
 \item Using \code{\%<<<\%} (\dQuote{backward} composition): \code{f \%<<<\% g}
 is another way to express \code{compose(f, g)}.
 \item Using \code{\%>>>\%} (\dQuote{forward} composition): \code{f \%>>>\% g}

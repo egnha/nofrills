@@ -17,7 +17,7 @@
 #'   argument values are [tidily evaluated][rlang::eval_tidy].
 #' @param ..env Environment in which to evaluate the argument values to fix.
 #'
-#' @return `partial()` returns a function whose [formals][formals()] are a
+#' @return `partial()` returns a function whose [formals][base::formals()] are a
 #'   contraction of the formals of `..f()` (as a closure) by the fixed
 #'   arguments. `partial(..f)` is identical to `..f`.
 #'

@@ -4,7 +4,7 @@
 #' Compose functions in three ways:
 #'
 #' - Using `compose()`: `compose(f, g)` is the function that calls `g` followed
-#'   by `f`. It has the [formals][formals()] of `g`.
+#'   by `f`. It has the [formals][base::formals()] of `g`.
 #'
 #' - Using \code{\%<<<\%} (\dQuote{backward} composition): \code{f \%<<<\% g}
 #'   is another way to express `compose(f, g)`.
@@ -21,8 +21,8 @@
 #'   right to left.
 #'
 #' @return `compose()`, \code{\%<<<\%} and \code{\%>>>\%} return a function
-#'   composition, whose [formals][formals()] match those of the initial function
-#'   called (as a closure).
+#'   composition, whose [formals][base::formals()] match those of the initial
+#'   function called (as a closure).
 #'
 #'   `decompose()` returns the list of composite functions of a function
 #'   composition (in reverse calling order), and wraps a non-composite function

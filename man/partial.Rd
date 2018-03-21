@@ -23,7 +23,7 @@ argument values are \link[rlang:eval_tidy]{tidily evaluated}.}
 \item{..env}{Environment in which to evaluate the argument values to fix.}
 }
 \value{
-\code{partial()} returns a function whose \link[=formals]{formals} are a
+\code{partial()} returns a function whose \link[base:formals]{formals} are a
 contraction of the formals of \code{..f()} (as a closure) by the fixed
 arguments. \code{partial(..f)} is identical to \code{..f}.
 }
