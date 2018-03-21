@@ -11,9 +11,10 @@
     modify function compositions.
 
   * Partial function application is available via the operator `partial()`,
-    along with its inverse operator `departial()`. Quasiquotation and splicing
-    of arguments are supported, in addition to argument-wise lazy or eager
-    (tidy) evaluation.
+    along with its inverse operator `departial()`. Like genuine partial function
+    application, `partial()` contracts formals, rather than producing a function
+    with generic formals `...`. Quasiquotation and splicing of arguments are
+    supported, in addition to argument-wise lazy or eager (tidy) evaluation.
 
 ## 0.3.0
 
