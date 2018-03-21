@@ -84,7 +84,7 @@ partial <- function(..f, ..., ..lazy = TRUE) {
   env <- new.env(parent = parent.frame())
   env$`__function__` <- f
   fmls <- contract(fmls, vals)
-  vals <- c(vals, as_names(fmls))
+  vals <- c(vals, eponymous(names(fmls)))
   fn(!!! fmls, ~ `__function__`(!!! vals), ..env = env)
 }
 
@@ -96,9 +96,8 @@ contract <- function(fmls, vals) {
 subst <- function(expr, vals)
   do.call("substitute", list(expr, vals))
 
-#' @importFrom stats setNames
-as_names <- function(fmls)
-  lapply(setNames(nm = names(fmls)), as.name)
+eponymous <- function(nms)
+  `names<-`(lapply(nms, as.name), nms)
 
 #' @rdname partial
 #' @export
