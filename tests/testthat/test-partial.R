@@ -22,7 +22,10 @@ test_that("arguments can be fixed", {
 })
 
 test_that("arguments can be lazily fixed when ..lazy = TRUE (default)", {
-  f <- function(x, y) c(x, y)
+  f <- function(x, y, z) c(x, y)
+
+  fp <- partial(f, z = stop("!"))
+  expect_identical(fp(0, 1), c(0, 1))
 
   fp <- partial(f, x = x, ..lazy = TRUE)
   x <- 0
@@ -45,6 +48,8 @@ test_that("arguments can be eagerly fixed when ..lazy = FALSE", {
   expect_identical(fp(1), value)
   x <- 1
   expect_identical(fp(1), value)
+
+  expect_error(partial(f, x = stop("!"), ..lazy = FALSE), "!")
 })
 
 test_that("quosure arguments can be tidily fixed when ..lazy = FALSE", {
