@@ -80,15 +80,7 @@ test_that("arguments to fix can be spliced", {
   expect_identical(fp(), value)
 })
 
-test_that("arguments to fix are evaluated in environment ..env", {
-  x <- "global"  # Doppelgaenger
-  env <- local({x <- "local"; environment()})
-  f <- function(x, y) x
-  fp <- partial(f, x = x, ..env = env)
-  expect_identical(fp(), "local")
-})
-
-test_that("by default, arguments to fix are evaluated in calling environment", {
+test_that("arguments to fix are evaluated in calling environment", {
   x <- "global"  # Doppelgaenger
   env <- local({x <- "local"; environment()})
   f <- function(x, y) x

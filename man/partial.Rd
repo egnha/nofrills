@@ -5,7 +5,7 @@
 \alias{departial}
 \title{Fix a number of arguments to a function}
 \usage{
-partial(..f, ..., ..lazy = TRUE, ..env = parent.frame())
+partial(..f, ..., ..lazy = TRUE)
 
 departial(..f)
 }
@@ -18,9 +18,8 @@ departial(..f)
 
 \item{..lazy}{Should the argument values be lazily evaluated? If \code{TRUE} (the
 default), the argument values are captured as expressions; if \code{FALSE}, the
-argument values are \link[rlang:eval_tidy]{tidily evaluated}.}
-
-\item{..env}{Environment in which to evaluate the argument values to fix.}
+argument values are captured as \link[rlang:quosure]{quosures} and are \link[rlang:eval_tidy]{tidily
+evaluated}.}
 }
 \value{
 \code{partial()} returns a function whose \link[base:formals]{formals} are a

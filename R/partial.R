@@ -14,8 +14,8 @@
 #'   _Examples_.
 #' @param ..lazy Should the argument values be lazily evaluated? If `TRUE` (the
 #'   default), the argument values are captured as expressions; if `FALSE`, the
-#'   argument values are [tidily evaluated][rlang::eval_tidy].
-#' @param ..env Environment in which to evaluate the argument values to fix.
+#'   argument values are captured as [quosures][rlang::quosure] and are [tidily
+#'   evaluated][rlang::eval_tidy].
 #'
 #' @return `partial()` returns a function whose [formals][base::formals()] are a
 #'   contraction of the formals of `..f()` (as a closure) by the fixed
@@ -73,7 +73,7 @@
 #' args(partial(foo, x = 1, y = 2, z = 3))
 #'
 #' @export
-partial <- function(..f, ..., ..lazy = TRUE, ..env = parent.frame()) {
+partial <- function(..f, ..., ..lazy = TRUE) {
   vals <- if (..lazy) exprs(...) else lapply(quos(...), eval_tidy)
   if (is_empty(vals))
     return(..f)
@@ -81,7 +81,7 @@ partial <- function(..f, ..., ..lazy = TRUE, ..env = parent.frame()) {
   fmls <- formals(f)
   names(vals) %are% names(fmls) %because%
     "Values to fix must be named by arguments of {..f}"
-  env <- new.env(parent = ..env)
+  env <- new.env(parent = parent.frame())
   env$`__function__` <- f
   fmls <- contract(fmls, vals)
   vals <- c(vals, as_names(fmls))
