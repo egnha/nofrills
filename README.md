@@ -2,9 +2,9 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 [![Travis-CI Build
-Status](https://img.shields.io/travis/egnha/nofrills/master.svg?style=flat-square)](https://travis-ci.org/egnha/nofrills)
-[![codecov](https://img.shields.io/codecov/c/github/egnha/nofrills/master.svg?style=flat-square)](https://codecov.io/gh/egnha/nofrills)
-[![CRAN\_Status\_Badge](https://img.shields.io/cran/v/nofrills.svg?style=flat-square)](https://cran.r-project.org/package=nofrills)
+Status](https://travis-ci.org/egnha/nofrills.svg?branch=master)](https://travis-ci.org/egnha/nofrills)
+[![codecov](https://codecov.io/gh/egnha/nofrills/branch/master/graph/badge.svg)](https://codecov.io/gh/egnha/nofrills)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/nofrills)](https://cran.r-project.org/package=nofrills)
 
 # nofrills <img src="inst/logo.png" align="right" />
 
