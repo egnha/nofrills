@@ -21,6 +21,20 @@
 #'   contraction of the formals of `..f()` (as a closure) by the fixed
 #'   arguments. `partial(..f)` is identical to `..f`.
 #'
+#' @section Technical Note:
+#'   Even while `partial()` contracts formals, it remains compatible with
+#'   functions that use \code{\link[base:missing]{missing()}} to test whether a
+#'   specified argument was given in a call.
+#'
+#'   However, in rare cases, impure functions that depend on introspection of
+#'   the calling environment may not be amenable to `partial()`. For example,
+#'   `partial(ls, all.names = TRUE)()` is not equivalent to
+#'   `ls(all.names = TRUE)`, because `ls()` inspects the calling environment to
+#'   produce its value and `partial(ls, all.names = TRUE)()` calls
+#'   `ls(all.names = TRUE)` from an (ephemeral) execution environment, where
+#'   only the arguments of `partial(ls, all.names = TRUE)` are bound (as
+#'   promises).
+#'
 #' @seealso [curry()]
 #'
 #' @examples

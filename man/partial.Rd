@@ -35,6 +35,22 @@ function of the remaining arguments.
 
 \code{departial()} inverts the application of \code{partial()}.
 }
+\section{Technical Note}{
+
+Even while \code{partial()} contracts formals, it remains compatible with
+functions that use \code{\link[base:missing]{missing()}} to test whether a
+specified argument was given in a call.
+
+However, in rare cases, impure functions that depend on introspection of
+the calling environment may not be amenable to \code{partial()}. For example,
+\code{partial(ls, all.names = TRUE)()} is not equivalent to
+\code{ls(all.names = TRUE)}, because \code{ls()} inspects the calling environment to
+produce its value and \code{partial(ls, all.names = TRUE)()} calls
+\code{ls(all.names = TRUE)} from an (ephemeral) execution environment, where
+only the arguments of \code{partial(ls, all.names = TRUE)} are bound (as
+promises).
+}
+
 \examples{
 draw3 <- partial(sample, size = 3)
 draw3(letters)
