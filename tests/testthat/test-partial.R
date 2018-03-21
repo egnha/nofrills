@@ -150,6 +150,18 @@ test_that("formals are contracted", {
   )
 })
 
+test_that("partial() is compatible with functions using missing()", {
+  f <- function(x) {
+    if (missing(x))
+      x <- "x is missing"
+    x
+  }
+  fp <- partial(f, x = "x is fixed")
+  expect_equal(formals(fp), formals(function() {}))
+  expect_equal(fp(), "x is fixed")
+  expect_equal(f(), "x is missing")
+})
+
 context("Inverting partial function application")
 
 test_that("de-partialzing a partial function recovers the original function", {
