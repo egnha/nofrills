@@ -6,6 +6,9 @@ opposite <- function(f) {
 box <- function(x)
   if (is.list(x)) x else list(x)
 
+subst <- function(expr, vals)
+  do.call("substitute", list(expr, vals))
+
 `%are%` <- function(these, those)
   all(these %in% those)
 

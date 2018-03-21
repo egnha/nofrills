@@ -93,8 +93,6 @@ contract <- function(fmls, vals) {
   fmls <- lapply(fmls, subst, vals = vals)
   as.pairlist(fmls)
 }
-subst <- function(expr, vals)
-  do.call("substitute", list(expr, vals))
 
 eponymous <- function(nms)
   `names<-`(lapply(nms, as.name), nms)
