@@ -1,7 +1,9 @@
 #' Deprecated functions
 #'
-#' These functions are deprecated and slated for removal from a future version
-#' of \pkg{nofrills}.
+#' These functions are softly deprecated and may be removed from a future
+#' version of \pkg{nofrills}. They were intended to enable a shorter
+#' `fn()`-syntax for higher-order functions—a negligible convenience. Instead,
+#' simply invoke `fn()` directly.
 #'
 #' @keywords internal
 #' @aliases as_fn make_fn_aware

@@ -33,8 +33,10 @@ using an abbreviated function expression of the form \code{.(...)}, cf.
 \code{\link[=as_fn]{as_fn()}}. If \code{...} is empty or \code{NULL}, then \code{f} is simply returned.
 }
 \description{
-These functions are deprecated and slated for removal from a future version
-of \pkg{nofrills}.
+These functions are softly deprecated and may be removed from a future
+version of \pkg{nofrills}. They were intended to enable a shorter
+\code{fn()}-syntax for higher-order functions—a negligible convenience. Instead,
+simply invoke \code{fn()} directly.
 }
 \details{
 \code{as_fn()} is for functions that take functional arguments. Use
