@@ -105,6 +105,46 @@ test_that("error is signaled when trying to call a fixed value", {
   expect_error(fp(x = 1), "unused argument \\(x = 1\\)")
 })
 
+test_that("formals are contracted", {
+  f <- function(x, y = x, ..., z = 0) NULL
+  expect_equal(
+    formals(partial(f)),
+    formals(f)
+  )
+  expect_equal(
+    formals(partial(f, x = 1)),
+    formals(function(y = 1, ..., z = 0) {})
+  )
+  expect_equal(
+    formals(partial(f, x = one)),
+    formals(function(y = one, ..., z = 0) {})
+  )
+  expect_equal(
+    formals(partial(f, y = 2)),
+    formals(function(x, ..., z = 0) {})
+  )
+  expect_equal(
+    formals(partial(f, z = 3)),
+    formals(function(x, y = x, ...) {})
+  )
+  expect_equal(
+    formals(partial(f, x = 1, y = 2)),
+    formals(function(..., z = 0) {})
+  )
+  expect_equal(
+    formals(partial(f, x = 1, z = 3)),
+    formals(function(y = 1, ...) {})
+  )
+  expect_equal(
+    formals(partial(f, y = 2, z = 3)),
+    formals(function(x, ...) {})
+  )
+  expect_equal(
+    formals(partial(f, x = 1, y = 2, z = 3)),
+    formals(function(...) {})
+  )
+})
+
 context("Inverting partial function application")
 
 test_that("de-partialzing a partial function recovers the original function", {
