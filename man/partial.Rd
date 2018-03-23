@@ -36,18 +36,19 @@ function of the remaining arguments.
 }
 \section{Technical Note}{
 
-Even while \code{partial()} contracts formals, it remains compatible with
+Even while \code{partial()} truncates formals, it remains compatible with
 functions that use \code{\link[base:missing]{missing()}} to test whether a
-specified argument was given in a call.
+specified argument was supplied in a call. For example,
+\code{draw3 <- partial(sample, size = 3)} works as a function that randomly
+draws three elements, even though \code{sample()} invokes \code{missing(size)} and
+\code{draw3()} has signature \code{function (x, replace = FALSE, prob = NULL)}.
 
-However, in rare cases, impure functions that depend on introspection of
-the calling environment may not be amenable to \code{partial()}. For example,
+Consequently, in rare cases, impure functions that depend on introspection
+of the calling context may not be amenable to \code{partial()}. For example,
 \code{partial(ls, all.names = TRUE)()} is not equivalent to
 \code{ls(all.names = TRUE)}, because \code{ls()} inspects the calling environment to
 produce its value and \code{partial(ls, all.names = TRUE)()} calls
-\code{ls(all.names = TRUE)} from an (ephemeral) execution environment, where
-only the arguments of \code{partial(ls, all.names = TRUE)} are bound (as
-promises).
+\code{ls(all.names = TRUE)} from an (ephemeral) execution environment.
 }
 
 \examples{
