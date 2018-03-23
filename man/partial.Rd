@@ -5,7 +5,7 @@
 \alias{departial}
 \title{Fix a number of arguments to a function}
 \usage{
-partial(..f, ..., ..lazy = TRUE)
+partial(..f, ..., ..eager = TRUE)
 
 departial(..f)
 }
@@ -16,15 +16,15 @@ departial(..f)
 \link[rlang:quasiquotation]{Quasiquotation} and
 \link[rlang:quasiquotation]{splicing} are supported (see \emph{Examples}).}
 
-\item{..lazy}{Should the argument values be lazily evaluated? If \code{TRUE} (the
-default), the argument values are captured as expressions; if \code{FALSE}, the
-argument values are captured as \link[rlang:quosure]{quosures} and are \link[rlang:eval_tidy]{tidily
-evaluated}.}
+\item{..eager}{Should the argument values be eagerly evaluated? If \code{TRUE}
+(the default), the argument values are captured as
+\link[rlang:quosure]{quosures} and are \link[rlang:eval_tidy]{tidily evaluated}; if
+\code{FALSE}, the argument values are captured as expressions.}
 }
 \value{
 \code{partial()} returns a function whose \link[base:formals]{formals} are a
-contraction of the formals of \code{..f()} (as a closure) by the fixed
-arguments. \code{partial(..f)} is identical to \code{..f}.
+truncation of the formals of \code{..f()} (as a closure) by the fixed arguments.
+\code{partial(..f)} is identical to \code{..f}.
 }
 \description{
 \code{partial()} enables
@@ -55,29 +55,39 @@ draw3 <- partial(sample, size = 3)
 draw3(letters)
 
 # Use departial() to recover the original function
-departial(draw3)  # sample()
+stopifnot(identical(departial(draw3), sample))
 
-# Arguments are lazily evaluated by default, i.e., whenever rnd_lazy() is called
-rnd_lazy <- partial(runif, n = rpois(1, 5))
-replicate(4, rnd_lazy(), simplify = FALSE)   # variable length
+# Eagerly evaluate argument values by default (..eager = TRUE)
+# The value of 'n' is fixed when the function rnd_eager() is created.
+rnd_eager <- partial(runif, n = rpois(1, 5))
+replicate(4, rnd_eager(), simplify = FALSE)   # constant (random) length
 
-# Arguments can be eagerly evaluated, i.e., when rnd_eager() is created
-rnd_eager <- partial(runif, n = rpois(1, 5), ..lazy = FALSE)
-replicate(4, rnd_eager(), simplify = FALSE)  # constant length
+# Lazily evaluate argument values with ..eager = FALSE
+# The expression for 'size' is evaluated whenever draw() is called.
+# NB: The 'x' refers to the 'x' argument of sample().
+draw <- partial(sample, size = sample(length(x), 1), ..eager = FALSE)
+replicate(4, draw(letters), simplify = FALSE)  # variable length
 
-# Arguments can be eagerly evaluated, selectively, via unquoting
-rnd <- partial(runif, n = !! rpois(1, 5), max = sample(10, 1))
+# Unquote when you want to lazily evaluate but refer to an 'x' in scope
+x <- 3
+draw_upto_3 <- partial(sample, size = sample(!! x, 1), ..eager = FALSE)
+replicate(4, draw_upto_3(letters), simplify = FALSE)  # variable length <= 3
+
+# Mix evaluation schemes by combining lazy evaluation with unquoting (`!!`)
+# Here 'n' is lazily evaluated, while 'max' is eagerly evaluated.
+rnd <- partial(runif, n = rpois(1, 5), max = !! sample(10, 1), ..eager = FALSE)
 replicate(4, rnd(), simplify = FALSE)
 
 # Arguments to fix can be spliced
-args_eager <- list(n = rpois(1, 5), max = sample(10, 1))
-rnd_eager3 <- partial(runif, !!! args_eager)
-replicate(4, rnd_eager3(), simplify = FALSE)
-args_mixed <- rlang::exprs(n = !! rpois(1, 5), max = sample(10, 1))
-rnd2 <- partial(runif, !!! args_mixed)
+args_eager <- alist(n = rpois(1, 5), max = sample(10, 1))
+rnd_eager2 <- partial(runif, !!! args_eager)
+replicate(4, rnd_eager2(), simplify = FALSE)
+
+args_mixed <- rlang::exprs(n = rpois(1, 5), max = !! sample(10, 1))
+rnd2 <- partial(runif, !!! args_mixed, ..eager = FALSE)
 replicate(4, rnd2(), simplify = FALSE)
 
-# partial() contracts formals (i.e., argument signature)
+# partial() truncates formals (i.e., argument signature) by fixed arguments
 foo <- function(x, y = x, ..., z = "z") list(x = x, y = y, z = z, ...)
 args(foo)
 args(partial(foo))

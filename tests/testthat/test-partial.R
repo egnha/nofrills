@@ -21,41 +21,41 @@ test_that("arguments can be fixed", {
   expect_error(fp(2), "unused argument")
 })
 
-test_that("arguments can be lazily fixed when ..lazy = TRUE (default)", {
+test_that("arguments can be lazily fixed when ..eager = FALSE", {
   f <- function(x, y, z) c(x, y)
 
-  fp <- partial(f, z = stop("!"))
+  fp <- partial(f, z = stop("!"), ..eager = FALSE)
   expect_identical(fp(0, 1), c(0, 1))
 
-  fp <- partial(f, x = x, ..lazy = TRUE)
+  fp <- partial(f, x = x, ..eager = FALSE)
   x <- 0
   expect_identical(fp(1), c(0, 1))
   x <- 1
   expect_identical(fp(1), c(1, 1))
 
-  fp <- partial(f, x = x)
+  fp <- partial(f, x = x, ..eager = FALSE)
   x <- 0
   expect_identical(fp(1), c(0, 1))
   x <- 1
   expect_identical(fp(1), c(1, 1))
 })
 
-test_that("arguments can be eagerly fixed when ..lazy = FALSE", {
+test_that("arguments can be eagerly fixed when ..eager = TRUE", {
   x <- 0
   value <- c(0, 1)
   f <- function(x, y) c(x, y)
-  fp <- partial(f, x = x, ..lazy = FALSE)
+  fp <- partial(f, x = x, ..eager = TRUE)
   expect_identical(fp(1), value)
   x <- 1
   expect_identical(fp(1), value)
 
-  expect_error(partial(f, x = stop("!"), ..lazy = FALSE), "!")
+  expect_error(partial(f, x = stop("!"), ..eager = TRUE), "!")
 })
 
-test_that("quosure arguments can be tidily fixed when ..lazy = FALSE", {
+test_that("quosure arguments can be tidily fixed when ..eager = TRUE", {
   x <- local({x <- 0; rlang::quo(x)})
   f <- function(x, y) c(x, y)
-  fp <- partial(f, x = !! x, ..lazy = FALSE)
+  fp <- partial(f, x = !! x, ..eager = TRUE)
   expect_identical(fp(1), c(0, 1))
 })
 
@@ -84,8 +84,11 @@ test_that("arguments to fix are evaluated in calling environment", {
   x <- "global"  # Doppelgaenger
   env <- local({x <- "local"; environment()})
   f <- function(x, y) x
-  fp <- evalq(partial(f, x = x), env)
-  expect_identical(fp(), "local")
+
+  fp_eager <- evalq(partial(f, x = x, ..eager = TRUE), env)
+  fp_lazy  <- evalq(partial(f, x = x, ..eager = FALSE), env)
+  expect_identical(fp_eager(), "local")
+  expect_identical(fp_lazy(), "local")
 })
 
 test_that("error is signaled when value to fix doesn't match an argument", {
@@ -113,7 +116,7 @@ test_that("formals are contracted", {
     formals(function(y = 1, ..., z = 0) {})
   )
   expect_equal(
-    formals(partial(f, x = one)),
+    formals(partial(f, x = one, ..eager = FALSE)),
     formals(function(y = one, ..., z = 0) {})
   )
   expect_equal(

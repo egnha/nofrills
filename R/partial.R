@@ -12,14 +12,14 @@
 #' @param ... Argument values of `..f` to fix, specified by name.
 #'   [Quasiquotation][rlang::quasiquotation] and
 #'   [splicing][rlang::quasiquotation] are supported (see _Examples_).
-#' @param ..lazy Should the argument values be lazily evaluated? If `TRUE` (the
-#'   default), the argument values are captured as expressions; if `FALSE`, the
-#'   argument values are captured as [quosures][rlang::quosure] and are [tidily
-#'   evaluated][rlang::eval_tidy].
+#' @param ..eager Should the argument values be eagerly evaluated? If `TRUE`
+#'   (the default), the argument values are captured as
+#'   [quosures][rlang::quosure] and are [tidily evaluated][rlang::eval_tidy]; if
+#'   `FALSE`, the argument values are captured as expressions.
 #'
 #' @return `partial()` returns a function whose [formals][base::formals()] are a
-#'   contraction of the formals of `..f()` (as a closure) by the fixed
-#'   arguments. `partial(..f)` is identical to `..f`.
+#'   truncation of the formals of `..f()` (as a closure) by the fixed arguments.
+#'   `partial(..f)` is identical to `..f`.
 #'
 #' @section Technical Note:
 #'   Even while `partial()` contracts formals, it remains compatible with
@@ -42,29 +42,39 @@
 #' draw3(letters)
 #'
 #' # Use departial() to recover the original function
-#' departial(draw3)  # sample()
+#' stopifnot(identical(departial(draw3), sample))
 #'
-#' # Arguments are lazily evaluated by default, i.e., whenever rnd_lazy() is called
-#' rnd_lazy <- partial(runif, n = rpois(1, 5))
-#' replicate(4, rnd_lazy(), simplify = FALSE)   # variable length
+#' # Eagerly evaluate argument values by default (..eager = TRUE)
+#' # The value of 'n' is fixed when the function rnd_eager() is created.
+#' rnd_eager <- partial(runif, n = rpois(1, 5))
+#' replicate(4, rnd_eager(), simplify = FALSE)   # constant (random) length
 #'
-#' # Arguments can be eagerly evaluated, i.e., when rnd_eager() is created
-#' rnd_eager <- partial(runif, n = rpois(1, 5), ..lazy = FALSE)
-#' replicate(4, rnd_eager(), simplify = FALSE)  # constant length
+#' # Lazily evaluate argument values with ..eager = FALSE
+#' # The expression for 'size' is evaluated whenever draw() is called.
+#' # NB: The 'x' refers to the 'x' argument of sample().
+#' draw <- partial(sample, size = sample(length(x), 1), ..eager = FALSE)
+#' replicate(4, draw(letters), simplify = FALSE)  # variable length
 #'
-#' # Arguments can be eagerly evaluated, selectively, via unquoting
-#' rnd <- partial(runif, n = !! rpois(1, 5), max = sample(10, 1))
+#' # Unquote when you want to lazily evaluate but refer to an 'x' in scope
+#' x <- 3
+#' draw_upto_3 <- partial(sample, size = sample(!! x, 1), ..eager = FALSE)
+#' replicate(4, draw_upto_3(letters), simplify = FALSE)  # variable length <= 3
+#'
+#' # Mix evaluation schemes by combining lazy evaluation with unquoting (`!!`)
+#' # Here 'n' is lazily evaluated, while 'max' is eagerly evaluated.
+#' rnd <- partial(runif, n = rpois(1, 5), max = !! sample(10, 1), ..eager = FALSE)
 #' replicate(4, rnd(), simplify = FALSE)
 #'
 #' # Arguments to fix can be spliced
-#' args_eager <- list(n = rpois(1, 5), max = sample(10, 1))
-#' rnd_eager3 <- partial(runif, !!! args_eager)
-#' replicate(4, rnd_eager3(), simplify = FALSE)
-#' args_mixed <- rlang::exprs(n = !! rpois(1, 5), max = sample(10, 1))
-#' rnd2 <- partial(runif, !!! args_mixed)
+#' args_eager <- alist(n = rpois(1, 5), max = sample(10, 1))
+#' rnd_eager2 <- partial(runif, !!! args_eager)
+#' replicate(4, rnd_eager2(), simplify = FALSE)
+#'
+#' args_mixed <- rlang::exprs(n = rpois(1, 5), max = !! sample(10, 1))
+#' rnd2 <- partial(runif, !!! args_mixed, ..eager = FALSE)
 #' replicate(4, rnd2(), simplify = FALSE)
 #'
-#' # partial() contracts formals (i.e., argument signature)
+#' # partial() truncates formals (i.e., argument signature) by fixed arguments
 #' foo <- function(x, y = x, ..., z = "z") list(x = x, y = y, z = z, ...)
 #' args(foo)
 #' args(partial(foo))
@@ -73,15 +83,16 @@
 #' args(partial(foo, x = 1, y = 2, z = 3))
 #'
 #' @export
-partial <- function(..f, ..., ..lazy = TRUE) {
-  vals <- if (..lazy) exprs(...) else lapply(quos(...), eval_tidy)
+partial <- function(..f, ..., ..eager = TRUE) {
+  vals <- if (..eager) lapply(quos(...), eval_tidy) else exprs(...)
   if (is_empty(vals))
     return(..f)
   f <- as_closure(..f)
   fmls <- formals(f)
   names(vals) %are% names(fmls) %because%
     "Values to fix must be named by arguments of {..f}"
-  env <- new.env(parent = parent.frame())
+  parent <- if (..eager) environment(f) else parent.frame()
+  env <- new.env(parent = parent)
   env$`__function__` <- f
   fmls <- contract(fmls, vals)
   vals <- c(vals, eponymous(names(fmls)))
