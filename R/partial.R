@@ -95,12 +95,12 @@ partial <- function(..f, ..., ..eager = TRUE) {
   parent <- if (..eager) environment(f) else parent.frame()
   env <- new.env(parent = parent)
   env$`__function__` <- f
-  fmls <- contract(fmls, vals)
-  vals <- c(vals, eponymous(names(fmls)))
-  fn(!!! fmls, ~ `__function__`(!!! vals), ..env = env)
+  fmls_trunc <- truncate(fmls, vals)
+  vals_all <- c(vals, eponymous(names(fmls_trunc)))
+  fn(!!! fmls_trunc, ~ `__function__`(!!! vals_all), ..env = env)
 }
 
-contract <- function(fmls, vals) {
+truncate <- function(fmls, vals) {
   fmls <- fmls[!(names(fmls) %in% names(vals))]
   fmls <- lapply(fmls, subst, vals = vals)
   as.pairlist(fmls)
