@@ -104,8 +104,8 @@ deconstruct <- function(..f) {
 partial_ <- function(fun, fmls, fix, env) {
   bind_quosures_actively(fix, env)
   env$`__fun__` <- fun
-  fmls_trunc <- truncate(fmls, names(fix))
-  args <- eponymous(formals(fun))
+  fmls_trunc <- truncate(fmls, cut = fix)
+  args <- eponymous_formals(fun)
   fn(!!! fmls_trunc, ~ `__fun__`(!!! args), ..env = env)
 }
 
@@ -119,11 +119,13 @@ get_tidy <- function(q) {
   function(.) eval_tidy(q)
 }
 
-truncate <- function(xs, nms)
+truncate <- function(xs, cut) {
+  nms <- names(cut)
   xs[!(names(xs) %in% nms)]
+}
 
-eponymous <- function(xs) {
-  nms <- names(xs)
+eponymous_formals <- function(f) {
+  nms <- names(formals(f))
   `names<-`(lapply(nms, as.name), nms)
 }
 
