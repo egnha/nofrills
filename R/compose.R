@@ -89,7 +89,7 @@
 #'
 #' @export
 compose <- function(...) {
-  `__pipeline__` <- flatten_fns()  # '...' consumed via call introspection
+  `__pipeline__` <- flatten_fns(...)
   n <- length(`__pipeline__`)
   if (n == 1)
     return(`__pipeline__`[[1]])
@@ -110,26 +110,14 @@ compose <- function(...) {
   fn_comp
 }
 
-flatten_fns <- local({
-  flatten <- list(
-    compose = function(...) unlist(list2(...)),
-    `%<<<%` = function(snd, fst) unlist(list2(snd, fst)),
-    `%>>>%` = function(fst, snd) unlist(list2(snd, fst)),
-    decompose = identity
-  )
-  are_funcs <- function(xs)
-    !is_empty(xs) && all(vapply(xs, is.function, logical(1)))
+flatten_fns <- function(...) {
+  fns <- unlist(lapply(list2(...), decompose_))
+  are_funcs(fns) %because% "Only functions or lists thereof can be composed"
+  fns
+}
 
-  function() {
-    dots <- eval(sys.call(-1), flatten, parent.frame(2))
-    fns <- unlist(lapply(dots, decompose_))
-    are_funcs(fns) %because% "Only functions or lists thereof can be composed"
-    fns
-  }
-})
-
-decompose_ <- function(x)
-  environment(x)$`__pipeline__` %||% x
+are_funcs <- function(xs)
+  !is_empty(xs) && all(vapply(xs, is.function, logical(1)))
 
 #' @param f,g Functions.
 #' @rdname compose
@@ -146,6 +134,9 @@ decompose <- function(f) {
   is.function(f) %because% "Only functions can be decomposed"
   box(decompose_(f))
 }
+
+decompose_ <- function(x)
+  environment(x)$`__pipeline__` %||% x
 
 #' @export
 print.CompositeFunction <- function(x, ...) {
