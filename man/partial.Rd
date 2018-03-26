@@ -5,26 +5,21 @@
 \alias{departial}
 \title{Fix a number of arguments to a function}
 \usage{
-partial(..f, ..., ..eager = TRUE)
+partial(..f, ...)
 
 departial(..f)
 }
 \arguments{
 \item{..f}{Function.}
 
-\item{...}{Argument values of \code{..f} to fix, specified by name.
-\link[rlang:quasiquotation]{Quasiquotation} and
-\link[rlang:quasiquotation]{splicing} are supported (see \emph{Examples}).}
-
-\item{..eager}{Should the argument values be eagerly evaluated? If \code{TRUE}
-(the default), the argument values are captured as
-\link[rlang:quosure]{quosures} and are \link[rlang:eval_tidy]{tidily evaluated}; if
-\code{FALSE}, the argument values are captured as expressions.}
+\item{...}{Argument values of \code{..f} to fix, specified by name. Captured as
+\link[rlang:quotation]{quosures}. \link[rlang:quasiquotation]{Quasiquotation} and
+\link[rlang:quasiquotation]{splicing} are supported (see \emph{Examples}).?}
 }
 \value{
 \code{partial()} returns a function whose \link[base:formals]{formals} are a
-truncation of the formals of \code{..f()} (as a closure) by the fixed arguments.
-\code{partial(..f)} is identical to \code{..f}.
+literal truncation of the formals of \code{..f()} (as a closure) by the fixed
+arguments. \code{partial(..f)} is identical to \code{..f}.
 }
 \description{
 \code{partial()} enables
@@ -32,7 +27,8 @@ truncation of the formals of \code{..f()} (as a closure) by the fixed arguments.
 given a function, it fixes the value of selected arguments to produce a
 function of the remaining arguments.
 
-\code{departial()} inverts the application of \code{partial()}.
+\code{departial()} \dQuote{inverts} the application of \code{partial()} by returning
+the original function.
 }
 \section{Technical Note}{
 

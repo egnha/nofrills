@@ -6,20 +6,17 @@
 #' given a function, it fixes the value of selected arguments to produce a
 #' function of the remaining arguments.
 #'
-#' `departial()` inverts the application of `partial()`.
+#' `departial()` \dQuote{inverts} the application of `partial()` by returning
+#' the original function.
 #'
 #' @param ..f Function.
-#' @param ... Argument values of `..f` to fix, specified by name.
-#'   [Quasiquotation][rlang::quasiquotation] and
-#'   [splicing][rlang::quasiquotation] are supported (see _Examples_).
-#' @param ..eager Should the argument values be eagerly evaluated? If `TRUE`
-#'   (the default), the argument values are captured as
-#'   [quosures][rlang::quosure] and are [tidily evaluated][rlang::eval_tidy]; if
-#'   `FALSE`, the argument values are captured as expressions.
+#' @param ... Argument values of `..f` to fix, specified by name. Captured as
+#'   [quosures][rlang::quotation]. [Quasiquotation][rlang::quasiquotation] and
+#'   [splicing][rlang::quasiquotation] are supported (see _Examples_).?
 #'
 #' @return `partial()` returns a function whose [formals][base::formals()] are a
-#'   truncation of the formals of `..f()` (as a closure) by the fixed arguments.
-#'   `partial(..f)` is identical to `..f`.
+#'   literal truncation of the formals of `..f()` (as a closure) by the fixed
+#'   arguments. `partial(..f)` is identical to `..f`.
 #'
 #' @section Technical Note:
 #'   Even while `partial()` truncates formals, it remains compatible with
@@ -84,27 +81,50 @@
 #' args(partial(foo, x = 1, y = 2, z = 3))
 #'
 #' @export
-partial <- function(..f, ..., ..eager = TRUE) {
-  vals <- if (..eager) lapply(quos(...), eval_tidy) else exprs(...)
-  if (is_empty(vals))
+partial <- function(..f, ...) {
+  fix <- quos(...)
+  if (is_empty(fix))
     return(..f)
-  f <- as_closure(..f)
-  fmls <- formals(f)
-  names(vals) %are% names(fmls) %because%
+  . <- deconstruct(..f)
+  names(fix) %are% names(.$fmls) %because%
     "Values to fix must be named by arguments of {..f}"
-  parent <- if (..eager) environment(f) else parent.frame()
-  env <- new.env(parent = parent)
-  env$`__function__` <- f
-  fmls_trunc <- truncate(fmls, vals)
-  vals_all <- c(vals, eponymous(names(fmls_trunc)))
-  fn(!!! fmls_trunc, ~ `__function__`(!!! vals_all), ..env = env)
+  partial_(.$fun, .$fmls, fix, .$env)
 }
 
-truncate <- function(fmls, vals) {
-  fmls <- fmls[!(names(fmls) %in% names(vals))]
-  fmls <- lapply(fmls, subst, vals = vals)
-  as.pairlist(fmls)
+deconstruct <- function(..f) {
+  f <- as_closure(..f)
+  f_dp <- departial_(..f)
+  if (is.null(f_dp)) {
+    fun <- f
+    env <- new.env(parent = environment(f))
+  }
+  else {
+    fun <- f_dp
+    env <- environment(f)
+  }
+  list(fun = fun, fmls = formals(f), env = env)
 }
+
+partial_ <- function(fun, fmls, fix, env) {
+  bind_quosures_actively(fix, env)
+  env$`__fun__` <- fun
+  fmls_trunc <- truncate(fmls, names(fix))
+  args <- eponymous(names(formals(fun)))
+  fn(!!! fmls_trunc, ~ `__fun__`(!!! args), ..env = env)
+}
+
+bind_quosures_actively <- function(qs, env) {
+  for (nm in names(qs))
+    makeActiveBinding(nm, get_tidy(qs[[nm]]), env)
+}
+
+get_tidy <- function(q) {
+  force(q)
+  function(.) eval_tidy(q)
+}
+
+truncate <- function(xs, nms)
+  xs[!(names(xs) %in% nms)]
 
 eponymous <- function(nms)
   `names<-`(lapply(nms, as.name), nms)
@@ -113,5 +133,8 @@ eponymous <- function(nms)
 #' @export
 departial <- function(..f) {
   is.function(..f) %because% "Only functions can be de-partialized"
-  environment(..f)$`__function__` %||% ..f
+  departial_(..f) %||% ..f
 }
+
+departial_ <- function(..f)
+  environment(..f)$`__fun__`
