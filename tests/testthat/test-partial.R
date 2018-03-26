@@ -98,8 +98,7 @@ test_that("error is signaled when value to fix doesn't match an argument", {
 })
 
 test_that("error is signaled when trying to call a fixed argument", {
-  fp <- partial(function(x, y) NULL, x = 0)
-  expect_error(fp(x = 1), "unused argument \\(x = 1\\)")
+  expect_error(partial(identity, x = 0)(x = 1), "unused argument \\(x = 1\\)")
 })
 
 test_that("formals are literally contracted", {
