@@ -113,6 +113,8 @@ compose <- function(...) {
 flatten_fns <- local({
   flatten <- list(
     compose = function(...) unlist(list2(...)),
+    `%<<<%` = function(snd, fst) unlist(list2(snd, fst)),
+    `%>>>%` = function(fst, snd) unlist(list2(snd, fst)),
     decompose = identity
   )
   are_funcs <- function(xs)
