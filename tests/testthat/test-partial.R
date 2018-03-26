@@ -51,7 +51,7 @@ test_that("argument values are captured eagerly with unquoting", {
   expect_identical(f(), out)
 })
 
-test_that("argument values are tidily evaluted", {
+test_that("argument values are tidily evaluated", {
   env <- local({
     value <- "x"
     environment()
@@ -101,7 +101,7 @@ test_that("error is signaled when trying to call a fixed argument", {
   expect_error(partial(identity, x = 0)(x = 1), "unused argument \\(x = 1\\)")
 })
 
-test_that("formals are literally contracted", {
+test_that("formals are literally truncated", {
   f <- function(x, y = x, ..., z = 0) NULL
   expect_equal(
     formals(partial(f)),
@@ -155,7 +155,7 @@ test_that("fixed arguments are not missing", {
 
 context("Inverting partial function application")
 
-test_that("de-partialzing a partial function recovers the original function", {
+test_that("departial() for a partial function recovers the original function", {
   f <- function(x, y) c(x, y)
   fp <- partial(f, x = 0)
   fpp <- partial(fp, y = 1)
@@ -163,13 +163,13 @@ test_that("de-partialzing a partial function recovers the original function", {
   expect_identical(departial(fpp), f)
 })
 
-test_that("de-partializing a non-partial function returns the function", {
+test_that("departial() is the identity for non-partial functions", {
   not_partial <- names(fn_kinds) != "partial"
   for (f in fn_kinds[not_partial])
     expect_identical(departial(f), f)
 })
 
-test_that("error is signaled when attempting to de-partialize a non-function", {
+test_that("error is signaled when applying departial() to a non-function", {
   expect_errors_with_message(
     "Only functions can be de-partialized",
     departial(NULL),
