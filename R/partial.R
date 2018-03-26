@@ -120,13 +120,14 @@ get_tidy <- function(q) {
 }
 
 truncate <- function(xs, cut) {
-  nms <- names(cut)
-  xs[!(names(xs) %in% nms)]
+  nms_cut <- names(cut)
+  xs[!(names(xs) %in% nms_cut)]
 }
 
 eponymous_formals <- function(f) {
   nms <- names(formals(f))
-  `names<-`(lapply(nms, as.name), nms)
+  names(nms) <- nms
+  lapply(nms, as.name)
 }
 
 #' @rdname partial
