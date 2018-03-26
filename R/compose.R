@@ -89,19 +89,19 @@
 #'
 #' @export
 compose <- function(...) {
-  `__fns_composite` <- flatten_fns()  # '...' consumed via call introspection
-  n <- length(`__fns_composite`)
+  `__pipeline__` <- flatten_fns()  # '...' consumed via call introspection
+  n <- length(`__pipeline__`)
   if (n == 1)
-    return(`__fns_composite`[[1]])
-  fn_last <- `__fns_composite`[[n]]
-  `__call_fn_last` <- function() {
+    return(`__pipeline__`[[1]])
+  fn_last <- `__pipeline__`[[n]]
+  `__call_fn_last__` <- function() {
     call <- `[[<-`(sys.call(-1), 1, fn_last)
     eval(call, parent.frame(2))
   }
-  `__fns_rest` <- rev(`__fns_composite`[-n])
+  `__fns_rest__` <- rev(`__pipeline__`[-n])
   fn_comp <- function() {
-    out <- `__call_fn_last`()
-    for (f in `__fns_rest`)
+    out <- `__call_fn_last__`()
+    for (f in `__fns_rest__`)
       out <- f(out)
     out
   }
@@ -127,7 +127,7 @@ flatten_fns <- local({
 })
 
 decompose_ <- function(x)
-  environment(x)$`__fns_composite` %||% x
+  environment(x)$`__pipeline__` %||% x
 
 #' @param f,g Functions.
 #' @rdname compose
