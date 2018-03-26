@@ -109,7 +109,7 @@ partial_ <- function(fun, fmls, fix, env) {
   bind_quosures_actively(fix, env)
   env$`__fun__` <- fun
   fmls_trunc <- truncate(fmls, names(fix))
-  args <- eponymous(names(formals(fun)))
+  args <- eponymous(formals(fun))
   fn(!!! fmls_trunc, ~ `__fun__`(!!! args), ..env = env)
 }
 
@@ -126,8 +126,10 @@ get_tidy <- function(q) {
 truncate <- function(xs, nms)
   xs[!(names(xs) %in% nms)]
 
-eponymous <- function(nms)
+eponymous <- function(xs) {
+  nms <- names(xs)
   `names<-`(lapply(nms, as.name), nms)
+}
 
 #' @rdname partial
 #' @export
