@@ -147,9 +147,9 @@ test_that("fixed arguments are not missing", {
       x <- "x is missing"
     x
   }
-  fp <- partial(f, x = "x is fixed")
-  expect_equal(formals(fp), formals(function() {}))
-  expect_identical(fp(), "x is fixed")
+  fix_x <- partial(f, x = "x is fixed")
+  expect_equal(formals(fix_x), formals(function() {}))
+  expect_identical(fix_x(), "x is fixed")
   expect_identical(f(), "x is missing")
 })
 
