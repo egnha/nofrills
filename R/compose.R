@@ -93,21 +93,21 @@ compose <- function(...) {
   n <- length(`__pipeline__`)
   if (n == 1)
     return(`__pipeline__`[[1]])
-  fn_last <- `__pipeline__`[[n]]
-  `__call_fn_last__` <- function() {
-    call <- `[[<-`(sys.call(-1), 1, fn_last)
+  fn_initial <- `__pipeline__`[[n]]
+  `__call_fn_initial__` <- function() {
+    call <- `[[<-`(sys.call(-1), 1, fn_initial)
     eval(call, parent.frame(2))
   }
   `__fns_rest__` <- rev(`__pipeline__`[-n])
-  fn_comp <- function() {
-    out <- `__call_fn_last__`()
+  fn_cmps <- function() {
+    out <- `__call_fn_initial__`()
     for (f in `__fns_rest__`)
       out <- f(out)
     out
   }
-  formals(fn_comp) <- formals(as_closure(fn_last))
-  class(fn_comp) <- c("CompositeFunction", "function")
-  fn_comp
+  formals(fn_cmps) <- formals(as_closure(fn_initial))
+  class(fn_cmps) <- c("CompositeFunction", "function")
+  fn_cmps
 }
 
 flatten_fns <- function(...) {
