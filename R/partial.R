@@ -77,28 +77,30 @@
 #' args(partial(foo, x = 1, y = 2, z = 3))
 #'
 #' @export
-partial <- function(..f, ...) {
-  f <- as_closure(..f)
-  fmls <- formals(f)
-  fix <- quos_match(fmls)  # '...' consumed by introspection
-  if (is_empty(fix))
-    return(..f)
-  dp <- departial_(..f)
-  if (is.null(dp)) {
-    fun <- f
-    env <- new.env(parent = environment(f))
-  } else {
-    fun <- dp
-    env <- environment(f)
+partial <- local({
+  quos_match <- function(fmls) {
+    mc <- match.call(template_partial, sys.call(-1))
+    dots <- mc[names(mc) != "..f"]
+    eval(call_quos_match(dots, fmls), parent.frame(2))
   }
-  partial_(fun, fmls, fix, env)
-}
 
-quos_match <- function(fmls) {
-  mc <- match.call(template_partial, sys.call(-1))
-  dots <- mc[names(mc) != "..f"]
-  eval(call_quos_match(dots, fmls), parent.frame(2))
-}
+  function(..f, ...) {
+    f <- as_closure(..f)
+    fmls <- formals(f)
+    fix <- quos_match(fmls)  # '...' consumed by introspection
+    if (is_empty(fix))
+      return(..f)
+    dp <- departial_(..f)
+    if (is.null(dp)) {
+      fun <- f
+      env <- new.env(parent = environment(f))
+    } else {
+      fun <- dp
+      env <- environment(f)
+    }
+    partial_(fun, fmls, fix, env)
+  }
+})
 
 template <- function(fmls)
   eval(call("function", fmls, NULL))
