@@ -98,6 +98,7 @@ partial <- local({
       fun <- dp
       env <- environment(f)
     }
+    names(fix) <- rename_dots_args(fix, env)
     partial_(fun, fmls, fix, env)
   }
 })
@@ -113,17 +114,30 @@ call_quos_match <- function(dots, fmls) {
   call
 }
 
+rename_dots_args <- function(xs_new, xs_prev) {
+  nms <- names(xs_new)
+  is_new_dots <- !nzchar(nms)
+  n_prev_dots <- sum(is_unnamed_dot(names(xs_prev)))
+  n_new_dots  <- sum(is_new_dots)
+  nms[is_new_dots] <- paste0("__", n_prev_dots + seq_len(n_new_dots))
+  nms
+}
+
 partial_ <- function(fun, fmls, fix, env) {
-  bind_quosures_actively(fix, env)
+  bind_fixed_args(fix, env)
   env$`__fun__` <- fun
+  fmls_fun <- formals(fun)
+  env$`__dots__` <- c(env$`__dots__`, dots(fix, fmls_fun))
   fmls_trunc <- truncate(fmls, cut = fix)
-  args <- eponymous_formals(fun)
+  args <- eponymous_args(fmls_fun, env$`__dots__`)
   fn(!!! fmls_trunc, ~ `__fun__`(!!! args), ..env = env)
 }
 
-bind_quosures_actively <- function(qs, env) {
-  for (nm in names(qs))
-    makeActiveBinding(nm, get_tidy(qs[[nm]]), env)
+bind_fixed_args <- function(fix, env) {
+  newly_fixed <- !(names(fix) %in% names(env))
+  all(newly_fixed) %because% "Can't reset previously fixed argument(s)"
+  for (nm in names(fix))
+    makeActiveBinding(nm, get_tidy(fix[[nm]]), env)
 }
 
 get_tidy <- function(q) {
@@ -131,15 +145,28 @@ get_tidy <- function(q) {
   function(.) eval_tidy(q)
 }
 
+dots <- function(fix, fmls) {
+  nms_fix <- names(fix)
+  nms_dots <- nms_fix[!(nms_fix %in% names_nondots(fmls))]
+  names(nms_dots) <- nms_dots
+  dots <- lapply(nms_dots, as.name)
+  names(dots)[is_unnamed_dot(nms_dots)] <- ""
+  dots
+}
+
+is_unnamed_dot <- function(x)
+  grepl("^__[[:digit:]]*$", x)
+
 truncate <- function(xs, cut) {
   nms_cut <- names(cut)
   xs[!(names(xs) %in% nms_cut)]
 }
 
-eponymous_formals <- function(f) {
-  nms <- names(formals(f))
-  names(nms) <- nms
-  lapply(nms, as.name)
+eponymous_args <- function(fmls, dots) {
+  nms_fmls <- names(fmls)
+  if (!("..." %in% names(fmls)))
+    return(eponymous(nms_fmls))
+  c(eponymous(nms_fmls[nms_fmls != "..."]), dots, quote(...))
 }
 
 #' @rdname partial

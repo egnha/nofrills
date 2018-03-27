@@ -1,3 +1,13 @@
+names_nondots <- function(xs) {
+  nms <- names(xs)
+  nms[nms != "..."]
+}
+
+eponymous <- function(nms) {
+  names(nms) <- nms
+  lapply(nms, as.name)
+}
+
 opposite <- function(f) {
   formals(f) <- rev(formals(f))
   f
