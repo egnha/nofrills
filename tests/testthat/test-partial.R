@@ -85,9 +85,9 @@ test_that("argument values can be spliced", {
 test_that("error is signaled when value to fix doesn't match an argument", {
   f <- function(x, y) NULL
   expect_errors_with_message(
-    "Values to fix must be named by arguments of 'f'",
-    partial(f, 0),
-    partial(f, xx = 0)
+    "unused argument",
+    partial(f, 0, 1, 2),
+    partial(f, z = 0)
   )
   expect_errors_with_message(
     NA,

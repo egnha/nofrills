@@ -78,27 +78,33 @@
 #'
 #' @export
 partial <- function(..f, ...) {
-  fix <- quos(...)
+  f <- as_closure(..f)
+  fmls <- formals(f)
+  fix <- quos_standardized(fmls)  # '...' consumed by introspection
   if (is_empty(fix))
     return(..f)
-  . <- deconstruct(..f)
-  names(fix) %are% names(.$fmls) %because%
-    "Values to fix must be named by arguments of {..f}"
-  partial_(.$fun, .$fmls, fix, .$env)
-}
-
-deconstruct <- function(..f) {
-  f <- as_closure(..f)
-  f_dp <- departial_(..f)
-  if (is.null(f_dp)) {
+  dp <- departial_(..f)
+  if (is.null(dp)) {
     fun <- f
     env <- new.env(parent = environment(f))
-  }
-  else {
-    fun <- f_dp
+  } else {
+    fun <- dp
     env <- environment(f)
   }
-  list(fun = fun, fmls = formals(f), env = env)
+  partial_(fun, fmls, fix, env)
+}
+
+quos_standardized <- function(fmls) {
+  mc <- match.call(sys.function(-1), sys.call(-1))
+  dots <- mc[names(mc) != "..f"]
+  template <- eval(call("function", fmls, NULL))
+  eval(call_quos_standardized(dots, template), parent.frame(2))
+}
+
+call_quos_standardized <- function(dots, template) {
+  call <- match.call(template, dots)
+  call[[1]] <- quos
+  call
 }
 
 partial_ <- function(fun, fmls, fix, env) {
