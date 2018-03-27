@@ -80,7 +80,7 @@
 partial <- function(..f, ...) {
   f <- as_closure(..f)
   fmls <- formals(f)
-  fix <- quos_standardized(fmls)  # '...' consumed by introspection
+  fix <- quos_match(fmls)  # '...' consumed by introspection
   if (is_empty(fix))
     return(..f)
   dp <- departial_(..f)
@@ -94,10 +94,10 @@ partial <- function(..f, ...) {
   partial_(fun, fmls, fix, env)
 }
 
-quos_standardized <- function(fmls) {
+quos_match <- function(fmls) {
   mc <- match.call(template_partial, sys.call(-1))
   dots <- mc[names(mc) != "..f"]
-  eval(call_quos_standardized(dots, fmls), parent.frame(2))
+  eval(call_quos_match(dots, fmls), parent.frame(2))
 }
 
 template <- function(fmls)
@@ -105,7 +105,7 @@ template <- function(fmls)
 
 template_partial <- template(formals(partial))
 
-call_quos_standardized <- function(dots, fmls) {
+call_quos_match <- function(dots, fmls) {
   call <- match.call(template(fmls), dots)
   call[[1]] <- quos
   call
