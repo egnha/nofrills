@@ -95,11 +95,13 @@ partial <- function(..f, ...) {
 }
 
 quos_standardized <- function(fmls) {
-  mc <- match.call(sys.function(-1), sys.call(-1))
+  mc <- match.call(template_partial, sys.call(-1))
   dots <- mc[names(mc) != "..f"]
-  template <- eval(call("function", fmls, NULL))
-  eval(call_quos_standardized(dots, template), parent.frame(2))
+  template_f <- eval(call("function", fmls, NULL))
+  eval(call_quos_standardized(dots, template_f), parent.frame(2))
 }
+
+template_partial <- function(..f , ...) NULL
 
 call_quos_standardized <- function(dots, template) {
   call <- match.call(template, dots)
