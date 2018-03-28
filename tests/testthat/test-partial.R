@@ -32,51 +32,61 @@ test_that("named argument values can be fixed", {
 test_that("named dots-arguments can be fixed", {
   f <- function(x, ..., y = 3) c(x, ..., y)
 
-  out <- c(1, a = 2, 3)
-  expect_equal(out, partial(f, a = 2)(1))
-  expect_equal(out, partial(f, 1, a = 2)())
-  expect_equal(out, partial(f, a = 2, 1)())
+  expect_all_equal(
+    c(1, a = 2, 3),
+    partial(f, a = 2)(1),
+    partial(f, 1, a = 2)(),
+    partial(f, a = 2, 1)()
+  )
 
-  out <- c(1, a = 2, b = 2.5, 3)
-  expect_equal(out, partial(f, a = 2, b = 2.5)(1))
-  expect_equal(out, partial(f, a = 2, b = 2.5, 1)())
-  expect_equal(out, partial(partial(f, a = 2), b = 2.5)(1))
-  expect_equal(out, partial(partial(partial(f, 1), a = 2), b = 2.5)())
-  expect_equal(out, partial(partial(partial(f, a = 2), 1), b = 2.5)())
-  expect_equal(out, partial(partial(partial(f, a = 2), b = 2.5), 1)())
+  expect_all_equal(
+    c(1, a = 2, b = 2.5, 3),
+    partial(f, a = 2, b = 2.5)(1),
+    partial(f, a = 2, b = 2.5, 1)(),
+    partial(partial(f, a = 2), b = 2.5)(1),
+    partial(partial(partial(f, 1), a = 2), b = 2.5)(),
+    partial(partial(partial(f, a = 2), 1), b = 2.5)(),
+    partial(partial(partial(f, a = 2), b = 2.5), 1)()
+  )
 
-  out <- c(1, a = 2, b = 3, 4)
-  expect_equal(out, partial(f, a = 2, b = 3, y = 4)(1))
-  expect_equal(out, partial(partial(f, a = 2, b = 3), y = 4)(1))
-  expect_equal(out, partial(partial(f, a = 2, y = 4), b = 3)(1))
-  expect_equal(out, partial(partial(f, y = 4, a = 2), b = 3)(1))
-  expect_equal(out, partial(partial(f, a = 2), b = 3, y = 4)(1))
-  expect_equal(out, partial(partial(f, y = 4), a = 2, b = 3)(1))
-  expect_equal(out, partial(partial(partial(f, y = 4), a = 2), b = 3)(1))
-  expect_equal(out, partial(partial(partial(f, a = 2), y = 4), b = 3)(1))
-  expect_equal(out, partial(partial(partial(f, a = 2), b = 3), y = 4)(1))
+  expect_all_equal(
+    c(1, a = 2, b = 3, 4),
+    partial(f, a = 2, b = 3, y = 4)(1),
+    partial(partial(f, a = 2, b = 3), y = 4)(1),
+    partial(partial(f, a = 2, y = 4), b = 3)(1),
+    partial(partial(f, y = 4, a = 2), b = 3)(1),
+    partial(partial(f, a = 2), b = 3, y = 4)(1),
+    partial(partial(f, y = 4), a = 2, b = 3)(1),
+    partial(partial(partial(f, y = 4), a = 2), b = 3)(1),
+    partial(partial(partial(f, a = 2), y = 4), b = 3)(1),
+    partial(partial(partial(f, a = 2), b = 3), y = 4)(1)
+  )
 })
 
 test_that("unnamed dots-arguments can be fixed", {
   f <- function(x, ...) c(x, ...)
 
-  out <- c(1, 2)
-  expect_equal(out, partial(f, 1, 2)())
-  expect_equal(out, partial(f, 2, x = 1)())
-  expect_equal(out, partial(f, x = 1, 2)())
+  expect_all_equal(
+    c(1, 2),
+    partial(f, 1, 2)(),
+    partial(f, 2, x = 1)(),
+    partial(f, x = 1, 2)()
+  )
 
-  out <- c(1, 2, 3)
-  expect_equal(out, partial(f, 1, 2, 3)())
-  expect_equal(out, partial(f, x = 1, 2, 3)())
-  expect_equal(out, partial(f, 2, x = 1, 3)())
-  expect_equal(out, partial(f, 2, 3, x = 1)())
-  expect_equal(out, partial(partial(f, 1), 2, 3)())
-  expect_equal(out, partial(partial(f, x = 1), 2, 3)())
-  expect_equal(out, partial(partial(f, 1, 2), 3)())
-  expect_equal(out, partial(partial(f, x = 1, 2), 3)())
-  expect_equal(out, partial(partial(f, 2, x = 1), 3)())
-  expect_equal(out, partial(partial(partial(f, 1), 2), 3)())
-  expect_equal(out, partial(partial(partial(f, x = 1), 2), 3)())
+  expect_all_equal(
+    c(1, 2, 3),
+    partial(f, 1, 2, 3)(),
+    partial(f, x = 1, 2, 3)(),
+    partial(f, 2, x = 1, 3)(),
+    partial(f, 2, 3, x = 1)(),
+    partial(partial(f, 1), 2, 3)(),
+    partial(partial(f, x = 1), 2, 3)(),
+    partial(partial(f, 1, 2), 3)(),
+    partial(partial(f, x = 1, 2), 3)(),
+    partial(partial(f, 2, x = 1), 3)(),
+    partial(partial(partial(f, 1), 2), 3)(),
+    partial(partial(partial(f, x = 1), 2), 3)()
+  )
 })
 
 test_that("dots persist", {
@@ -185,57 +195,65 @@ test_that("arguments values are matched according to R's calling convention", {
   expect_equal(out, partial(f, 1)(2))
 
   # 'yyy' may be partially matched
-  out <- c(1, 2, 0)
-  expect_equal(out, partial(f, x = 1, yyy = 2)())
-  expect_equal(out, partial(f, x = 1, y = 2)())
-  expect_equal(out, partial(f, x = 1, 2)())
-  expect_equal(out, partial(f, 2, x = 1)())
-  expect_equal(out, partial(f, yyy = 2, 1)())
-  expect_equal(out, partial(f, y = 2, 1)())
-  expect_equal(out, partial(f, 1, yyy = 2)())
-  expect_equal(out, partial(f, 1, y = 2)())
-  expect_equal(out, partial(f, 1, 2)())
+  expect_all_equal(
+    c(1, 2, 0),
+    partial(f, x = 1, yyy = 2)(),
+    partial(f, x = 1, y = 2)(),
+    partial(f, x = 1, 2)(),
+    partial(f, 2, x = 1)(),
+    partial(f, yyy = 2, 1)(),
+    partial(f, y = 2, 1)(),
+    partial(f, 1, yyy = 2)(),
+    partial(f, 1, y = 2)(),
+    partial(f, 1, 2)()
+  )
 
-  out <- c(1, 2, 3, 0)
-  expect_equal(out, partial(f, x = 1, yyy = 2, 3)())
-  expect_equal(out, partial(f, x = 1, y = 2, 3)())
-  expect_equal(out, partial(f, 1, 2, 3)())
-  expect_equal(out, partial(f, x = 1, 2, 3)())
-  expect_equal(out, partial(f, 2, x = 1, 3)())
-  expect_equal(out, partial(f, yyy = 2, 1, 3)())
-  expect_equal(out, partial(f, y = 2, 1, 3)())
-  expect_equal(out, partial(f, 1, yyy = 2, 3)())
-  expect_equal(out, partial(f, 1, y = 2, 3)())
-  expect_equal(out, partial(f, 3, x = 1, yyy = 2)())
-  expect_equal(out, partial(f, 3, x = 1, y = 2)())
-  expect_equal(out, partial(f, 3, yyy = 2, x = 1)())
-  expect_equal(out, partial(f, 3, y = 2, x = 1)())
+  expect_all_equal(
+    out <- c(1, 2, 3, 0),
+    partial(f, x = 1, yyy = 2, 3)(),
+    partial(f, x = 1, y = 2, 3)(),
+    partial(f, 1, 2, 3)(),
+    partial(f, x = 1, 2, 3)(),
+    partial(f, 2, x = 1, 3)(),
+    partial(f, yyy = 2, 1, 3)(),
+    partial(f, y = 2, 1, 3)(),
+    partial(f, 1, yyy = 2, 3)(),
+    partial(f, 1, y = 2, 3)(),
+    partial(f, 3, x = 1, yyy = 2)(),
+    partial(f, 3, x = 1, y = 2)(),
+    partial(f, 3, yyy = 2, x = 1)(),
+    partial(f, 3, y = 2, x = 1)()
+  )
 
   # 'z' not matched to 'zzz', since 'zzz' follows '...'
-  out <- c(1, 2, z = 3, 0)
-  expect_equal(out, partial(f, x = 1, yyy = 2, z = 3)())
-  expect_equal(out, partial(f, x = 1, y = 2, z = 3)())
-  expect_equal(out, partial(f, 1, 2, z = 3)())
-  expect_equal(out, partial(f, 1, z = 3, 2)())
-  expect_equal(out, partial(f, z = 3, 1, 2)())
-  expect_equal(out, partial(f, x = 1, z = 3, 2)())
-  expect_equal(out, partial(f, x = 1, 2, z = 3)())
-  expect_equal(out, partial(f, 2, x = 1, z = 3)())
-  expect_equal(out, partial(f, yyy = 2, z = 3, 1)())
-  expect_equal(out, partial(f, y = 2, z = 3, 1)())
-  expect_equal(out, partial(f, yyy = 2, 1, z = 3)())
-  expect_equal(out, partial(f, y = 2, 1, z = 3)())
-  expect_equal(out, partial(f, 1, yyy = 2, z = 3)())
-  expect_equal(out, partial(f, 1, y = 2, z = 3)())
+  expect_all_equal(
+    c(1, 2, z = 3, 0),
+    partial(f, x = 1, yyy = 2, z = 3)(),
+    partial(f, x = 1, y = 2, z = 3)(),
+    partial(f, 1, 2, z = 3)(),
+    partial(f, 1, z = 3, 2)(),
+    partial(f, z = 3, 1, 2)(),
+    partial(f, x = 1, z = 3, 2)(),
+    partial(f, x = 1, 2, z = 3)(),
+    partial(f, 2, x = 1, z = 3)(),
+    partial(f, yyy = 2, z = 3, 1)(),
+    partial(f, y = 2, z = 3, 1)(),
+    partial(f, yyy = 2, 1, z = 3)(),
+    partial(f, y = 2, 1, z = 3)(),
+    partial(f, 1, yyy = 2, z = 3)(),
+    partial(f, 1, y = 2, z = 3)()
+  )
 
   # 'zzz' must be matched exactly, since it follows '...'
-  out <- c(1, 2, 3)
-  expect_equal(out, partial(f, zzz = 3)(1, 2))
-  expect_equal(out, partial(f, 1, zzz = 3)(2))
-  expect_equal(out, partial(f, zzz = 3, 1)(2))
-  expect_equal(out, partial(f, 1, 2, zzz = 3)())
-  expect_equal(out, partial(f, 1, zzz = 3, 2)())
-  expect_equal(out, partial(f, zzz = 3, 1, 2)())
+  expect_all_equal(
+    c(1, 2, 3),
+    partial(f, zzz = 3)(1, 2),
+    partial(f, 1, zzz = 3)(2),
+    partial(f, zzz = 3, 1)(2),
+    partial(f, 1, 2, zzz = 3)(),
+    partial(f, 1, zzz = 3, 2)(),
+    partial(f, zzz = 3, 1, 2)()
+  )
 })
 
 test_that("argument values are captured lazily (by default)", {

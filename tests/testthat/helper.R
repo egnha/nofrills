@@ -1,10 +1,17 @@
-expect_errors_with_message <- function(regexp, ...) {
-  exprs <- eval(substitute(alist(...)))
-  for (expr in exprs) {
-    expectation <- bquote(expect_error(.(expr), .(regexp)))
-    eval.parent(expectation)
+expectations <- function(expect) {
+  expect <- substitute(expect)
+  function(target, ...) {
+    exprs <- eval(substitute(alist(...)))
+    for (expr in exprs) {
+      expectation <- bquote(.(expect)(.(expr), .(target)))
+      eval.parent(expectation)
+    }
   }
 }
+
+expect_errors_with_message <- expectations(expect_error)
+
+expect_all_equal <- expectations(expect_equal)
 
 # As of testthat 1.0.2.9000, objects are captured as quosures by `expect_*()`.
 # This causes spurious test failures, due to a bug in `rlang::enquo()`
