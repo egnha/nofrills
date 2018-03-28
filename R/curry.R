@@ -99,3 +99,29 @@ make_curried_function <- local({
 #' @rdname curry
 #' @export
 curry_fn <- fn_factory(make_curried_function)
+
+#' @rdname curry
+#' @export
+curry2 <- function(f) {
+  fmls <- formals(as_closure(f))
+  if (length(fmls) <= 1)
+    return(f)
+  `__partialize__` <- function() {
+    call_partial <- `[[<-`(sys.call(-1), 1, partial)
+    call_partial$..f <- f
+    eval(call_partial, parent.frame(2))
+  }
+  f_curried <- function() {
+    p <- `__partialize__`()
+    if (`__callable__`(p))
+      return(p())
+    nofrills::curry2(p)
+  }
+  formals(f_curried) <- fmls
+  f_curried
+}
+
+`__callable__` <- function(f) {
+  fmls <- formals(f)
+  length(fmls) == 0 || all(fmls[names_nondots(fmls)] != quote(expr = ))
+}
