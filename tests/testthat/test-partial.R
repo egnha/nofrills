@@ -79,6 +79,44 @@ test_that("unnamed dots-arguments can be fixed", {
   expect_equal(out, partial(partial(partial(f, x = 1), 2), 3)())
 })
 
+test_that("dots persist", {
+  expect_dots <- function(...) {
+    fs <- eval(substitute(alist(...)))
+    for (f in fs) {
+      expectation <- bquote(expect_true("..." %in% names(formals(.(f)))))
+      eval.parent(expectation)
+    }
+  }
+
+  f <- function(x, y, ..., z = 3) c(x, y, ..., z)
+  expect_dots(
+    partial(f),
+    partial(f, 1),
+    partial(f, y = 2),
+    partial(f, z = 3),
+    partial(f, 1, 2),
+    partial(f, 1, z = 3),
+    partial(f, y = 2, z = 3),
+    partial(f, 1, 2, 3),
+    partial(f, 1, 2, a = 3),
+    partial(f, 1, 2, 3, 4),
+    partial(f, 1, 2, 3, a = 4),
+    partial(f, 1, 2, a = 3, 4),
+    partial(partial(f, 1), 2),
+    partial(partial(f, 1), 2, 3),
+    partial(partial(f, 1), 2, a = 3),
+    partial(partial(f, 1, 2), 3),
+    partial(partial(f, 1, 2), a = 3),
+    partial(partial(partial(f, 1), 2), 3),
+    partial(partial(partial(f, 1), 2), a = 3),
+    partial(f, 1, 2, 3, z = 5),
+    partial(f, 1, 2, 3, 4, z = 5),
+    partial(f, 1, 2, 3, a = 4, z = 5),
+    partial(f, 1, 2, a = 3, 4, z = 5),
+    partial(f, 1, 2, a = 3, b = 4, z = 5)
+  )
+})
+
 test_that("partial() is operationally idempotent", {
   f <- function(x, y, ..., z = 3) c(x, y, ..., z)
 
