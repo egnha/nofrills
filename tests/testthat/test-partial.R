@@ -245,6 +245,17 @@ test_that("error is signaled when value to fix doesn't match an argument", {
   )
 })
 
+test_that("error is signaled when trying to fix a previously fixed argument", {
+  f <- function(x, y, ...) NULL
+  expect_errors_with_message(
+    "Can't reset previously fixed argument\\(s\\)",
+    partial(partial(f, x = 1), x = 1),
+    partial(partial(f, 1), x = 1),
+    partial(partial(f, 1, a = 2), a = 2),
+    partial(partial(f, x = 1, y = 2), y = 2)
+  )
+})
+
 test_that("error is signaled when trying to call a fixed argument", {
   expect_error(partial(identity, x = 0)(x = 1), "unused argument \\(x = 1\\)")
 })
