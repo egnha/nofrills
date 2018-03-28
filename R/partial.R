@@ -118,14 +118,14 @@ name_bare_dots <- function(xs_new, xs_prev) {
   nms <- names(xs_new)
   is_bare_dot <- !nzchar(nms)
   n_bare_dots <- sum(is_bare_dot)
-  n_prev_dots <- sum(is_bare_dot(names(xs_prev)))
+  n_prev_dots <- sum(is_bare_dot_name(names(xs_prev)))
   # '__1', '__2', ... mimic names of elements of '...'
   nms[is_bare_dot] <- paste0("__", n_prev_dots + seq_len(n_bare_dots))
   nms
 }
 
-is_bare_dot <- function(xs)
-  grepl("^__[[:digit:]]*$", xs)
+is_bare_dot_name <- function(nms)
+  grepl("^__[[:digit:]]*$", nms)
 
 partial_ <- function(fun, fmls, fix, env) {
   bind_fixed_args(fix, env)
@@ -153,7 +153,7 @@ dot_args <- function(fix, fmls) {
   nms_fix <- names(fix)
   nms_dots <- nms_fix[nms_fix %notin% names_nondots(fmls)]
   dots <- eponymous(nms_dots)
-  names(dots)[is_bare_dot(nms_dots)] <- ""
+  names(dots)[is_bare_dot_name(nms_dots)] <- ""
   dots
 }
 
