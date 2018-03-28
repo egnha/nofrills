@@ -1,10 +1,9 @@
 expect_errors_with_message <- function(regexp, ...) {
   exprs <- eval(substitute(alist(...)))
-  expectations <- lapply(exprs, function(expr)
-    bquote(expect_error(.(expr), .(regexp)))
-  )
-  for (expectation in expectations)
+  for (expr in exprs) {
+    expectation <- bquote(expect_error(.(expr), .(regexp)))
     eval.parent(expectation)
+  }
 }
 
 # As of testthat 1.0.2.9000, objects are captured as quosures by `expect_*()`.
