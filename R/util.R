@@ -1,7 +1,8 @@
-names_nondots <- function(xs) {
-  nms <- names(xs)
-  nms[nms != "..."]
-}
+names_nondots <- function(xs)
+  nondots(names(xs))
+
+nondots <- function(xs)
+  xs[xs != "..."]
 
 eponymous <- function(nms) {
   names(nms) <- nms
