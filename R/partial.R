@@ -134,7 +134,7 @@ partial_ <- function(fun, fmls, fix, env) {
 }
 
 bind_fixed_args <- function(fix, env) {
-  newly_fixed <- !(names(fix) %in% names(env))
+  newly_fixed <- names(fix) %notin% names(env)
   all(newly_fixed) %because% "Can't reset previously fixed argument(s)"
   for (nm in names(fix))
     makeActiveBinding(nm, get_tidy(fix[[nm]]), env)
@@ -147,7 +147,7 @@ get_tidy <- function(q) {
 
 dots <- function(fix, fmls) {
   nms_fix <- names(fix)
-  nms_dots <- nms_fix[!(nms_fix %in% names_nondots(fmls))]
+  nms_dots <- nms_fix[nms_fix %notin% names_nondots(fmls)]
   names(nms_dots) <- nms_dots
   dots <- lapply(nms_dots, as.name)
   names(dots)[is_unnamed_dot(nms_dots)] <- ""
@@ -159,12 +159,12 @@ is_unnamed_dot <- function(x)
 
 truncate <- function(xs, cut) {
   nms_cut <- names(cut)
-  xs[!(names(xs) %in% nms_cut)]
+  xs[names(xs) %notin% nms_cut]
 }
 
 eponymous_args <- function(fmls, dots) {
   nms_fmls <- names(fmls)
-  if (!("..." %in% names(fmls)))
+  if ("..." %notin% names(fmls))
     return(eponymous(nms_fmls))
   c(eponymous(nms_fmls[nms_fmls != "..."]), dots, quote(...))
 }

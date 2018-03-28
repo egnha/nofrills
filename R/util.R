@@ -19,6 +19,9 @@ box <- function(x)
 subst <- function(expr, vals)
   do.call("substitute", list(expr, vals))
 
+`%notin%` <- function(these, those)
+  ! these %in% those
+
 `%are%` <- function(these, those)
   all(these %in% those)
 
