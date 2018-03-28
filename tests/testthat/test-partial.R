@@ -177,6 +177,67 @@ test_that("partial() is operationally idempotent", {
   )
 })
 
+test_that("arguments values are matched according to R's calling convention", {
+  f <- function(x, yyy, ..., zzz = 0) c(x, yyy, ..., zzz)
+
+  out <- c(1, 2, 0)
+  expect_equal(partial(f, x = 1)(2), out)
+  expect_equal(out, partial(f, 1)(2))
+
+  # 'yyy' may be partially matched
+  out <- c(1, 2, 0)
+  expect_equal(out, partial(f, x = 1, yyy = 2)())
+  expect_equal(out, partial(f, x = 1, y = 2)())
+  expect_equal(out, partial(f, x = 1, 2)())
+  expect_equal(out, partial(f, 2, x = 1)())
+  expect_equal(out, partial(f, yyy = 2, 1)())
+  expect_equal(out, partial(f, y = 2, 1)())
+  expect_equal(out, partial(f, 1, yyy = 2)())
+  expect_equal(out, partial(f, 1, y = 2)())
+  expect_equal(out, partial(f, 1, 2)())
+
+  out <- c(1, 2, 3, 0)
+  expect_equal(out, partial(f, x = 1, yyy = 2, 3)())
+  expect_equal(out, partial(f, x = 1, y = 2, 3)())
+  expect_equal(out, partial(f, 1, 2, 3)())
+  expect_equal(out, partial(f, x = 1, 2, 3)())
+  expect_equal(out, partial(f, 2, x = 1, 3)())
+  expect_equal(out, partial(f, yyy = 2, 1, 3)())
+  expect_equal(out, partial(f, y = 2, 1, 3)())
+  expect_equal(out, partial(f, 1, yyy = 2, 3)())
+  expect_equal(out, partial(f, 1, y = 2, 3)())
+  expect_equal(out, partial(f, 3, x = 1, yyy = 2)())
+  expect_equal(out, partial(f, 3, x = 1, y = 2)())
+  expect_equal(out, partial(f, 3, yyy = 2, x = 1)())
+  expect_equal(out, partial(f, 3, y = 2, x = 1)())
+
+  # 'z' not matched to 'zzz', since 'zzz' follows '...'
+  out <- c(1, 2, z = 3, 0)
+  expect_equal(out, partial(f, x = 1, yyy = 2, z = 3)())
+  expect_equal(out, partial(f, x = 1, y = 2, z = 3)())
+  expect_equal(out, partial(f, 1, 2, z = 3)())
+  expect_equal(out, partial(f, 1, z = 3, 2)())
+  expect_equal(out, partial(f, z = 3, 1, 2)())
+  expect_equal(out, partial(f, x = 1, z = 3, 2)())
+  expect_equal(out, partial(f, x = 1, 2, z = 3)())
+  expect_equal(out, partial(f, 2, x = 1, z = 3)())
+  expect_equal(out, partial(f, yyy = 2, z = 3, 1)())
+  expect_equal(out, partial(f, y = 2, z = 3, 1)())
+  expect_equal(out, partial(f, yyy = 2, 1, z = 3)())
+  expect_equal(out, partial(f, y = 2, 1, z = 3)())
+  expect_equal(out, partial(f, 1, yyy = 2, z = 3)())
+  expect_equal(out, partial(f, 1, y = 2, z = 3)())
+
+  # 'zzz' must be matched exactly, since it follows '...'
+  out <- c(1, 2, 3)
+  expect_equal(out, partial(f, zzz = 3)(1, 2))
+  expect_equal(out, partial(f, 1, zzz = 3)(2))
+  expect_equal(out, partial(f, zzz = 3, 1)(2))
+  expect_equal(out, partial(f, 1, 2, zzz = 3)())
+  expect_equal(out, partial(f, 1, zzz = 3, 2)())
+  expect_equal(out, partial(f, zzz = 3, 1, 2)())
+})
+
 test_that("argument values are captured lazily (by default)", {
   expect_error(partial(identity, x = stop("!")), NA)
   expect_error(partial(identity, x = stop("!"))(), "!")
