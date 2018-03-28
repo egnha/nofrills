@@ -12,7 +12,7 @@ test_that("function returned unchanged when no argument values to fix", {
     expect_identical(partial(f), f)
 })
 
-test_that("argument values can be fixed", {
+test_that("named argument values can be fixed", {
   f <- function(x, y) c(x, y)
   out <- c(0, 1)
 
@@ -27,6 +27,56 @@ test_that("argument values can be fixed", {
   fix_xy <- partial(f, x = 0, y = 1)
   expect_identical(fix_xy(), out)
   expect_error(fix_xy(dummy), "unused argument")
+})
+
+test_that("named dots-arguments can be fixed", {
+  f <- function(x, ..., y = 3) c(x, ..., y)
+
+  out <- c(1, a = 2, 3)
+  expect_equal(out, partial(f, a = 2)(1))
+  expect_equal(out, partial(f, 1, a = 2)())
+  expect_equal(out, partial(f, a = 2, 1)())
+
+  out <- c(1, a = 2, b = 2.5, 3)
+  expect_equal(out, partial(f, a = 2, b = 2.5)(1))
+  expect_equal(out, partial(f, a = 2, b = 2.5, 1)())
+  expect_equal(out, partial(partial(f, a = 2), b = 2.5)(1))
+  expect_equal(out, partial(partial(partial(f, 1), a = 2), b = 2.5)())
+  expect_equal(out, partial(partial(partial(f, a = 2), 1), b = 2.5)())
+  expect_equal(out, partial(partial(partial(f, a = 2), b = 2.5), 1)())
+
+  out <- c(1, a = 2, b = 3, 4)
+  expect_equal(out, partial(f, a = 2, b = 3, y = 4)(1))
+  expect_equal(out, partial(partial(f, a = 2, b = 3), y = 4)(1))
+  expect_equal(out, partial(partial(f, a = 2, y = 4), b = 3)(1))
+  expect_equal(out, partial(partial(f, y = 4, a = 2), b = 3)(1))
+  expect_equal(out, partial(partial(f, a = 2), b = 3, y = 4)(1))
+  expect_equal(out, partial(partial(f, y = 4), a = 2, b = 3)(1))
+  expect_equal(out, partial(partial(partial(f, y = 4), a = 2), b = 3)(1))
+  expect_equal(out, partial(partial(partial(f, a = 2), y = 4), b = 3)(1))
+  expect_equal(out, partial(partial(partial(f, a = 2), b = 3), y = 4)(1))
+})
+
+test_that("unnamed dots-arguments can be fixed", {
+  f <- function(x, ...) c(x, ...)
+
+  out <- c(1, 2)
+  expect_equal(out, partial(f, 1, 2)())
+  expect_equal(out, partial(f, 2, x = 1)())
+  expect_equal(out, partial(f, x = 1, 2)())
+
+  out <- c(1, 2, 3)
+  expect_equal(out, partial(f, 1, 2, 3)())
+  expect_equal(out, partial(f, x = 1, 2, 3)())
+  expect_equal(out, partial(f, 2, x = 1, 3)())
+  expect_equal(out, partial(f, 2, 3, x = 1)())
+  expect_equal(out, partial(partial(f, 1), 2, 3)())
+  expect_equal(out, partial(partial(f, x = 1), 2, 3)())
+  expect_equal(out, partial(partial(f, 1, 2), 3)())
+  expect_equal(out, partial(partial(f, x = 1, 2), 3)())
+  expect_equal(out, partial(partial(f, 2, x = 1), 3)())
+  expect_equal(out, partial(partial(partial(f, 1), 2), 3)())
+  expect_equal(out, partial(partial(partial(f, x = 1), 2), 3)())
 })
 
 test_that("partial() is operationally idempotent", {
