@@ -20,7 +20,7 @@ subst <- function(expr, vals)
   do.call("substitute", list(expr, vals))
 
 `%notin%` <- function(these, those)
-  ! these %in% those
+  match(these, those, nomatch = 0L) == 0L
 
 `%are%` <- function(these, those)
   all(these %in% those)
