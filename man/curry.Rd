@@ -4,6 +4,7 @@
 \alias{curry}
 \alias{curry_fn}
 \alias{curry2}
+\alias{uncurry}
 \title{Curry a function}
 \usage{
 curry(f, env = environment(f))
@@ -11,6 +12,8 @@ curry(f, env = environment(f))
 curry_fn(..., ..env = parent.frame())
 
 curry2(f)
+
+uncurry(f)
 }
 \arguments{
 \item{f}{Function.}
