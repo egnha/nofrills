@@ -135,8 +135,11 @@ decompose <- function(f) {
   box(decompose_(f))
 }
 
-decompose_ <- function(x)
-  environment(x)$`__pipeline__` %||% x
+decompose_ <- local({
+  get_pipeline <- getter("__pipeline__", mode = "list")
+  function(x)
+    get_pipeline(environment(x)) %||% x
+})
 
 #' @export
 print.CompositeFunction <- function(x, ...) {

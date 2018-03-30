@@ -176,5 +176,4 @@ departial <- function(..f) {
   departial_(..f) %||% ..f
 }
 
-departial_ <- function(..f)
-  environment(..f)$`__fun__`
+departial_ <- get_function("__fun__")

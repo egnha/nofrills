@@ -1,3 +1,27 @@
+get_function <- function(nm) {
+  get_function_ <- getter(nm, mode = "function")
+  function(x)
+    get_function_(environment(x))
+}
+
+getter <- function(nm, mode) {
+  force(nm)
+  force(mode)
+  function(env) {
+    if (is.null(env))
+      return(NULL)
+    get0(nm, envir = env, mode = mode, inherits = FALSE)
+  }
+}
+
+setter <- function(nm) {
+  force(nm)
+  function(x, value) {
+    assign(nm, value, envir = x)
+    invisible(x)
+  }
+}
+
 names_nondots <- function(xs)
   nondots(names(xs))
 

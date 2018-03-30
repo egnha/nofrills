@@ -131,7 +131,10 @@ curry2 <- local({
 
 #' @rdname curry
 #' @export
-uncurry <- function(f) {
-  is.function(f) %because% "Only functions can be uncurried"
-  environment(f)$`__uncurry__` %||% f
-}
+uncurry <- local({
+  uncurry_ <- get_function("__uncurry__")
+  function(f) {
+    is.function(f) %because% "Only functions can be uncurried"
+    uncurry_(f) %||% f
+  }
+})
