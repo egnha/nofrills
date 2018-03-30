@@ -110,14 +110,16 @@ compose <- function(...) {
   fn_cmps
 }
 
-flatten_fns <- function(...) {
-  fns <- unlist(lapply(list2(...), decompose_))
-  are_funcs(fns) %because% "Only functions or lists thereof can be composed"
-  fns
-}
+flatten_fns <- local({
+  are_funs <- function(xs)
+    !is_empty(xs) && all(vapply(xs, is.function, logical(1)))
 
-are_funcs <- function(xs)
-  !is_empty(xs) && all(vapply(xs, is.function, logical(1)))
+  function(...) {
+    fns <- unlist(lapply(list2(...), decompose_))
+    are_funs(fns) %because% "Only functions or lists thereof can be composed"
+    fns
+  }
+})
 
 #' @param f,g Functions.
 #' @rdname compose

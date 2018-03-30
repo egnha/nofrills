@@ -179,4 +179,4 @@ departial <- function(`__f`) {
   departial_(`__f`) %||% `__f`
 }
 
-departial_ <- get_function("__fun__")
+departial_ <- fun_getter("__fun__")

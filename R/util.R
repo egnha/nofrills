@@ -1,7 +1,7 @@
-get_function <- function(nm) {
-  get_function_ <- getter(nm, mode = "function")
+fun_getter <- function(nm) {
+  get_fun <- getter(nm, mode = "function")
   function(x)
-    get_function_(environment(x))
+    get_fun(environment(x))
 }
 
 getter <- function(nm, mode) {

@@ -65,7 +65,7 @@ curry <- local({
 #' @rdname curry
 #' @export
 uncurry <- local({
-  uncurry_ <- get_function("__uncurry__")
+  uncurry_ <- fun_getter("__uncurry__")
   function(f) {
     is.function(f) %because% "Only functions can be uncurried"
     uncurry_(f) %||% f
