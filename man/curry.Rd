@@ -2,33 +2,18 @@
 % Please edit documentation in R/curry.R
 \name{curry}
 \alias{curry}
-\alias{curry_fn}
-\alias{curry2}
 \alias{uncurry}
 \title{Curry a function}
 \usage{
-curry(f, env = environment(f))
-
-curry_fn(..., ..env = parent.frame())
-
-curry2(f)
+curry(f)
 
 uncurry(f)
 }
 \arguments{
 \item{f}{Function.}
-
-\item{env}{Environment of the curried function or \code{NULL}. If \code{NULL}, the
-environment of the curried function is the calling environment.}
-
-\item{...}{Function declaration, which supports
-\link[rlang:quasiquotation]{quasiquotation}.}
-
-\item{..env}{Environment in which to create the function (i.e., the
-function’s \link[base:environment]{enclosing environment}).}
 }
 \value{
-A function of nested single-argument functions.
+Curried function.
 }
 \description{
 \code{curry()} \href{https://en.wikipedia.org/wiki/Currying}{curries} functions—it
@@ -44,7 +29,7 @@ example, \code{curry()} produces the function\preformatted{function(x) {
 
 from the function \code{function(x, y, z) x * y * z}.
 
-\code{curry_fn()} produces a curried function from an \code{\link[=fn]{fn()}}-style function
+\code{fn_curry()} produces a curried function from an \code{\link[=fn]{fn()}}-style function
 declaration, which supports \link[rlang:quasiquotation]{quasiquotation} of a
 function’s body and (default) argument values.
 }
@@ -58,26 +43,7 @@ curry(function(x, y, z = 0) x + y + z)
 double <- curry(`*`)(2)
 double(3)  # 6
 
-curry_fn(x, y, z = 0 ~ x + y + z)
-curry_fn(target, ... ~ identical(target, ...))
-
-## Delay unquoting to embed argument values into the innermost function.
-## This makes generated source code readily comprehensible.
-
-# Assign objects a class
-classify_as <- curry_fn(class, x ~ `class<-`(x, QUQ(class)))
-as_this <- classify_as("this")
-as_this
-#> function (x)
-#> `class<-`(x, "this")
-
-# Evaluate functions on a given set of arguments
-do_call <- curry_fn(... = , f ~ f(QUQS(list(...))))
-do_call(x = 1, 2)
-#> function (f)
-#> f(x = 1, 2)
-
 }
 \seealso{
-\code{\link[=fn]{fn()}}, \code{\link[=partial]{partial()}}
+\code{\link[=fn_curry]{fn_curry()}}, \code{\link[=partial]{partial()}}
 }

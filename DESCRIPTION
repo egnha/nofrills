@@ -20,9 +20,9 @@ Collate:
     'util.R'
     'exprs.R'
     'fn.R'
-    'curry.R'
-    'partial.R'
     'compose.R'
+    'partial.R'
+    'curry.R'
     'deprecated.R'
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)

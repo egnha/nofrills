@@ -203,7 +203,7 @@ make_function <- function(args, body, env) {
 #'       foo(1)  #> [1] 2
 #'   ```
 #'
-#' @seealso [curry_fn()]
+#' @seealso [curry()]
 #'
 #' @examples
 #' fn(x ~ x + 1)
