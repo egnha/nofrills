@@ -50,12 +50,6 @@ devtools::install_github("egnha/nofrills")
 
 ## Usage
 
-    #> 
-    #> Attaching package: 'nofrills'
-    #> The following object is masked from 'package:stats':
-    #> 
-    #>     decompose
-
 ### Same syntax as `function()` but shorter
 
 ``` r
@@ -161,13 +155,11 @@ as_this <- classify_as("this")
 as_this
 #> function (x) 
 #> `class<-`(x, "this")
-#> <environment: 0x7ff7d6db8b88>
 
 do_call <- curry_fn(... = , f ~ f(QUQS(list(...))))
 do_call(x = 1, 2)
 #> function (f) 
 #> f(x = 1, 2)
-#> <environment: 0x7ff7d70de348>
 ```
 
 #### Curry a function with `curry()`
