@@ -90,14 +90,6 @@ test_that("unnamed dots-arguments can be fixed", {
 })
 
 test_that("dots persist", {
-  expect_dots <- function(...) {
-    fs <- eval(substitute(alist(...)))
-    for (f in fs) {
-      expectation <- bquote(expect_true("..." %in% names(formals(.(f)))))
-      eval.parent(expectation)
-    }
-  }
-
   f <- function(x, y, ..., z = 3) c(x, y, ..., z)
   expect_dots(
     partial(f),

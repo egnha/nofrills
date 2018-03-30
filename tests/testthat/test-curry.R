@@ -1,64 +1,246 @@
+expect_equal_formals <- function(f, g) {
+  expect_equal(formals(f), formals(g))
+}
+
 context("Currying")
 
-test_that("functions can be curried", {
-  expect_equal(curry(function() NULL), function() NULL)
-  expect_equal(curry(function(x) x), function(x) x)
-  expect_equal(curry(function(x, y) x + y), function(x) function(y) x + y)
-  expect_equal(curry(function(x = 0, y) x + y), function(x = 0) function(y) x + y)
-  expect_equal(curry(function(x, y = 0) x + y), function(x) function(y = 0) x + y)
-  expect_equal(curry(function(x, y, z) x + y + z), function(x) function(y) function(z) x + y + z)
+test_that("functions without arguments are already curried", {
+  f <- function() NULL
+  expect_identical(curry(f), f)
 })
 
-test_that("function declarations can be curried", {
-  expect_equal(curry_fn(~NULL), function() NULL)
-  expect_equal(curry_fn(x ~ x), function(x) x)
-  expect_equal(curry_fn(x, y ~ x + y), function(x) nofrills::fn(y = , ~x + y))
-  expect_equal(curry_fn(x = 0, y ~ x + y), function(x = 0) nofrills::fn(y = , ~x + y))
-  expect_equal(curry_fn(x, y = 0 ~ x + y), function(x) nofrills::fn(y = 0, ~x + y))
-  expect_equal(curry_fn(x, y, z ~ x + y + z), function(x) function(y) nofrills::fn(z = , ~x + y + z))
+test_that("functions of a single argument are already curried", {
+  fs <- list(function(x) NULL, function(...) NULL)
+  for (f in fs)
+    expect_identical(curry(f), f)
 })
 
-test_that("dots (...) are treated as a single argument", {
-  expect_equal(curry(function(...) NULL), function(...) NULL)
-  expect_equal(curry(function(x, ...) NULL), function(x) function(...) NULL)
-  expect_equal(curry(function(..., x) NULL), function(...) function(x) NULL)
-  expect_equal(curry_fn(... ~ NULL), function(...) NULL)
-  expect_equal(curry_fn(x, ... ~ NULL), function(x) nofrills::fn(... = , ~NULL))
-  expect_equal(curry_fn(... = , x ~ NULL), function(...) nofrills::fn(x = , ~NULL))
+test_that("function value is returned for a complete set of arguments", {
+  f <- function(x, ...) c(x, ...)
+  fc <- curry(f)
+  expect_equal(fc(1), f(1))
+  expect_equal(fc(1, 2), f(1, 2))
+
+  f <- function(x = 0, ...) c(x, ...)
+  fc <- curry(f)
+  expect_equal(fc(), f())
+  expect_equal(fc(1), f(1))
+
+  f <- function(..., x) c(x, ...)
+  fc <- curry(f)
+  expect_equal(fc(x = 0), f(x = 0))
+  expect_equal(fc(x = 0, 1), f(x = 0, 1))
+
+  f <- function(x, y) c(x, y)
+  fc <- curry(f)
+  expect_equal(fc(1, 2), f(1, 2))
+
+  f <- function(x, y = 1) c(x, y)
+  fc <- curry(f)
+  expect_equal(fc(0), f(0))
+  expect_equal(fc(0, 1), f(0, 1))
+
+  f <- function(x = 0, y) c(x, y)
+  fc <- curry(f)
+  expect_equal(fc(y = 1), f(y = 1))
+  expect_equal(fc(0, 1), f(0, 1))
+
+  f <- function(x = 0, y = 1) c(x, y)
+  fc <- curry(f)
+  expect_equal(fc(), f())
+
+  f <- function(x, y, ..., z = 2) c(x, y, ..., z)
+  fc <- curry(f)
+  expect_equal(fc(0, 1), f(0, 1))
 })
 
-test_that("function environment can be set", {
-  env <- new.env()
-  expect_equal(environment(curry(function(x, y) NULL, env)), env)
-  expect_equal(environment(curry_fn(x, y ~ NULL, ..env = env)), env)
+test_that("curried function is returned for an incomplete set of arguments", {
+  f <- function(u, v, w, x, y, ...) c(u, v, w, x, y, ...)
+
+  fc <- curry(f)(1)
+  expect_equal_formals(fc, function(v, w, x, y, ...) {})
+  expect_equal(fc(2, 3, 4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1, 2)
+  expect_equal_formals(fc, function(w, x, y, ...) {})
+  expect_equal(fc(3, 4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(2, u = 1)
+  expect_equal_formals(fc, function(w, x, y, ...) {})
+  expect_equal(fc(3, 4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1)(2)
+  expect_equal_formals(fc, function(w, x, y, ...) {})
+  expect_equal(fc(3, 4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(v = 2)(1)
+  expect_equal_formals(fc, function(w, x, y, ...) {})
+  expect_equal(fc(3, 4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1, 2, 3)
+  expect_equal_formals(fc, function(x, y, ...) {})
+  expect_equal(fc(4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1)(2, 3)
+  expect_equal_formals(fc, function(x, y, ...) {})
+  expect_equal(fc(4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1, 2)(3)
+  expect_equal_formals(fc, function(x, y, ...) {})
+  expect_equal(fc(4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1)(2)(3)
+  expect_equal_formals(fc, function(x, y, ...) {})
+  expect_equal(fc(4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1, 2, 3, 4)
+  expect_equal_formals(fc, function(y, ...) {})
+  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1, 2, 3)(4)
+  expect_equal_formals(fc, function(y, ...) {})
+  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1, 2)(3, 4)
+  expect_equal_formals(fc, function(y, ...) {})
+  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1, 2)(3)(4)
+  expect_equal_formals(fc, function(y, ...) {})
+  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1)(2, 3, 4)
+  expect_equal_formals(fc, function(y, ...) {})
+  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1)(2, 3)(4)
+  expect_equal_formals(fc, function(y, ...) {})
+  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1)(2)(3, 4)
+  expect_equal_formals(fc, function(y, ...) {})
+  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1)(2)(3)(4)
+  expect_equal_formals(fc, function(y, ...) {})
+  expect_equal(fc(5), c(1, 2, 3, 4, 5))
 })
 
-test_that("function environment is preserved", {
-  env <- new.env()
-  foo <- evalq(function(x, y) NULL, env)
-  expect_equal(environment(curry(foo)), env)
+test_that("dot-arguments can be set", {
+  f <- function(x, y, z, ..., w = 4) c(x, y, z, w, ...)
+
+  fc <- curry(f)(a = 5)
+  expect_equal_formals(fc, f)
+  expect_equal(fc(1, 2, 3), c(1, 2, 3, 4, a = 5))
+
+  fc <- curry(f)(a = 5, b = 6)
+  expect_equal_formals(fc, f)
+  expect_equal(fc(1, 2, 3), c(1, 2, 3, 4, a = 5, b = 6))
+
+  fc <- curry(f)(a = 5)(b = 6)
+  expect_equal_formals(fc, f)
+  expect_equal(fc(1, 2, 3), c(1, 2, 3, 4, a = 5, b = 6))
+
+  fc <- curry(f)(1, a = 5)
+  expect_equal_formals(fc, function(y, z, ..., w = 4) {})
+  expect_equal(fc(2, 3), c(1, 2, 3, 4, a = 5))
+
+  fc <- curry(f)(1)(a = 5)
+  expect_equal_formals(fc, function(y, z, ..., w = 4) {})
+  expect_equal(fc(2, 3), c(1, 2, 3, 4, a = 5))
+
+  fc <- curry(f)(a = 5)(1)
+  expect_equal_formals(fc, function(y, z, ..., w = 4) {})
+  expect_equal(fc(2, 3), c(1, 2, 3, 4, a = 5))
+
+  fc <- curry(f)(1, 2)(a = 5)
+  expect_equal_formals(fc, function(z, ..., w = 4) {})
+  expect_equal(fc(3), c(1, 2, 3, 4, a = 5))
+
+  fc <- curry(f)(1)(2)(a = 5)
+  expect_equal_formals(fc, function(z, ..., w = 4) {})
+  expect_equal(fc(3), c(1, 2, 3, 4, a = 5))
+
+  fc <- curry(f)(1)(a = 5)(2)
+  expect_equal_formals(fc, function(z, ..., w = 4) {})
+  expect_equal(fc(3), c(1, 2, 3, 4, a = 5))
+
+  fc <- curry(f)(a = 5)(1)(2)
+  expect_equal_formals(fc, function(z, ..., w = 4) {})
+  expect_equal(fc(3), c(1, 2, 3, 4, a = 5))
+
+  fc <- curry(f)(a = 5)(1, 2)
+  expect_equal_formals(fc, function(z, ..., w = 4) {})
+  expect_equal(fc(3), c(1, 2, 3, 4, a = 5))
+
+  out <- curry(f)(1, 2, 3, a = 5, 6)
+  expect_equal(out, f(1, 2, 3, a = 5, 6))
+
+  out <- curry(f)(a = 5, 1, 2, 3, 6)
+  expect_equal(out, f(a = 5, 1, 2, 3, 6))
 })
 
-test_that("curried function declarations support argument value unquoting", {
-  zero <- 0
-  expect_equal(curry_fn(x = !!zero, y ~ NULL), function(x = 0) nofrills::fn(y = , ~NULL))
+test_that("formal argument is dropped once it is curried away", {
+  f <- function(x, y = "y", ..., z = "z", w) NULL
+  fc <- curry(f)
+
+  expect_equal_formals(fc(0), function(y = "y", ..., z = "z", w) {})
+  expect_equal_formals(fc(y = 0), function(x, ..., z = "z", w) {})
+  expect_equal_formals(fc(z = 0), function(x, y = "y", ..., w) {})
+  expect_equal_formals(fc(w = 0), function(x, y = "y", ..., z = "z") {})
 })
 
-test_that("curried function declarations support argument name unquoting", {
-  arg <- "x"
-  expect_equal(curry_fn(!!arg := 0, y ~ NULL), function(x = 0) nofrills::fn(y = , ~NULL))
+test_that("dots persist", {
+  f <- function(u, v, w = "w", ..., x = "x", y) NULL
+  fc <- curry(f)
+  expect_dots(
+    fc(1),
+    fc(1, 2),
+    fc(1)(2),
+    fc(1, 2, 3),
+    fc(1, 2)(3),
+    fc(1)(2, 3),
+    fc(1)(2)(3),
+    fc(1, 2, 3, 4),
+    fc(1, 2, 3, 4, a = 5),
+    fc(x = "x", 1, 2, 3, 4, a = 5),
+    fc(y = "y", u = 1, a = 5)
+  )
 })
 
-test_that("curried function declarations support argument splicing", {
-  f <- function(x, y = 1, ..., z) x + y + z
-  f_curried <- curry_fn(x, y = 1, ... = , z ~ x + y + z)
-  fmls <- formals(f)
-  expect_equal_(curry_fn(!!!fmls, ~x + y + z), f_curried)
-  expect_equal_(curry_fn(!!!formals(f), ~x + y + z), f_curried)
+context("Uncurrying")
+
+test_that("uncurried function is only callable on a complete set of arguments", {
+  fc <- curry(function(x, y, ..., z) c(x, y, z, ...))
+
+  fu <- uncurry(fc(1))
+  expect_equal_formals(fu, function(y, ..., z) {})
+  expect_equal(fu(2, z = 3), c(1, 2, 3))
+  expect_equal(fu(2, z = 3), c(1, 2, 3))
+  expect_error(fu(2), "argument \"z\" is missing")
+  expect_error(fu(z = 3), "argument \"y\" is missing")
+
+  fu <- uncurry(fc(1, 2))
+  expect_equal_formals(fu, function(..., z) {})
+  expect_equal(fu(z = 3), c(1, 2, 3))
+  expect_error(fu(3), "argument \"z\" is missing")
+
+  fu <- uncurry(fc(z = 3))
+  expect_equal_formals(fu, function(x, y, ...) {})
+  expect_equal(fu(1, 2), c(1, 2, 3))
+  expect_error(fu(1), "argument \"y\" is missing")
+  expect_error(fu(y = 2), "argument \"x\" is missing")
+
+  fu <- uncurry(fc(a = 1))
+  expect_equal_formals(fu, function(x, y, ..., z) {})
+  expect_equal(fu(1, 2, z = 3), c(1, 2, 3, a = 1))
+  expect_error(fu(1, 2), "argument \"z\" is missing")
+  expect_error(fu(1, z = 3), "argument \"y\" is missing")
+  expect_error(fu(y = 2, z = 3), "argument \"x\" is missing")
 })
 
-test_that("curried function declarations support body unquoting", {
-  f <- function(x, y) x + y
-  f_curried <- curry_fn(x, y ~ x + y)
-  expect_equal(curry_fn(x, y ~ !!body(f)), f_curried)
+test_that("error signaled when attempting to uncurry a non-function", {
+  non_fs <- list(NULL, quote(function(x) NULL), quote(identity))
+  for (x in non_fs)
+    expect_error(uncurry(x), "Only functions can be uncurried")
 })
