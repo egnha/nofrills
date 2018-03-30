@@ -2,21 +2,21 @@
 #'
 #' @description
 #' `partial()` enables
-#' [partial function application](https://en.wikipedia.org/wiki/Partial_application):
+#' [partial application](https://en.wikipedia.org/wiki/Partial_application):
 #' given a function, it fixes the value of selected arguments to produce a
 #' function of the remaining arguments.
 #'
 #' `departial()` \dQuote{inverts} the application of `partial()` by returning
 #' the original function.
 #'
-#' @param ..f Function.
-#' @param ... Argument values of `..f` to fix, specified by name. Captured as
-#'   [quosures][rlang::quotation]. [Quasiquotation][rlang::quasiquotation] and
-#'   [splicing][rlang::quasiquotation] are supported (see _Examples_).
+#' @param __f Function.
+#' @param ... Argument values of `` `__f` `` to fix, specified by name. Captured
+#'   as [quosures][rlang::quotation]. [Quasiquotation][rlang::quasiquotation]
+#'   and [splicing][rlang::quasiquotation] are supported (see _Examples_).
 #'
 #' @return `partial()` returns a function whose [formals][base::formals()] are a
-#'   literal truncation of the formals of `..f()` (as a closure) by the fixed
-#'   arguments. `partial(..f)` is identical to `..f`.
+#'   literal truncation of the formals of `` `__f`()`` (as a closure) by the
+#'   fixed arguments. ``partial(`__f`)`` is identical to `` `__f` ``.
 #'
 #' @section Technical Note:
 #'   Even while `partial()` truncates formals, it remains compatible with
@@ -33,7 +33,7 @@
 #'   produce its value and `partial(ls, all.names = TRUE)()` calls
 #'   `ls(all.names = TRUE)` from an (ephemeral) execution environment.
 #'
-#' @seealso [curry()]
+#' @seealso [curry()], [fn_curry()]
 #'
 #' @examples
 #' draw3 <- partial(sample, size = 3)
@@ -80,26 +80,17 @@
 partial <- local({
   quos_match <- function(fmls) {
     mc <- match.call(fn_template_partial, sys.call(-1))
-    dots <- mc[names(mc) != "..f"]
+    dots <- mc[names(mc) != "__f"]
     eval(call_quos_match(dots, fmls), parent.frame(2))
   }
 
-  function(..f, ...) {
-    f <- as_closure(..f)
+  function(`__f`, ...) {
+    f <- as_closure(`__f`)
     fmls <- formals(f)
     fix <- quos_match(fmls)  # '...' consumed by introspection
     if (is_empty(fix))
-      return(..f)
-    dp <- departial_(..f)
-    if (is.null(dp)) {
-      fun <- f
-      env <- new.env(parent = environment(f))
-    } else {
-      fun <- dp
-      env <- environment(f)
-    }
-    names(fix) <- name_bare_dots(fix, env)
-    partial_(fun, fmls, fix, env)
+      return(`__f`)
+    partial_(departial_(`__f`) %||% f, fmls, fix, environment(f))
   }
 })
 
@@ -114,11 +105,11 @@ call_quos_match <- function(dots, fmls) {
   call
 }
 
-name_bare_dots <- function(xs_new, xs_prev) {
-  nms <- names(xs_new)
+name_bare_dots <- function(xs, env) {
+  nms <- names(xs)
   is_bare_dot <- !nzchar(nms)
   n_bare_dots <- sum(is_bare_dot)
-  n_prev_dots <- sum(is_bare_dot_name(names(xs_prev)))
+  n_prev_dots <- sum(is_bare_dot_name(names_fixed_args(env)))
   # '__1', '__2', ... mimic names of elements of '...'
   nms[is_bare_dot] <- paste0("__", n_prev_dots + seq_len(n_bare_dots))
   nms
@@ -127,21 +118,33 @@ name_bare_dots <- function(xs_new, xs_prev) {
 is_bare_dot_name <- function(nms)
   grepl("^__[[:digit:]]*$", nms)
 
-partial_ <- function(fun, fmls, fix, env) {
-  bind_fixed_args(fix, env)
+names_fixed_args     <- getter("__names_fixed_args__", mode = "character")
+`names_fixed_args<-` <- setter("__names_fixed_args__")
+
+partial_ <- function(fun, fmls, fix, parent) {
+  names(fix) <- name_bare_dots(fix, parent)
+  env <- bind_fixed_args(fix, parent)
   env$`__fun__` <- fun
   fmls_fun <- formals(fun)
-  env$`__dots__` <- c(env$`__dots__`, dot_args(fix, fmls_fun))
+  dots(env) <- c(dots(parent), dot_args(fix, fmls_fun))
   fmls_trunc <- truncate(fmls, cut = fix)
-  args <- eponymous_args(fmls_fun, env$`__dots__`)
+  args <- eponymous_args(fmls_fun, dots(env))
   fn(!!! fmls_trunc, ~ `__fun__`(!!! args), ..env = env)
 }
 
-bind_fixed_args <- function(fix, env) {
-  newly_fixed <- names(fix) %notin% names(env)
-  all(newly_fixed) %because% "Can't reset previously fixed argument(s)"
-  for (nm in names(fix))
+dots     <- getter("__dots__", mode = "list")
+`dots<-` <- setter("__dots__")
+
+bind_fixed_args <- function(fix, parent) {
+  fixed_new <- names(fix)
+  fixed_prev <- names_fixed_args(parent)
+  all(fixed_new %notin% fixed_prev) %because%
+    "Can't reset previously fixed argument(s)"
+  env <- new.env(parent = parent)
+  names_fixed_args(env) <- c(fixed_prev, fixed_new)
+  for (nm in fixed_new)
     makeActiveBinding(nm, get_tidy(fix[[nm]]), env)
+  env
 }
 
 get_tidy <- function(q) {
@@ -171,9 +174,9 @@ eponymous_args <- function(fmls, dots) {
 
 #' @rdname partial
 #' @export
-departial <- function(..f) {
-  is.function(..f) %because% "Only functions can be de-partialized"
-  departial_(..f) %||% ..f
+departial <- function(`__f`) {
+  is.function(`__f`) %because% "Only functions can be de-partialized"
+  departial_(`__f`) %||% `__f`
 }
 
 departial_ <- get_function("__fun__")

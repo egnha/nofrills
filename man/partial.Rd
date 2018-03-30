@@ -5,25 +5,25 @@
 \alias{departial}
 \title{Fix a number of arguments to a function}
 \usage{
-partial(..f, ...)
+partial(`__f`, ...)
 
-departial(..f)
+departial(`__f`)
 }
 \arguments{
-\item{..f}{Function.}
+\item{__f}{Function.}
 
-\item{...}{Argument values of \code{..f} to fix, specified by name. Captured as
-\link[rlang:quotation]{quosures}. \link[rlang:quasiquotation]{Quasiquotation} and
-\link[rlang:quasiquotation]{splicing} are supported (see \emph{Examples}).}
+\item{...}{Argument values of \code{`__f`} to fix, specified by name. Captured
+as \link[rlang:quotation]{quosures}. \link[rlang:quasiquotation]{Quasiquotation}
+and \link[rlang:quasiquotation]{splicing} are supported (see \emph{Examples}).}
 }
 \value{
 \code{partial()} returns a function whose \link[base:formals]{formals} are a
-literal truncation of the formals of \code{..f()} (as a closure) by the fixed
-arguments. \code{partial(..f)} is identical to \code{..f}.
+literal truncation of the formals of \code{`__f`()} (as a closure) by the
+fixed arguments. \code{partial(`__f`)} is identical to \code{`__f`}.
 }
 \description{
 \code{partial()} enables
-\href{https://en.wikipedia.org/wiki/Partial_application}{partial function application}:
+\href{https://en.wikipedia.org/wiki/Partial_application}{partial application}:
 given a function, it fixes the value of selected arguments to produce a
 function of the remaining arguments.
 
@@ -90,5 +90,5 @@ args(partial(foo, x = 1, y = 2, z = 3))
 
 }
 \seealso{
-\code{\link[=curry]{curry()}}
+\code{\link[=curry]{curry()}}, \code{\link[=fn_curry]{fn_curry()}}
 }
