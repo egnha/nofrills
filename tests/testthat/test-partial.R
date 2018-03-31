@@ -407,9 +407,7 @@ test_that("function is not mutated, i.e., partial() has no side effects", {
         # No change in environment of f0 (which is locked)
         expect_error(eval(expr_partial), NA)
         # No mutation of formals, body or attributes of f0
-        expect_true(
-          identical(f, f0, ignore.bytecode = FALSE, ignore.srcref = FALSE)
-        )
+        expect_true(identical(f, f0, ignore.bytecode = FALSE))
       }
     }
   }
