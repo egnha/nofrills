@@ -15,6 +15,27 @@ test_that("functions of a single argument are already curried", {
     expect_identical(curry(f), f)
 })
 
+test_that("currying is idempotent", {
+  fs <- list(
+    function() NULL,
+    function(x) NULL,
+    function(x, ...) NULL,
+    function(x, y, ...) NULL,
+    function(x, y, ..., z = "z") NULL
+  )
+  for (f in fs) {
+    fc <- curry(f)
+    fcc <- curry(fc)
+    fccc <- curry(fcc)
+    expect_identical(fc, fcc)
+    expect_identical(fc, fccc)
+
+    # Identical, were it not for intervening ephemeral calling environments
+    expect_equal(curry(f), curry(curry(f)))
+    expect_equal(curry(f), curry(curry(curry(f))))
+  }
+})
+
 test_that("function value is returned for a complete set of arguments", {
   f <- function(x, ...) c(x, ...)
   fc <- curry(f)

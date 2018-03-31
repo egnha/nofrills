@@ -43,7 +43,7 @@ curry <- local({
 
   function(f) {
     fmls <- formals(as_closure(f))
-    if (length(fmls) <= 1)
+    if (length(fmls) <= 1 || is_curried(f))
       return(f)
     `__uncurry__` <- f  # Sentinel value for uncurrying
     `__partialize__` <- function() {
@@ -61,6 +61,9 @@ curry <- local({
     f_curried
   }
 })
+
+is_curried <- function(f)
+  c("__uncurry__", "__partialize__") %are% names(environment(f))
 
 #' @rdname curry
 #' @export
