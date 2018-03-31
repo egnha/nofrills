@@ -4,15 +4,31 @@ expect_equal_formals <- function(f, g) {
 
 context("Currying")
 
-test_that("functions without arguments are already curried", {
+test_that("function without arguments is already curried", {
   f <- function() NULL
   expect_identical(curry(f), f)
+  expect_true(is_curried(f))
 })
 
-test_that("functions of a single argument are already curried", {
+test_that("function of a single argument or just dots is already curried", {
   fs <- list(function(x) NULL, function(...) NULL)
-  for (f in fs)
+  for (f in fs) {
     expect_identical(curry(f), f)
+    expect_true(is_curried(f))
+  }
+})
+
+test_that("function whose arguments all have values is already curried", {
+  fs <- list(
+    function(x = 1) NULL,
+    function(x = 1, ...) NULL,
+    function(x = 1, y = 2) NULL,
+    function(x = 1, y = 2, ...) NULL
+  )
+  for (f in fs) {
+    expect_identical(curry(f), f)
+    expect_true(is_curried(f))
+  }
 })
 
 test_that("currying is idempotent", {

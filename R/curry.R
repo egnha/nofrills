@@ -38,12 +38,12 @@
 curry <- local({
   `__callable__` <- function(f) {
     fmls <- formals(f)
-    length(fmls) == 0 || all(fmls[names_nondots(fmls)] != quote(expr = ))
+    length(fmls) == 0 || all_have_values(fmls)
   }
 
   function(f) {
-    fmls <- formals(as_closure(f))
-    if (length(fmls) <= 1 || is_curried(f))
+    f_closure <- as_closure(f)
+    if (is_curried_(f_closure))
       return(f)
     `__uncurry__` <- f  # Sentinel value for uncurrying
     `__partialize__` <- function() {
@@ -57,13 +57,35 @@ curry <- local({
         return(p())
       nofrills::curry(p)
     }
-    formals(f_curried) <- fmls
+    formals(f_curried) <- formals(f_closure)
     f_curried
   }
 })
 
-is_curried <- function(f)
-  c("__uncurry__", "__partialize__") %are% names(environment(f))
+all_have_values <- function(fmls)
+  all(fmls[names_nondots(fmls)] != quote(expr = ))
+
+#' @param x Object to test.
+#'
+#' @return `is_curried(x)` is `TRUE` when `x` is a curried function, and
+#'   `FALSE`, otherwise.
+#'
+#' @rdname curry
+#' @export
+is_curried <- function(x) {
+  if (is.function(x))
+    return(is_curried_(as_closure(x)))
+  FALSE
+}
+
+is_curried_ <- function(f) {
+  fmls <- formals(f)
+  length(fmls) <= 1 || all_have_values(fmls) || {
+    env <- environment(f)
+    exists("__uncurry__", envir = env, mode = "function", inherits = FALSE) &&
+      exists("__partialize__", envir = env, mode = "function", inherits = FALSE)
+  }
+}
 
 #' @rdname curry
 #' @export

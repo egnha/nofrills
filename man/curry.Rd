@@ -2,18 +2,26 @@
 % Please edit documentation in R/curry.R
 \name{curry}
 \alias{curry}
+\alias{is_curried}
 \alias{uncurry}
 \title{Curry a function}
 \usage{
 curry(f)
 
+is_curried(x)
+
 uncurry(f)
 }
 \arguments{
 \item{f}{Function.}
+
+\item{x}{Object to test.}
 }
 \value{
 Curried function.
+
+\code{is_curried(x)} is \code{TRUE} when \code{x} is a curried function, and
+\code{FALSE}, otherwise.
 }
 \description{
 \code{curry()} \href{https://en.wikipedia.org/wiki/Currying}{curries} functions—it
