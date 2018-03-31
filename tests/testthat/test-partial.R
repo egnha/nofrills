@@ -383,6 +383,45 @@ test_that("fixed arguments are not missing", {
   expect_identical(f(), "x is missing")
 })
 
+test_that("function is not mutated, i.e., partial() has no side effects", {
+  exprs_partial_fun <- alist(
+    partial(f),
+    partial(f, 0),
+    partial(f, y = 0),
+    partial(f, y = 0, 0),
+    partial(f, a = 0),
+    partial(f, 0, 0),
+    partial(f, 0, 0, y = 0)
+  )
+  expect_no_mutation_when_partializing <- function(...) {
+    exprs_fun <- eval(substitute(alist(...)))
+    for (expr in exprs_fun) {
+      expr <- substitute(expr)
+      f0 <- local({
+        local <- "local"
+        eval(expr)
+      })
+      lockEnvironment(environment(f0), bindings = TRUE)
+      f <- f0
+      for (expr_partial in exprs_partial_fun) {
+        # No change in environment of f0 (which is locked)
+        expect_error(eval(expr_partial), NA)
+        # No mutation of formals, body or attributes of f0
+        expect_true(
+          identical(f, f0, ignore.bytecode = FALSE, ignore.srcref = FALSE)
+        )
+      }
+    }
+  }
+
+  expect_no_mutation_when_partializing(
+    function(x, ..., y = "y") local,
+    partial(function(x, ..., y = "y") local, b = 0),
+    partial(function(z, x, ..., y = "y") local, 0),
+    partial(partial(function(z, x, ..., y = "y") local, 0), b = 0)
+  )
+})
+
 context("Inverting partial function application")
 
 test_that("departial() for a partial function recovers the original function", {
