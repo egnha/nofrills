@@ -1,38 +1,45 @@
 #' Curry a function
 #'
 #' @description
-#' `curry()` [curries](https://en.wikipedia.org/wiki/Currying) functions—it
-#' reconstitutes a function as a succession of single-argument functions. For
-#' example, `curry()` produces the function
-#' ```
-#' function(x) {
-#'   function(y) {
-#'     function(z) {
-#'       x * y * z
-#'     }
-#'   }
-#' }
-#' ```
-#' from the function `function(x, y, z) x * y * z`.
-#'
-#' `fn_curry()` produces a curried function from an [fn()]-style function
-#' declaration, which supports [quasiquotation][rlang::quasiquotation] of a
-#' function’s body and (default) argument values.
-#'
-#' @details Dots (`...`) are treated as a unit when currying. For example,
-#'   `curry()` transforms `function(x, ...) list(x, ...)` to
-#'   `function(x) { function(...) list(x, ...) }`.
+#' `curry()` [curries](https://en.wikipedia.org/wiki/Currying) functions in a
+#' manner congenial to R’s calling convention.
 #'
 #' @param f Function.
 #'
-#' @return Curried function.
+#' @return `curry()` returns a curried function.
 #'
 #' @seealso [fn_curry()], [partial()]
 #'
 #' @examples
-#' curry(function(x, y, z = 0) x + y + z)
+#' f <- function(x, y, ..., z = 3) c(x, y, z, ...)
+#' fc <- curry(f)
+#' stopifnot(
+#'   identical(
+#'     formals(fc(1)),
+#'     formals(function(y, ..., z = 3) {})
+#'   ),
+#'   identical(fc(1)(2),     c(1, 2, 3)),
+#'   identical(fc(1, 2),     c(1, 2, 3)),
+#'   identical(fc(2, x = 1), c(1, 2, 3)),
+#'   identical(
+#'     formals(fc(1, a = 1)),
+#'     formals(function(y, ..., z = 3) {})
+#'   ),
+#'   identical(fc(1, a = 1)(2), c(1, 2, 3, a = 1)),
+#'   identical(fc(1, 2, a = 1), c(1, 2, 3, a = 1))
+#' )
+#'
+#' stopifnot(
+#'   !is_curried(f),
+#'   is_curried(fc),
+#'   is_curried(function() NULL),
+#'   is_curried(function(x) NULL),
+#'   is_curried(function(...) NULL),
+#'   is_curried(function(x = 1, y = 2) NULL)
+#' )
+#'
 #' double <- curry(`*`)(2)
-#' double(3)  # 6
+#' stopifnot(double(3) == 6)
 #'
 #' @export
 curry <- local({
@@ -96,6 +103,11 @@ uncurry <- local({
   }
 })
 
+#' @description
+#' `fn_curry()` produces a curried function from an [fn()]-style function
+#' declaration, which supports [quasiquotation][rlang::quasiquotation] of a
+#' function’s body and (default) argument values.
+#'
 #' @examples
 #' fn_curry(x, y, z = 0 ~ x + y + z)
 #' fn_curry(target, x, ... ~ identical(x, target, ...))
@@ -103,14 +115,16 @@ uncurry <- local({
 #' # Assign objects a class
 #' classify_as <- fn_curry(class, x ~ `class<-`(x, class))
 #' as_this <- classify_as("this")
-#' as_this(NA)
+#' stopifnot(inherits(as_this(NA), "this"))
 #'
 #' # Evaluate functions on a given set of arguments
 #' do_call <- fn_curry(... = , ..f ~ do.call(..f, list(...)))
 #' apply_fn <- do_call(1, 2)
-#' apply_fn(..f = `*`)
-#' apply_fn(..f = `/`)
-#' apply_fn(..f = c)
+#' stopifnot(
+#'   apply_fn(..f = `*`) == 2,
+#'   apply_fn(..f = `/`) == 0.5,
+#'   apply_fn(..f = c)   == c(1, 2)
+#' )
 #'
 #' @rdname fn
 #' @export

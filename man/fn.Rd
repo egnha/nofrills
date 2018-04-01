@@ -34,6 +34,10 @@ are equivalent
 \dQuote{burn in} values at the point of function creation (see
 \emph{Pure functions via quasiquotation})
 }
+
+\code{fn_curry()} produces a curried function from an \code{\link[=fn]{fn()}}-style function
+declaration, which supports \link[rlang:quasiquotation]{quasiquotation} of a
+function’s body and (default) argument values.
 }
 \section{Function declarations}{
  A \emph{function declaration} is an expression
@@ -178,14 +182,16 @@ fn_curry(target, x, ... ~ identical(x, target, ...))
 # Assign objects a class
 classify_as <- fn_curry(class, x ~ `class<-`(x, class))
 as_this <- classify_as("this")
-as_this(NA)
+stopifnot(inherits(as_this(NA), "this"))
 
 # Evaluate functions on a given set of arguments
 do_call <- fn_curry(... = , ..f ~ do.call(..f, list(...)))
 apply_fn <- do_call(1, 2)
-apply_fn(..f = `*`)
-apply_fn(..f = `/`)
-apply_fn(..f = c)
+stopifnot(
+  apply_fn(..f = `*`) == 2,
+  apply_fn(..f = `/`) == 0.5,
+  apply_fn(..f = c)   == c(1, 2)
+)
 
 }
 \seealso{

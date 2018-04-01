@@ -18,38 +18,45 @@ uncurry(f)
 \item{x}{Object to test.}
 }
 \value{
-Curried function.
+\code{curry()} returns a curried function.
 
 \code{is_curried(x)} is \code{TRUE} when \code{x} is a curried function, and
 \code{FALSE}, otherwise.
 }
 \description{
-\code{curry()} \href{https://en.wikipedia.org/wiki/Currying}{curries} functions—it
-reconstitutes a function as a succession of single-argument functions. For
-example, \code{curry()} produces the function\preformatted{function(x) {
-  function(y) {
-    function(z) {
-      x * y * z
-    }
-  }
-}
-}
-
-from the function \code{function(x, y, z) x * y * z}.
-
-\code{fn_curry()} produces a curried function from an \code{\link[=fn]{fn()}}-style function
-declaration, which supports \link[rlang:quasiquotation]{quasiquotation} of a
-function’s body and (default) argument values.
-}
-\details{
-Dots (\code{...}) are treated as a unit when currying. For example,
-\code{curry()} transforms \code{function(x, ...) list(x, ...)} to
-\code{function(x) { function(...) list(x, ...) }}.
+\code{curry()} \href{https://en.wikipedia.org/wiki/Currying}{curries} functions in a
+manner congenial to R’s calling convention.
 }
 \examples{
-curry(function(x, y, z = 0) x + y + z)
+f <- function(x, y, ..., z = 3) c(x, y, z, ...)
+fc <- curry(f)
+stopifnot(
+  identical(
+    formals(fc(1)),
+    formals(function(y, ..., z = 3) {})
+  ),
+  identical(fc(1)(2),     c(1, 2, 3)),
+  identical(fc(1, 2),     c(1, 2, 3)),
+  identical(fc(2, x = 1), c(1, 2, 3)),
+  identical(
+    formals(fc(1, a = 1)),
+    formals(function(y, ..., z = 3) {})
+  ),
+  identical(fc(1, a = 1)(2), c(1, 2, 3, a = 1)),
+  identical(fc(1, 2, a = 1), c(1, 2, 3, a = 1))
+)
+
+stopifnot(
+  !is_curried(f),
+  is_curried(fc),
+  is_curried(function() NULL),
+  is_curried(function(x) NULL),
+  is_curried(function(...) NULL),
+  is_curried(function(x = 1, y = 2) NULL)
+)
+
 double <- curry(`*`)(2)
-double(3)  # 6
+stopifnot(double(3) == 6)
 
 }
 \seealso{
