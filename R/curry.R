@@ -96,7 +96,7 @@ is_curried_ <- function(f) {
   fmls <- formals(f)
   length(fmls) <= 1 ||
     all_have_values(fmls) ||
-    c("__uncurry__", "__partialize__") %are% names(environment(f))
+    "__uncurry__" %in% names(environment(f))
 }
 
 all_have_values <- function(fmls)
