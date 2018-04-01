@@ -20,15 +20,17 @@
     forms `%<<<%` and `%>>>%` (forward composition). Crucially, `compose()`
     is associative, both semantically and operationally, which prevents nested
     compositions from piling up. Additionally, `compose()` preserves the formals
-    of the initial function called. `decompose()` inverts `compose()` by
-    returning the list of composite functions, enabling you to inspect and
-    modify function compositions.
+    of the initial function called, i.e., `compose()` returns a function of the
+    proper “type.” `decompose()` inverts `compose()` by returning the list of
+    composite functions, enabling you to inspect and modify function
+    compositions.
 
-  * Partial function application is available via the operator `partial()`,
-    along with its inverse operator `departial()`. Like genuine partial function
-    application, `partial()` contracts formals, rather than producing a function
-    with generic formals `...`. Quasiquotation and splicing of arguments are
-    supported, in addition to argument-wise lazy or eager (tidy) evaluation.
+  * Partial application is available via the operator `partial()`, along with
+    its inverse operator `departial()`. Like genuine partial application,
+    `partial()` contracts formals, rather than producing a function with
+    indefinite formals `...`, i.e., `partial()` returns a function of the
+    proper “type.” Quasiquotation and splicing of arguments are supported, in
+    addition to argument-wise lazy or eager (tidy) evaluation.
 
   * `as_fn()` and `make_fn_aware()` are softly deprecated.
 
