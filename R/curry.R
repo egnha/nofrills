@@ -80,11 +80,9 @@ is_curried <- function(x) {
 
 is_curried_ <- function(f) {
   fmls <- formals(f)
-  length(fmls) <= 1 || all_have_values(fmls) || {
-    env <- environment(f)
-    exists("__uncurry__", envir = env, mode = "function", inherits = FALSE) &&
-      exists("__partialize__", envir = env, mode = "function", inherits = FALSE)
-  }
+  length(fmls) <= 1 ||
+    all_have_values(fmls) ||
+    c("__uncurry__", "__partialize__") %in% names(environment(f))
 }
 
 #' @rdname curry

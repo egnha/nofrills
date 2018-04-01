@@ -48,7 +48,7 @@ subst <- function(expr, vals)
   match(these, those, nomatch = 0L) == 0L
 
 `%are%` <- function(these, those)
-  all(these %in% those)
+  all(match(these, those, nomatch = 0L) > 0L)
 
 `%because%` <- function(assertion, reason) {
   if (!assertion)
