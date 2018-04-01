@@ -7,8 +7,8 @@
     curried function on any number of arguments: if the supplied arguments are
     complete, you get the function’s return value on those arguments; otherwise,
     you get a function of the remaining arguments with the supplied arguments
-    fixed, which itself is a curried function. This yields a more flexible and
-    yet less verbose syntax for constructing functions via currying, than is
+    fixed, which itself is a curried function. This yields a more flexible, yet
+    less verbose, syntax for constructing functions via currying than is
     possible with a strict currying operator. Currying can be undone with
     `uncurry()`. As before, `curry()` remains an idempotent operator, i.e.,
     currying an already curried function is the identity operator.
