@@ -1,81 +1,3 @@
-.BLANK <- list(quote(expr =))
-
-fn_factory <- function(function_) {
-  function(..., ..env = parent.frame()) {
-    is.environment(..env) %because% "'..env' must be an environment"
-    d <- get_fn_declaration(...)
-    function_(d$args, d$body, ..env)
-  }
-}
-
-get_fn_declaration <- function(...) {
-  xs <- get_exprs(...)
-  args <- get_args(xs$front)
-  remains <- behead(xs$back)
-  list(args = c(args, remains$head), body = remains$body)
-}
-
-get_exprs <- function(...) {
-  xs <- validate(exprs_(...))
-  n <- length(xs)
-  list(front = xs[-n], back = xs[n])
-}
-validate <- function(xs, n) {
-  (!is_empty(xs)) %because% "Function must be declared"
-  n <- length(xs)
-  is_fml <- vapply(xs, is_formula, logical(1))
-  all(!is_fml[-n]) %because% "Only the body (as last argument) should be a formula"
-  is_fml[n] %because% "Final argument must be a formula (specifying the body)"
-  xs
-}
-
-get_args <- function(xs) {
-  if (is_empty(xs))
-    return(NULL)
-  standardize_bare_arguments(xs)
-}
-standardize_bare_arguments <- function(xs) {
-  no_name <- !nzchar(names(xs))
-  names(xs)[no_name] <- vapply(xs[no_name], expr_name, character(1))
-  xs[no_name] <- .BLANK
-  xs
-}
-
-behead <- function(x) {
-  list(head = get_head(x), body = f_rhs(x[[1]]))
-}
-get_head <- function(x) {
-  nm <- names(x)
-  arg <- f_lhs(x[[1]])
-  if (is_onesided(x[[1]]))
-    get_empty_head(nm)
-  else
-    get_nonempty_head(arg, nm)
-}
-is_onesided <- function(x) {
-  length(x) == 2
-}
-get_empty_head <- function(nm) {
-  (!nzchar(nm)) %because% "Default value of final argument expected"
-  NULL
-}
-get_nonempty_head <- function(arg, nm) {
-  if (nzchar(nm))
-    `names<-`(list(arg), nm)
-  else
-    `names<-`(.BLANK, expr_name(arg))
-}
-
-make_function <- function(args, body, env) {
-  stopifnot(all(have_name(args)), is.environment(env))
-  if (is_closure(body))
-    body <- call("function", formals(body), base::body(body))
-  else
-    is_expr(body) %because% "Body must be an expression or closure"
-  args <- as.pairlist(args)
-  eval(call("function", args, body), env)
-}
-
 #' Low-cost anonymous functions
 #'
 #' `fn()` enables you to create (anonymous) functions, of arbitrary call
@@ -243,4 +165,78 @@ make_function <- function(args, body, env) {
 #' }
 #'
 #' @export
-fn <- fn_factory(make_function)
+fn <- function(..., ..env = parent.frame()) {
+  is.environment(..env) %because% "'..env' must be an environment"
+  d <- get_fn_declaration(...)
+  make_function(d$args, d$body, ..env)
+}
+
+get_fn_declaration <- function(...) {
+  xs <- get_exprs(...)
+  args <- get_args(xs$front)
+  remains <- behead(xs$back)
+  list(args = c(args, remains$head), body = remains$body)
+}
+
+get_exprs <- function(...) {
+  xs <- validate(exprs_(...))
+  n <- length(xs)
+  list(front = xs[-n], back = xs[n])
+}
+validate <- function(xs, n) {
+  (!is_empty(xs)) %because% "Function must be declared"
+  n <- length(xs)
+  is_fml <- vapply(xs, is_formula, logical(1))
+  all(!is_fml[-n]) %because% "Only the body (as last argument) should be a formula"
+  is_fml[n] %because% "Final argument must be a formula (specifying the body)"
+  xs
+}
+
+get_args <- function(xs) {
+  if (is_empty(xs))
+    return(NULL)
+  standardize_bare_arguments(xs)
+}
+standardize_bare_arguments <- function(xs) {
+  no_name <- !nzchar(names(xs))
+  names(xs)[no_name] <- vapply(xs[no_name], expr_name, character(1))
+  xs[no_name] <- blank
+  xs
+}
+
+behead <- function(x) {
+  list(head = get_head(x), body = f_rhs(x[[1]]))
+}
+get_head <- function(x) {
+  nm <- names(x)
+  arg <- f_lhs(x[[1]])
+  if (is_onesided(x[[1]]))
+    get_empty_head(nm)
+  else
+    get_nonempty_head(arg, nm)
+}
+is_onesided <- function(x) {
+  length(x) == 2
+}
+get_empty_head <- function(nm) {
+  (!nzchar(nm)) %because% "Default value of final argument expected"
+  NULL
+}
+get_nonempty_head <- function(arg, nm) {
+  if (nzchar(nm))
+    `names<-`(list(arg), nm)
+  else
+    `names<-`(blank, expr_name(arg))
+}
+
+make_function <- function(args, body, env) {
+  stopifnot(all(have_name(args)), is.environment(env))
+  if (is_closure(body))
+    body <- call("function", formals(body), base::body(body))
+  else
+    is_expr(body) %because% "Body must be an expression or closure"
+  args <- as.pairlist(args)
+  eval(call("function", args, body), env)
+}
+
+blank <- list(quote(expr = ))
