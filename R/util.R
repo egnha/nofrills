@@ -3,7 +3,7 @@ call_in_caller_env <- function(f, maybe_transform = NULL) {
   if (is.null(maybe_transform))
     return(
       function()
-        eval(`[[<-`(sys.call(-1), 1, f), parent.frame())
+        eval(`[[<-`(sys.call(-1), 1, f), parent.frame(2))
     )
   function(...) {
     call <- maybe_transform(sys.call(-1), ...)
