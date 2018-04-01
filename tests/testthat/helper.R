@@ -16,7 +16,7 @@ expect_all_equal <- expectations(expect_equal)
 expect_dots <- function(...) {
   fs <- eval(substitute(alist(...)))
   for (f in fs) {
-    expectation <- bquote(expect_true(hasName(formals(.(f)), "...")))
+    expectation <- bquote(expect_true("..." %in% names(formals(.(f)))))
     eval.parent(expectation)
   }
 }
