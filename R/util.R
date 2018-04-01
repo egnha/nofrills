@@ -1,3 +1,16 @@
+call_in_caller_env <- function(f, transform = NULL) {
+  force(f)
+  if (is.null(transform))
+    return(
+      function()
+        eval(`[[<-`(sys.call(-1), 1, f), parent.frame())
+    )
+  function() {
+    call <- sys.call(-1)
+    eval(`[[<-`(transform(call), 1, f), parent.frame(2))
+  }
+}
+
 fun_getter <- function(nm) {
   get_fun <- getter(nm, mode = "function")
   function(x)

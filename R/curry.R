@@ -40,17 +40,18 @@ curry <- local({
     fmls <- formals(f)
     length(fmls) == 0 || all_have_values(fmls)
   }
+  partialize <- function(f) {
+    force(f)
+    # '__f' is function-argument name of partial()
+    function(call) `[[<-`(call, "__f", f)
+  }
 
   function(f) {
     f_closure <- as_closure(f)
     if (is_curried_(f_closure))
       return(f)
     `__uncurry__` <- f  # Sentinel value for uncurrying
-    `__partialize__` <- function() {
-      call_partial <- `[[<-`(sys.call(-1), 1, partial)
-      call_partial$`__f` <- f
-      eval(call_partial, parent.frame(2))
-    }
+    `__partialize__` <- call_in_caller_env(partial, partialize(f))
     f_curried <- function() {
       p <- `__partialize__`()
       if (`__callable__`(p))

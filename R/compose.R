@@ -94,10 +94,7 @@ compose <- function(...) {
   if (n == 1)
     return(`__pipeline__`[[1]])
   fn_initial <- `__pipeline__`[[n]]
-  `__call_fn_initial__` <- function() {
-    call <- `[[<-`(sys.call(-1), 1, fn_initial)
-    eval(call, parent.frame(2))
-  }
+  `__call_fn_initial__` <- call_in_caller_env(fn_initial)
   `__fns_rest__` <- rev(`__pipeline__`[-n])
   fn_cmps <- function() {
     out <- `__call_fn_initial__`()
