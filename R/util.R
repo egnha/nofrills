@@ -1,13 +1,13 @@
-call_in_caller_env <- function(f, transform = NULL) {
+call_in_caller_env <- function(f, maybe_transform = NULL) {
   force(f)
-  if (is.null(transform))
+  if (is.null(maybe_transform))
     return(
       function()
         eval(`[[<-`(sys.call(-1), 1, f), parent.frame())
     )
   function() {
     call <- sys.call(-1)
-    eval(`[[<-`(transform(call), 1, f), parent.frame(2))
+    eval(`[[<-`(maybe_transform(call), 1, f), parent.frame(2))
   }
 }
 
@@ -20,10 +20,10 @@ fun_getter <- function(nm) {
 getter <- function(nm, mode) {
   force(nm)
   force(mode)
-  function(env) {
-    if (is.null(env))
+  function(maybe_env) {
+    if (is.null(maybe_env))
       return(NULL)
-    get0(nm, envir = env, mode = mode, inherits = FALSE)
+    get0(nm, envir = maybe_env, mode = mode, inherits = FALSE)
   }
 }
 
