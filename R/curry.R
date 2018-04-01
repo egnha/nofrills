@@ -70,9 +70,6 @@ curry <- local({
   }
 })
 
-all_have_values <- function(fmls)
-  all(fmls[names_nondots(fmls)] != quote(expr = ))
-
 #' @param x Object to test.
 #'
 #' @return `is_curried(x)` is `TRUE` when `x` is a curried function, and
@@ -92,6 +89,9 @@ is_curried_ <- function(f) {
     all_have_values(fmls) ||
     c("__uncurry__", "__partialize__") %are% names(environment(f))
 }
+
+all_have_values <- function(fmls)
+  all(fmls[names_nondots(fmls)] != quote(expr = ))
 
 #' @rdname curry
 #' @export
