@@ -30,25 +30,34 @@ manner congenial to R’s calling convention.
 \examples{
 f <- function(x, y, ..., z = 3) c(x, y, z, ...)
 fc <- curry(f)
+
 stopifnot(
   identical(
     formals(fc(1)),
     formals(function(y, ..., z = 3) {})
   ),
-  identical(fc(1)(2),     c(1, 2, 3)),
-  identical(fc(1, 2),     c(1, 2, 3)),
-  identical(fc(2, x = 1), c(1, 2, 3)),
   identical(
     formals(fc(1, a = 1)),
     formals(function(y, ..., z = 3) {})
   ),
+  identical(
+    formals(fc(y = 2, z = 4)),
+    formals(function(x, ...) {})
+  ),
+  identical(fc(1)(2),        c(1, 2, 3)),
+  identical(fc(y = 2)(1),    c(1, 2, 3)),
+  identical(fc(1, 2),        c(1, 2, 3)),
+  identical(fc(2, x = 1),    c(1, 2, 3)),
+  identical(fc(1, 2, a = 1), c(1, 2, 3, a = 1)),
   identical(fc(1, a = 1)(2), c(1, 2, 3, a = 1)),
-  identical(fc(1, 2, a = 1), c(1, 2, 3, a = 1))
+  identical(fc(1)(a = 1)(2), c(1, 2, 3, a = 1))
 )
 
 stopifnot(
   !is_curried(f),
+  !is_curried(uncurry(fc)),
   is_curried(fc),
+  is_curried(fc(1)),
   is_curried(function() NULL),
   is_curried(function(x) NULL),
   is_curried(function(...) NULL),
