@@ -78,16 +78,17 @@
 #'
 #' @export
 partial <- local({
-  quos_match <- function(fmls) {
-    mc <- match.call(fn_template_partial, sys.call(-1))
-    dots <- mc[names(mc) != "__f"]
-    eval(call_quos_match(dots, fmls), parent.frame(2))
+  dots_match <- function(call, fmls) {
+    call <- match.call(fn_template_partial, call)
+    call <- call[names(call) != "__f"]
+    match.call(fn_template(fmls), call)
   }
+  quos_dots_match <- call_in_caller_env(quos, dots_match)
 
   function(`__f`, ...) {
     f <- as_closure(`__f`)
     fmls <- formals(f)
-    fix <- quos_match(fmls)  # '...' consumed by introspection
+    fix <- quos_dots_match(fmls)  # '...' consumed by introspection
     if (is_empty(fix))
       return(`__f`)
     parent <- environment(f)
@@ -100,12 +101,6 @@ fn_template <- function(fmls)
   eval(call("function", fmls, NULL))
 
 fn_template_partial <- fn_template(formals(partial))
-
-call_quos_match <- function(dots, fmls) {
-  call <- match.call(fn_template(fmls), dots)
-  call[[1]] <- quos
-  call
-}
 
 name_bare_dots <- function(xs, env) {
   nms <- names(xs)
