@@ -82,11 +82,24 @@ replicate(4, rnd_mixed2(), simplify = FALSE)
 
 # partial() truncates formals by the fixed arguments
 foo <- function(x, y = x, ..., z = "z") NULL
-args(foo)
-args(partial(foo))
-args(partial(foo, x = 1))
-args(partial(foo, x = 1, y = 2))
-args(partial(foo, x = 1, y = 2, z = 3))
+stopifnot(
+  identical(
+    formals(partial(foo)),
+    formals(foo)
+  ),
+  identical(
+    formals(partial(foo, x = 1)),
+    formals(function(y = x, ..., z = "z") {})
+  ),
+  identical(
+    formals(partial(foo, x = 1, y = 2)),
+    formals(function(..., z = "z") {})
+  ),
+  identical(
+    formals(partial(foo, x = 1, y = 2, z = 3)),
+    formals(function(...) {})
+  )
+)
 
 }
 \seealso{
