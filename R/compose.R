@@ -19,6 +19,7 @@
 #'   automatically spliced in. (Explicit [splicing][rlang::quasiquotation] via
 #'   `!!!` is also supported.) Following convention, functions are composed from
 #'   right to left.
+#' @param fst,snd,f Functions.
 #'
 #' @return `compose()`, \code{\%<<<\%} and \code{\%>>>\%} return a function
 #'   composition, whose [formals][base::formals()] match those of the initial
@@ -118,7 +119,6 @@ flatten_fns <- local({
   }
 })
 
-#' @param f,g Functions.
 #' @rdname compose
 #' @export
 `%<<<%` <- function(snd, fst) compose(snd, fst)

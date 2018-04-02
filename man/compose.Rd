@@ -21,7 +21,7 @@ automatically spliced in. (Explicit \link[rlang:quasiquotation]{splicing} via
 \code{!!!} is also supported.) Following convention, functions are composed from
 right to left.}
 
-\item{f, g}{Functions.}
+\item{fst, snd, f}{Functions.}
 }
 \value{
 \code{compose()}, \code{\%<<<\%} and \code{\%>>>\%} return a function
