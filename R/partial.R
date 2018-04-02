@@ -168,14 +168,12 @@ dot_args <- function(fix, fmls) {
   dots
 }
 
-truncate <- function(xs, cut) {
-  nms_cut <- names(cut)
-  xs[names(xs) %notin% nms_cut]
-}
+truncate <- function(xs, cut)
+  xs[names(xs) %notin% names(cut)]
 
 eponymous_args <- function(fmls, dots) {
   nms_fmls <- names(fmls)
-  if ("..." %notin% names(fmls))
+  if ("..." %notin% nms_fmls)
     return(eponymous(nms_fmls))
   c(eponymous(nondots(nms_fmls)), dots, quote(...))
 }
