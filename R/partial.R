@@ -118,6 +118,7 @@ partial_ <- function(fun, fmls, fix, parent) {
   if (has_dots(nms_fmls_fun)) {
     names(fix) <- name_bare_dots(fix, parent)
     env <- bind_fixed_args(fix, parent)
+    names_fixed_args(env) <- c(names_fixed_args(parent), names(fix))
     args <- eponymous_args(nms_fmls_fun, fix, env)
   } else {
     env <- bind_fixed_args(fix, parent)
@@ -128,41 +129,33 @@ partial_ <- function(fun, fmls, fix, parent) {
   fn(!!! fmls_trunc, ~ `__fun__`(!!! args), ..env = env)
 }
 
-bind_fixed_args <- function(fix, parent) {
-  nms <- names(fix)
-  nms_prev <- names_fixed_args(parent)
+name_bare_dots <- function(xs, env) {
+  nms <- names(xs)
+  nms_prev <- names_fixed_args(env)
+  is_bare_dot <- !nzchar(nms)
+  n_bare_dots <- sum(is_bare_dot)
+  if (n_bare_dots > 0) {
+    n_prev_dots <- sum(is_bare_dot_name(nms_prev))
+    nms[is_bare_dot] <- paste0("__", n_prev_dots + seq_len(n_bare_dots))
+  }
   all(nms %notin% nms_prev) %because% "Can't reset previously fixed argument(s)"
-  env <- new.env(parent = parent)
-  names_fixed_args(env) <- c(nms_prev, nms)
-  for (nm in nms)
-    makeActiveBinding(nm, get_tidy(fix[[nm]]), env)
-  env
+  nms
 }
 
 names_fixed_args <- getter("__names_fixed_args__", mode = "character")
 `names_fixed_args<-` <- setter("__names_fixed_args__")
 
+bind_fixed_args <- function(fix, parent) {
+  env <- new.env(parent = parent)
+  for (nm in names(fix))
+    makeActiveBinding(nm, get_tidy(fix[[nm]]), env)
+  env
+}
+
 get_tidy <- function(q) {
   force(q)
   function(.) eval_tidy(q)
 }
-
-truncate <- function(xs, cut)
-  xs[names(xs) %notin% names(cut)]
-
-name_bare_dots <- function(xs, env) {
-  nms <- names(xs)
-  is_bare_dot <- !nzchar(nms)
-  n_bare_dots <- sum(is_bare_dot)
-  if (n_bare_dots > 0) {
-    n_prev_dots <- sum(is_bare_dot_name(names_fixed_args(env)))
-    nms[is_bare_dot] <- paste0("__", n_prev_dots + seq_len(n_bare_dots))
-  }
-  nms
-}
-
-is_bare_dot_name <- function(nms)
-  grepl("^__[[:digit:]]*$", nms)
 
 eponymous_args <- function(nms_fmls, fix, env) {
   nms <- nondots(nms_fmls)
@@ -180,6 +173,12 @@ dot_args <- function(fix, nms) {
   names(dots)[is_bare_dot_name(nms_dots)] <- ""
   dots
 }
+
+is_bare_dot_name <- function(nms)
+  grepl("^__[[:digit:]]*$", nms)
+
+truncate <- function(xs, cut)
+  xs[names(xs) %notin% names(cut)]
 
 #' @rdname partial
 #' @export
