@@ -143,7 +143,7 @@ name_bare_dots <- function(xs, env) {
   nms
 }
 
-names_fixed_args <- getter("__names_fixed_args__", mode = "character")
+names_fixed_args     <- getter("__names_fixed_args__", mode = "character")
 `names_fixed_args<-` <- setter("__names_fixed_args__")
 
 bind_fixed_args <- function(fix, parent) {
@@ -164,7 +164,7 @@ eponymous_args <- function(nms_fmls, fix, env) {
   c(eponymous(nms), dots(env), quote(...))
 }
 
-dots <- getter("__dots__", mode = "list")
+dots     <- getter("__dots__", mode = "list")
 `dots<-` <- setter("__dots__")
 
 dot_args <- function(fix, nms) {
