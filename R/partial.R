@@ -99,7 +99,7 @@ partial <- local({
   quos_dots_match <- call_in_caller_env(quos, dots_match)
 
   function(`__f`, ...) {
-    f <- as_closure(`__f`)
+    f <- closure(`__f`)
     fmls <- formals(f)
     fix <- quos_dots_match(fmls)  # '...' consumed by introspection
     if (is_empty(fix))

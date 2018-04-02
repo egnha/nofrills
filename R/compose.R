@@ -103,7 +103,7 @@ compose <- function(...) {
       out <- f(out)
     out
   }
-  formals(fn_cmps) <- formals(as_closure(fn_initial))
+  formals(fn_cmps) <- formals(closure(fn_initial))
   class(fn_cmps) <- c("CompositeFunction", "function")
   fn_cmps
 }

@@ -1,3 +1,9 @@
+closure <- function(f) {
+  if (typeof(f) == "closure")
+    return(f)
+  as_closure(f, parent.frame())
+}
+
 call_in_caller_env <- function(f, maybe_transform = NULL) {
   force(f)
   if (is.null(maybe_transform))

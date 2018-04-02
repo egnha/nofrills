@@ -63,7 +63,7 @@ curry <- local({
   }
 
   function(f) {
-    f_closure <- as_closure(f)
+    f_closure <- closure(f)
     if (is_curried_(f_closure))
       return(f)
     `__uncurry__` <- f  # Sentinel value for uncurrying
@@ -88,7 +88,7 @@ curry <- local({
 #' @export
 is_curried <- function(x) {
   if (is.function(x))
-    return(is_curried_(as_closure(x)))
+    return(is_curried_(closure(x)))
   FALSE
 }
 
