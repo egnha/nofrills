@@ -41,11 +41,11 @@ setter <- function(nm) {
   }
 }
 
-names_nondots <- function(xs)
-  nondots(names(xs))
-
 nondots <- function(xs)
   xs[xs != "..."]
+
+has_dots <- function(x)
+  match("...", x, nomatch = 0L) > 0L
 
 eponymous <- function(nms) {
   names(nms) <- nms
