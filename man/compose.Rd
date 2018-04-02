@@ -9,9 +9,9 @@
 \usage{
 compose(...)
 
-f \%<<<\% g
+snd \%<<<\% fst
 
-g \%>>>\% f
+fst \%>>>\% snd
 
 decompose(f)
 }

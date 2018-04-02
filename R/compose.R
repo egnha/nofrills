@@ -121,7 +121,7 @@ flatten_fns <- local({
 #' @param f,g Functions.
 #' @rdname compose
 #' @export
-`%<<<%` <- function(f, g) compose(f, g)
+`%<<<%` <- function(snd, fst) compose(snd, fst)
 
 #' @rdname compose
 #' @export
