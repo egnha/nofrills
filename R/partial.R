@@ -164,16 +164,17 @@ is_bare_dot_name <- function(nms)
   grepl("^__[[:digit:]]*$", nms)
 
 eponymous_args <- function(fmls, fix, env) {
-  dots(env) <- c(dots(parent.env(env)), dot_args(fix, fmls))
-  c(eponymous(names_nondots(fmls)), dots(env), quote(...))
+  nms <- names_nondots(fmls)
+  dots(env) <- c(dots(parent.env(env)), dot_args(fix, nms))
+  c(eponymous(nms), dots(env), quote(...))
 }
 
 dots <- getter("__dots__", mode = "list")
 `dots<-` <- setter("__dots__")
 
-dot_args <- function(fix, fmls) {
+dot_args <- function(fix, nms) {
   nms_fix <- names(fix)
-  nms_dots <- nms_fix[nms_fix %notin% names_nondots(fmls)]
+  nms_dots <- nms_fix[nms_fix %notin% nms]
   dots <- eponymous(nms_dots)
   names(dots)[is_bare_dot_name(nms_dots)] <- ""
   dots
