@@ -124,9 +124,10 @@ partial_ <- function(fun, fmls, fix, parent) {
     env <- bind_fixed_args(fix, parent)
     args <- eponymous(nms_fmls_fun)
   }
-  env$`__fun__` <- fun
   fmls_trunc <- truncate(fmls, cut = fix)
-  fn(!!! fmls_trunc, ~ `__fun__`(!!! args), ..env = env)
+  body <- as.call(c(quote(`__fun__`), args))
+  env$`__fun__` <- fun
+  eval(call("function", fmls_trunc, body), env)
 }
 
 name_bare_dots <- function(xs, env) {
@@ -177,8 +178,8 @@ dot_args <- function(fix, nms) {
 is_bare_dot_name <- function(nms)
   grepl("^__[[:digit:]]*$", nms)
 
-truncate <- function(xs, cut)
-  xs[names(xs) %notin% names(cut)]
+truncate <- function(fmls, cut)
+  as.pairlist(fmls[names(fmls) %notin% names(cut)])
 
 #' @rdname partial
 #' @export
