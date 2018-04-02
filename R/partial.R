@@ -104,9 +104,7 @@ partial <- local({
     fix <- quos_dots_match(fmls)  # '...' consumed by introspection
     if (is_empty(fix))
       return(`__f`)
-    parent <- environment(f)
-    names(fix) <- name_bare_dots(fix, parent)
-    partial_(departial_(`__f`) %||% f, fmls, fix, parent)
+    partial_(departial_(`__f`) %||% f, fmls, fix, environment(f))
   }
 })
 
@@ -115,46 +113,59 @@ fn_template <- function(fmls)
 
 fn_template_partial <- fn_template(formals(partial))
 
-name_bare_dots <- function(xs, env) {
-  nms <- names(xs)
-  nms_prev <- names_fixed_args(env)
-  is_bare_dot <- !nzchar(nms)
-  n_bare_dots <- sum(is_bare_dot)
-  n_prev_dots <- sum(is_bare_dot_name(nms_prev))
-  # '__1', '__2', ... mimic names of elements of '...'
-  nms[is_bare_dot] <- paste0("__", n_prev_dots + seq_len(n_bare_dots))
-  all(nms %notin% nms_prev) %because% "Can't reset previously fixed argument(s)"
-  nms
-}
-
-names_fixed_args <- getter("__names_fixed_args__", mode = "character")
-`names_fixed_args<-` <- setter("__names_fixed_args__")
-
-is_bare_dot_name <- function(nms)
-  grepl("^__[[:digit:]]*$", nms)
-
 partial_ <- function(fun, fmls, fix, parent) {
-  env <- bind_fixed_args(fix, parent)
-  env$`__fun__` <- fun
   fmls_fun <- formals(fun)
-  dots(env) <- c(dots(parent), dot_args(fix, fmls_fun))
-  args <- eponymous_args(fmls_fun, dots(env))
+  if ("..." %in% names(fmls)) {
+    names(fix) <- name_bare_dots(fix, parent)
+    env <- bind_fixed_args(fix, parent)
+    args <- eponymous_args(fmls_fun, fix, env)
+  } else {
+    env <- bind_fixed_args(fix, parent)
+    args <- eponymous(names(fmls_fun))
+  }
+  env$`__fun__` <- fun
   fmls_trunc <- truncate(fmls, cut = fix)
   fn(!!! fmls_trunc, ~ `__fun__`(!!! args), ..env = env)
 }
 
 bind_fixed_args <- function(fix, parent) {
+  nms <- names(fix)
+  nms_prev <- names_fixed_args(parent)
+  all(nms %notin% nms_prev) %because% "Can't reset previously fixed argument(s)"
   env <- new.env(parent = parent)
-  nms_fix <- names(fix)
-  names_fixed_args(env) <- c(names_fixed_args(parent), nms_fix)
-  for (nm in nms_fix)
+  names_fixed_args(env) <- c(nms_prev, nms)
+  for (nm in nms)
     makeActiveBinding(nm, get_tidy(fix[[nm]]), env)
   env
 }
 
+names_fixed_args <- getter("__names_fixed_args__", mode = "character")
+`names_fixed_args<-` <- setter("__names_fixed_args__")
+
 get_tidy <- function(q) {
   force(q)
   function(.) eval_tidy(q)
+}
+
+truncate <- function(xs, cut)
+  xs[names(xs) %notin% names(cut)]
+
+name_bare_dots <- function(xs, env) {
+  nms <- names(xs)
+  is_bare_dot <- !nzchar(nms)
+  if ((n_bare_dots <- sum(is_bare_dot)) > 0) {
+    n_prev_dots <- sum(is_bare_dot_name(names_fixed_args(env)))
+    nms[is_bare_dot] <- paste0("__", n_prev_dots + seq_len(n_bare_dots))
+  }
+  nms
+}
+
+is_bare_dot_name <- function(nms)
+  grepl("^__[[:digit:]]*$", nms)
+
+eponymous_args <- function(fmls, fix, env) {
+  dots(env) <- c(dots(parent.env(env)), dot_args(fix, fmls))
+  c(eponymous(names_nondots(fmls)), dots(env), quote(...))
 }
 
 dots <- getter("__dots__", mode = "list")
@@ -166,16 +177,6 @@ dot_args <- function(fix, fmls) {
   dots <- eponymous(nms_dots)
   names(dots)[is_bare_dot_name(nms_dots)] <- ""
   dots
-}
-
-truncate <- function(xs, cut)
-  xs[names(xs) %notin% names(cut)]
-
-eponymous_args <- function(fmls, dots) {
-  nms_fmls <- names(fmls)
-  if ("..." %notin% nms_fmls)
-    return(eponymous(nms_fmls))
-  c(eponymous(nondots(nms_fmls)), dots, quote(...))
 }
 
 #' @rdname partial
