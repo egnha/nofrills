@@ -176,7 +176,7 @@ dot_args <- function(fix, nms) {
 }
 
 is_bare_dot_name <- function(nms)
-  grepl("^__[[:digit:]]*$", nms)
+  grepl("^__[123456789][[:digit:]]*$", nms)
 
 truncate <- function(fmls, cut)
   as.pairlist(fmls[names(fmls) %notin% names(cut)])
