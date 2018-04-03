@@ -121,14 +121,13 @@ partial_ <- function(fun, fmls, fix, parent) {
     names(fix) <- name_bare_dots(fix, parent)
     env <- bind_actively(fix, parent)
     record_args(fix, nms_fmls_fun, env)
-    args <- c(args(env), quote(...))
+    body <- as.call(c(quote(`__fun__`), args(env), quote(...)))
   } else {
     env <- bind_actively(fix, parent)
     args(env) <- args(parent) %||% eponymous(nms_fmls_fun)
-    args <- args(env)
+    body <- as.call(c(quote(`__fun__`), args(env)))
   }
   fmls_trunc <- truncate(fmls, cut = fix)
-  body <- as.call(c(quote(`__fun__`), args))
   env$`__fun__` <- fun
   eval(call("function", fmls_trunc, body), env)
 }
