@@ -188,4 +188,4 @@ departial <- function(`__f`) {
   departial_(`__f`) %||% `__f`
 }
 
-departial_ <- fun_getter("__fun__")
+departial_ <- getter("__fun__", environment)

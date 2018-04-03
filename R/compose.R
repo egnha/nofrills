@@ -135,7 +135,7 @@ decompose <- function(f) {
 }
 
 decompose_ <- local({
-  get_pipeline <- getter("__pipeline__", mode = "list")
+  get_pipeline <- getter("__pipeline__")
   function(x)
     get_pipeline(environment(x)) %||% x
 })

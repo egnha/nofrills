@@ -17,20 +17,11 @@ call_in_caller_env <- function(f, maybe_transform = NULL) {
   }
 }
 
-fun_getter <- function(nm) {
-  get_fun <- getter(nm, mode = "function")
-  function(x)
-    get_fun(environment(x))
-}
-
-getter <- function(nm, mode) {
+getter <- function(nm, maybe_transform = NULL) {
   force(nm)
-  force(mode)
-  function(maybe_env) {
-    if (is.null(maybe_env))
-      return(NULL)
-    get0(nm, envir = maybe_env, mode = mode, inherits = FALSE)
-  }
+  if (is.null(maybe_transform))
+    return(function(env) .subset2(env, nm))
+  function(env) .subset2(maybe_transform(env), nm)
 }
 
 setter <- function(nm) {

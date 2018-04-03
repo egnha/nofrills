@@ -105,7 +105,7 @@ all_have_values <- function(fmls)
 #' @rdname curry
 #' @export
 uncurry <- local({
-  uncurry_ <- fun_getter("__uncurry__")
+  uncurry_ <- getter("__uncurry__", environment)
   function(f) {
     is.function(f) %because% "Only functions can be uncurried"
     uncurry_(f) %||% f
