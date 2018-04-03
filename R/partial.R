@@ -124,7 +124,8 @@ partial_ <- function(fun, fmls, fix, parent) {
     args <- c(args(env), quote(...))
   } else {
     env <- bind_actively(fix, parent)
-    args <- eponymous(nms_fmls_fun)
+    args(env) <- args(parent) %||% eponymous(nms_fmls_fun)
+    args <- args(env)
   }
   fmls_trunc <- truncate(fmls, cut = fix)
   body <- as.call(c(quote(`__fun__`), args))
@@ -165,7 +166,6 @@ record_args <- local({
     names(dots)[is_bare_dot_name(nms_dots)] <- ""
     dots
   }
-  `args<-`        <- setter("__args__")
   `names_fixed<-` <- setter("__names_fixed__")
 
   function(fix, nms, env, parent = parent.env(env)) {
@@ -177,6 +177,7 @@ record_args <- local({
 })
 
 args        <- getter("__args__")
+`args<-`    <- setter("__args__")
 names_fixed <- getter("__names_fixed__")
 
 is_bare_dot_name <- function(nms)
