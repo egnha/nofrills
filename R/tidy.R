@@ -2,7 +2,7 @@
 #'
 #' A **tidy function** is a function whose arguments support unquoting (`!!`)
 #' and (`!!!`) splicing, i.e., [quasiquotation][rlang::quasiquotation]. `tidy()`
-#' takes any function and makes it tidy.
+#' enhances a function by making it tidy.
 #'
 #' @param f Function.
 #' @return `tidy()` returns a tidy function.
@@ -57,6 +57,8 @@ tidy <- function(f) {
 
 #' @rdname tidy
 #' @param x Object to test: Is it a tidy function?
+#' @return `is_tidy()` returns `TRUE` for void functions and functions made by
+#'   `tidy()`, and `FALSE` otherwise.
 #' @examples
 #' stopifnot(
 #'   is_tidy(tidy(f)),
@@ -80,7 +82,8 @@ is_tidy_ <- function(f) {
 }
 
 #' @rdname tidy
-#' @return `untidy()` recovers the “untidy” function underlying a tidy function.
+#' @return `untidy()` recovers the “untidy” function underlying a function made
+#'   by `tidy()`.
 #' @examples
 #' stopifnot(
 #'   # untidy() recovers the “untidy” function underlying a tidy function

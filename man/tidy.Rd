@@ -20,12 +20,16 @@ untidy(f)
 \value{
 \code{tidy()} returns a tidy function.
 
-\code{untidy()} recovers the “untidy” function underlying a tidy function.
+\code{is_tidy()} returns \code{TRUE} for void functions and functions made by
+\code{tidy()}, and \code{FALSE} otherwise.
+
+\code{untidy()} recovers the “untidy” function underlying a function made
+by \code{tidy()}.
 }
 \description{
 A \strong{tidy function} is a function whose arguments support unquoting (\code{!!})
 and (\code{!!!}) splicing, i.e., \link[rlang:quasiquotation]{quasiquotation}. \code{tidy()}
-takes any function and makes it tidy.
+enhances a function by making it tidy.
 }
 \examples{
 f <- function(x, y, ..., z = "z") list(x, y, z, ...)
