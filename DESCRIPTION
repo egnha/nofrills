@@ -20,6 +20,7 @@ Collate:
     'util.R'
     'exprs.R'
     'fn.R'
+    'tidy.R'
     'compose.R'
     'partial.R'
     'curry.R'
