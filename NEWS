@@ -2,6 +2,11 @@
 
 ## 0.3.0.9000
 
+  * The function transformer `tidy()` is introduced. It enhances functions by
+    enabling them to support unquoting and splicing of arguments, i.e.,
+    quasiquotation. This is handy when you want a function written by someone
+    else to comprehend quasiquotation. Apply `untidy()` to undo `tidy()`.
+
   * Rather than performing strict currying, `curry()` now curries functions in a
     manner congenial to R’s calling convention. This means you can now call a
     curried function on any number of arguments: if the supplied arguments are
