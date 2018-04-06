@@ -1,7 +1,7 @@
 #' Make a function tidy
 #'
-#' A _tidy function_ is a function whose arguments support unquoting (`!!`) and
-#' (`!!!`) splicing, i.e., [quasiquotation][rlang::quasiquotation]. `tidy()`
+#' A **tidy function** is a function whose arguments support unquoting (`!!`)
+#' and (`!!!`) splicing, i.e., [quasiquotation][rlang::quasiquotation]. `tidy()`
 #' takes any function and makes it tidy.
 #'
 #' @param f Function.

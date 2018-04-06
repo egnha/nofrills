@@ -23,8 +23,8 @@ untidy(f)
 \code{untidy()} recovers the “untidy” function underlying a tidy function.
 }
 \description{
-A \emph{tidy function} is a function whose arguments support unquoting (\code{!!}) and
-(\code{!!!}) splicing, i.e., \link[rlang:quasiquotation]{quasiquotation}. \code{tidy()}
+A \strong{tidy function} is a function whose arguments support unquoting (\code{!!})
+and (\code{!!!}) splicing, i.e., \link[rlang:quasiquotation]{quasiquotation}. \code{tidy()}
 takes any function and makes it tidy.
 }
 \examples{
