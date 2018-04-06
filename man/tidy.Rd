@@ -18,10 +18,14 @@ untidy(f)
 \item{x}{Object to test: Is it a tidy function?}
 }
 \value{
-Tidy function.
+\code{tidy()} returns a tidy function.
+
+\code{untidy()} recovers the “untidy” function underlying a tidy function.
 }
 \description{
-Make a function tidy
+A \emph{tidy function} is a function whose arguments support unquoting (\code{!!}) and
+(\code{!!!}) splicing, i.e., \link[rlang:quasiquotation]{quasiquotation}. \code{tidy()}
+takes any function and makes it tidy.
 }
 \examples{
 f <- function(x, y, ..., z = "z") list(x, y, z, ...)

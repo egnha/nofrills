@@ -1,7 +1,11 @@
 #' Make a function tidy
 #'
+#' A _tidy function_ is a function whose arguments support unquoting (`!!`) and
+#' (`!!!`) splicing, i.e., [quasiquotation][rlang::quasiquotation]. `tidy()`
+#' takes any function and makes it tidy.
+#'
 #' @param f Function.
-#' @return Tidy function.
+#' @return `tidy()` returns a tidy function.
 #' @examples
 #' f <- function(x, y, ..., z = "z") list(x, y, z, ...)
 #' f_tidy <- tidy(f)
@@ -76,6 +80,7 @@ is_tidy_ <- function(f) {
 }
 
 #' @rdname tidy
+#' @return `untidy()` recovers the “untidy” function underlying a tidy function.
 #' @examples
 #' stopifnot(
 #'   # untidy() recovers the “untidy” function underlying a tidy function
