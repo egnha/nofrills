@@ -139,7 +139,7 @@ name_bare_dots <- function(xs, env) {
   if (n_bare_dots == 0)
     return(nms)
   n_prev_dots <- sum(is_bare_dot_name(names_fixed(env)))
-  nms[is_bare_dot] <- paste0("__", n_prev_dots + seq_len(n_bare_dots))
+  nms[is_bare_dot] <- sprintf("__%d", n_prev_dots + seq_len(n_bare_dots))
   nms
 }
 
