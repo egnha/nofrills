@@ -11,8 +11,8 @@
 #'
 #' @param __f Function.
 #' @param ... Argument values of `` `__f` `` to fix, specified by name. Captured
-#'   as [quosures][rlang::quotation]. [Quasiquotation][rlang::quasiquotation]
-#'   and [splicing][rlang::quasiquotation] are supported (see _Examples_).
+#'   as [quosures][rlang::quotation]. [Unquoting][rlang::quasiquotation] and
+#'   [splicing][rlang::quasiquotation] are supported (see _Examples_).
 #'
 #' @return `partial()` returns a function whose [formals][base::formals()] are a
 #'   literal truncation of the formals of `` `__f`()`` (as a closure) by the

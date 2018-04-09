@@ -13,8 +13,8 @@ departial(`__f`)
 \item{__f}{Function.}
 
 \item{...}{Argument values of \code{`__f`} to fix, specified by name. Captured
-as \link[rlang:quotation]{quosures}. \link[rlang:quasiquotation]{Quasiquotation}
-and \link[rlang:quasiquotation]{splicing} are supported (see \emph{Examples}).}
+as \link[rlang:quotation]{quosures}. \link[rlang:quasiquotation]{Unquoting} and
+\link[rlang:quasiquotation]{splicing} are supported (see \emph{Examples}).}
 }
 \value{
 \code{partial()} returns a function whose \link[base:formals]{formals} are a
