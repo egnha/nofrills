@@ -230,7 +230,7 @@ get_nonempty_head <- function(arg, nm) {
 }
 
 make_function <- function(args, body, env) {
-  stopifnot(all(have_name(args)), is.environment(env))
+  stopifnot(all(have_name(args)))
   if (is_closure(body))
     body <- call("function", formals(body), base::body(body))
   else
