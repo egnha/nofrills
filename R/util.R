@@ -1,3 +1,8 @@
+# rlang::new_function() without checks
+new_function_ <- function(args, body, env = parent.frame()) {
+  eval(call("function", as.pairlist(args), body), env)
+}
+
 closure <- function(f) {
   if (typeof(f) == "closure")
     return(f)

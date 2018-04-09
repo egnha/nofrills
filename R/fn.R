@@ -235,8 +235,7 @@ make_function <- function(args, body, env) {
     body <- call("function", formals(body), base::body(body))
   else
     is_expr(body) %because% "Body must be an expression or closure"
-  args <- as.pairlist(args)
-  eval(call("function", args, body), env)
+  new_function_(args, body, env)
 }
 
 blank <- list(quote(expr = ))
