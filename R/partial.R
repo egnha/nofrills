@@ -188,10 +188,10 @@ tidy_dots <- function(nms_fix, nms_nondots) {
   dots
 }
 
-promise_tidy <- function(nms, exclude, env) {
+promise_tidy <- function(nms, exclude, parent) {
   nms <- nms[nms %notin% names(exclude)]
   promises <- as_eval_tidy(privatize(nms), nms)
-  env <- list2env(list(eval_tidy = eval_tidy), parent = env)
+  env <- list2env(list(eval_tidy = eval_tidy), parent = parent)
   new_function_(promises, quote(environment()), env)
 }
 
