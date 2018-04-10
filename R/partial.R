@@ -97,8 +97,7 @@ partial <- local({
     match.call(fn_template(fmls), call)
   }
   quos_dots_match <- call_in_caller_env(quos, dots_match)
-
-  function(`__f`, ...) {
+  partial <- function(`__f`, ...) {
     f <- closure(`__f`)
     fmls <- formals(f)
     fix <- quos_dots_match(fmls)  # '...' consumed by introspection
@@ -106,10 +105,11 @@ partial <- local({
       return(`__f`)
     partial_(departial_(`__f`) %||% f, fmls, fix, environment(f))
   }
-})
+  fn_template <- function(fmls) new_function_(fmls, NULL)
+  fn_template_partial <- fn_template(formals(partial))
 
-fn_template <- function(fmls) new_function_(fmls, NULL)
-fn_template_partial <- fn_template(formals(partial))
+  partial
+})
 
 partial_ <- local({
   body_partial <- quote({
