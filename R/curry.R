@@ -106,7 +106,7 @@ is_curried_ <- function(f) {
 }
 
 all_have_values <- function(fmls)
-  all(fmls[nondots(names(fmls))] != quote(expr = ))
+  all(fmls[names(fmls) != "..."] != quote(expr = ))
 
 #' @rdname curry
 #' @export
