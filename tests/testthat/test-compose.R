@@ -1,5 +1,5 @@
 make_funs <- function(n)
-  lapply(seq_len(n), function(i) function(. = NULL) c(i, .))
+  lapply(seq_len(n), function(i) {force(i); function(. = NULL) c(i, .)})
 fs <- make_funs(3)
 cmp <- function() fs[[1]](fs[[2]](fs[[3]]()))
 cmps <- list(
