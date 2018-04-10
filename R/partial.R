@@ -183,19 +183,19 @@ is_bare_dot_name <- function(nms) {
 
 tidy_dots <- function(nms_fix, nms_nondots) {
   nms_dots <- nms_fix[nms_fix %notin% nms_nondots]
-  dots <- as_eval_tidy(nms_dots)
+  dots <- map_eval_tidy(nms_dots)
   names(dots)[is_bare_dot_name(nms_dots)] <- ""
   dots
 }
 
 promise_tidy <- function(nms, exclude, parent) {
   nms <- nms[nms %notin% names(exclude)]
-  promises <- as_eval_tidy(privatize(nms), nms)
+  promises <- map_eval_tidy(privatize(nms), nms)
   env <- list2env(list(eval_tidy = eval_tidy), parent = parent)
   new_function_(promises, quote(environment()), env)
 }
 
-as_eval_tidy <- function(nms, rename = nms) {
+map_eval_tidy <- function(nms, rename = nms) {
   names(nms) <- rename
   lapply(nms, function(nm) call("eval_tidy", as.name(nm)))
 }
