@@ -10,7 +10,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
-Depends: R (>= 3.2)
+Depends: R (>= 3.1.0)
 Imports: rlang (>= 0.2.0)
 Suggests: testthat (>= 2.0.0), dplyr (>= 0.7.0)
 URL: https://github.com/egnha/nofrills
