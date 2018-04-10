@@ -43,10 +43,10 @@ tidy <- function(f) {
   is.function(f) %because% "Only functions can be tidied"
   if (is_tidy_(f))
     return(f)
-  `__untidy_fun__` <- f
+  `__pretidy__` <- f
   `__quo__` <- quo
   f_tidy <- function() {
-    call <- `[[<-`(sys.call(), 1, `__untidy_fun__`)
+    call <- `[[<-`(sys.call(), 1, `__pretidy__`)
     call <- eval(as.call(c(`__quo__`, call)), parent.frame())
     eval_tidy(call)
   }
@@ -78,7 +78,7 @@ is_tidy_ <- function(f) {
   env <- environment(f)
   if (is.null(env))
     return(FALSE)  # Non-vacuous primitive functions are never tidy
-  exists("__untidy_fun__", envir = env, mode = "function", inherits = FALSE)
+  exists("__pretidy__", envir = env, mode = "function")
 }
 
 #' @rdname tidy
@@ -96,7 +96,7 @@ untidy <- function(f) {
   untidy_(f) %||% f
 }
 
-untidy_ <- getter("__untidy_fun__", environment)
+untidy_ <- getter("__pretidy__", environment)
 
 #' @export
 print.TidyFunction <- function(x, ...) {

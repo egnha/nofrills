@@ -102,7 +102,7 @@ is_curried_ <- function(f) {
   fmls <- formals(f)
   length(fmls) <= 1 ||
     all(fmls[names(fmls) != "..."] != quote(expr = )) ||
-    "__precurry__" %in% names(environment(f))
+    exists("__precurry__", envir = environment(f), mode = "function")
 }
 
 #' @rdname curry
