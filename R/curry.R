@@ -66,15 +66,15 @@ curry <- local({
     f_closure <- closure(f)
     if (is_curried_(f_closure))
       return(f)
-    `__uncurry__` <- f  # Sentinel value for uncurrying
+    `__precurry__` <- f
     `__partialize__` <- call_in_caller_env(partial, partialize(f))
     `__nms_free_fmls__` <- names_free_formals(f_closure)
     f_curried <- function() {
       mc <- match.call()
       if (length(mc) == 1)
-        return(`__uncurry__`())
+        return(`__precurry__`())
       if (`__nms_free_fmls__` %are% names(mc[-1]))
-        return(eval(`[[<-`(mc, 1, `__uncurry__`), parent.frame()))
+        return(eval(`[[<-`(mc, 1, `__precurry__`), parent.frame()))
       p <- `__partialize__`()
       `__curry__`(p)
     }
@@ -102,7 +102,7 @@ is_curried_ <- function(f) {
   fmls <- formals(f)
   length(fmls) <= 1 ||
     all_have_values(fmls) ||
-    "__uncurry__" %in% names(environment(f))
+    "__precurry__" %in% names(environment(f))
 }
 
 all_have_values <- function(fmls)
@@ -111,7 +111,7 @@ all_have_values <- function(fmls)
 #' @rdname curry
 #' @export
 uncurry <- local({
-  uncurry_ <- getter("__uncurry__", environment)
+  uncurry_ <- getter("__precurry__", environment)
   function(f) {
     is.function(f) %because% "Only functions can be uncurried"
     uncurry_(f) %||% f
