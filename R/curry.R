@@ -52,31 +52,37 @@
 #'
 #' @export
 curry <- local({
-  `__callable__` <- function(f) {
-    fmls <- formals(f)
-    length(fmls) == 0 || all_have_values(fmls)
-  }
   partialize <- function(f) {
     force(f)
     # '__f' is function-argument name of partial()
     function(call) `[[<-`(call, "__f", f)
   }
-
-  function(f) {
+  names_free_formals <- function(f) {
+    fmls <- formals(f)
+    nms <- names(fmls)
+    nms[nms != "..." & as.list(fmls) == quote(expr = )]
+  }
+  `__curry__` <- function(f) {
     f_closure <- closure(f)
     if (is_curried_(f_closure))
       return(f)
     `__uncurry__` <- f  # Sentinel value for uncurrying
     `__partialize__` <- call_in_caller_env(partial, partialize(f))
+    `__nms_free_fmls__` <- names_free_formals(f_closure)
     f_curried <- function() {
+      mc <- match.call()
+      if (length(mc) == 1)
+        return(`__uncurry__`())
+      if (`__nms_free_fmls__` %are% names(mc[-1]))
+        return(eval(`[[<-`(mc, 1, `__uncurry__`), parent.frame()))
       p <- `__partialize__`()
-      if (`__callable__`(p))
-        return(p())
-      nofrills::curry(p)
+      `__curry__`(p)
     }
     formals(f_curried) <- formals(f_closure)
     f_curried
   }
+
+  `__curry__`
 })
 
 #' @param x Object to test.
