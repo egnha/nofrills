@@ -101,12 +101,9 @@ is_curried <- function(x) {
 is_curried_ <- function(f) {
   fmls <- formals(f)
   length(fmls) <= 1 ||
-    all_have_values(fmls) ||
+    all(fmls[names(fmls) != "..."] != quote(expr = )) ||
     "__precurry__" %in% names(environment(f))
 }
-
-all_have_values <- function(fmls)
-  all(fmls[names(fmls) != "..."] != quote(expr = ))
 
 #' @rdname curry
 #' @export
