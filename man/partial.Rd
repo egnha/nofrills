@@ -64,7 +64,7 @@ replicate(4, rnd(), simplify = FALSE)   # variable length
 rnd_eager <- partial(runif, n = !! rpois(1, 5))
 len <- length(rnd_eager())
 reps <- replicate(4, rnd_eager(), simplify = FALSE)   # constant length
-stopifnot(all(lengths(reps) == len))
+stopifnot(all(vapply(reps, length, integer(1)) == len))
 
 # Mix evaluation schemes by combining lazy evaluation with unquoting (`!!`)
 # Here 'n' is lazily evaluated, while 'max' is eagerly evaluated.
