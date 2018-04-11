@@ -120,7 +120,6 @@ partial_ <- local({
   `call_bare<-` <- setter("__call_bare__")
 
   function(f_bare, fmls, fix, parent) {
-    fmls_partial <- fmls[names(fmls) %notin% names(fix)]
     nms_bare <- names(formals(f_bare))
     if (has_dots(nms_bare)) {
       env <- bind_fixed_args(fix, parent, nondots(nms_bare))
@@ -130,9 +129,10 @@ partial_ <- local({
       call_bare(env) <- call_bare(parent) %||%
         as.call(c(quote(`__bare__`), eponymous(nms_bare)))
     }
-    env$`__bare__` <- f_bare
-    env$`__partial__` <- new_function_(fmls_partial, call_bare(env), env)
+    fmls_partial <- fmls[names(fmls) %notin% names(fix)]
     env$`__with_fixed_args__` <- promise_tidy(nms_bare, fmls_partial, env)
+    env$`__partial__` <- new_function_(fmls_partial, call_bare(env), env)
+    env$`__bare__` <- f_bare
     new_function_(fmls_partial, body_partial, env)
   }
 })
@@ -145,23 +145,27 @@ bind_fixed_args <- local({
   `names_fixed<-` <- setter("__names_fixed__")
 
   function(fix, parent, nms = NULL) {
-    if (is.null(nms)) {
-      names(fix) <- privatize(names(fix))
-      return(list2env(fix, parent = parent))
+    if (is.null(nms))
+      env <- bind_fixed_args_(fix, parent)
+    else {
+      all(names(fix) %notin% names_fixed(parent)) %because%
+        "Can't reset previously fixed argument(s)"
+      names(fix) <- name_bare_dots(fix, parent)
+      env <- bind_fixed_args_(fix, parent, nms)
+      args(env) <- c(args(parent) %||% eponymous(nms), tidy_dots(names(fix), nms))
     }
-    all(names(fix) %notin% names_fixed(parent)) %because%
-      "Can't reset previously fixed argument(s)"
-    names(fix) <- name_bare_dots(fix, parent)
-    env <- bind_fixed_args_(fix, nms, parent)
-    args(env) <- c(args(parent) %||% eponymous(nms), tidy_dots(names(fix), nms))
     names_fixed(env) <- c(names_fixed(parent), names(fix))
     env
   }
 })
 
-bind_fixed_args_ <- function(fix, nms, parent) {
-  is_nondot <- names(fix) %in% nms
-  names(fix)[is_nondot] <- privatize(names(fix)[is_nondot])
+bind_fixed_args_ <- function(fix, parent, nms = NULL) {
+  if (is.null(nms))
+    names(fix) <- privatize(names(fix))
+  else {
+    is_nondot <- names(fix) %in% nms
+    names(fix)[is_nondot] <- privatize(names(fix)[is_nondot])
+  }
   list2env(fix, parent = parent)
 }
 
