@@ -103,7 +103,9 @@ partial <- local({
     fix <- quos_dots_match(fmls)  # '...' consumed by introspection
     if (is_empty(fix))
       return(`__f`)
-    partial_(departial_(`__f`) %||% f, fmls, fix, environment(f))
+    partial_(
+      departial_(`__f`) %||% f, substitute(`__f`), fmls, fix, environment(f)
+    ) %as% "PartialFunction"
   }
   fn_template <- function(fmls) new_function_(fmls, NULL)
   fn_template_partial <- fn_template(formals(partial))
@@ -118,8 +120,9 @@ partial_ <- local({
   })
   call_bare     <- getter("__call_bare__")
   `call_bare<-` <- setter("__call_bare__")
+  `expr_f<-`    <- setter("__expr_f__")
 
-  function(f_bare, fmls, fix, parent) {
+  function(f_bare, expr, fmls, fix, parent) {
     nms_bare <- names(formals(f_bare))
     if (has_dots(nms_bare)) {
       env <- bind_fixed_args(fix, parent, nondots(nms_bare))
@@ -129,6 +132,7 @@ partial_ <- local({
       call_bare(env) <- call_bare(parent) %||%
         as.call(c(quote(`__bare__`), eponymous(nms_bare)))
     }
+    expr_f(env) <- expr_f(parent) %||% expr
     fmls_partial <- fmls[names(fmls) %notin% names(fix)]
     env$`__with_fixed_args__` <- promise_tidy(nms_bare, fmls_partial, env)
     env$`__partial__` <- new_function_(fmls_partial, call_bare(env), env)
@@ -138,6 +142,7 @@ partial_ <- local({
 })
 
 args        <- getter("__args__")
+expr_f      <- getter("__expr_f__")
 names_fixed <- getter("__names_fixed__")
 
 bind_fixed_args <- local({
@@ -214,3 +219,66 @@ departial <- function(`__f`) {
 }
 
 departial_ <- getter("__bare__", environment)
+
+#' @export
+print.PartialFunction <- function(x, ...) {
+  cat("<Partial Application>\n\n")
+
+  expr_partial <- environment(x)$`__partial__`
+  expr_x <- expr_f(environment(x))
+  env <- new.env(parent = environment(x))
+  env$`__bare__` <- call_with_fixed_args(x, expr_x)
+  environment(expr_partial) <- env
+  expr_print(expr_partial())
+
+  inner_f <- if (is.name(expr_x)) paste0(" '", expr_x, "'") else ""
+  cat("\n(Apply 'departial()' to recover the inner function", inner_f, ")",
+      sep = "")
+
+  invisible(x)
+}
+
+call_with_fixed_args <- local({
+  unquote <- list(eval_tidy = function(arg) uq(substitute(arg)))
+  function(x, expr_x) {
+    fmls <- formals(x)
+    subst_fixed_args <- fixed_args_substitution(x)
+    expr_fixed <- function(arg, env)
+      expr_uq(subst_fixed_args(arg), env)
+    function(...) {
+      fmls_fixed <- lapply(fmls, expr_fixed, env = parent.frame())
+      fmls_fixed <- as.pairlist(fmls_fixed)
+      call <- subst_fixed_args(sys.call())
+      args_fixed <- lapply(call[-1], function(arg)
+        if (is_tidy_call(arg)) eval(arg, unquote) else arg
+      )
+      # Workaround: rlang::expr() removes parens for anonymous-function calls
+      if (!is.name(expr_x))
+        expr_x <- call("(", expr_x)
+      body_fixed <- as.call(c(expr_x, args_fixed))
+      call_fixed <- call("function", fmls_fixed, call("{", body_fixed))
+      expr_uq(call_fixed, parent.frame())
+    }
+  }
+})
+
+fixed_args_substitution <- function(x) {
+  nms_fixed <- names_fixed(environment(x))
+  nms_fixed <- nms_fixed[nms_fixed %in% names(formals(departial_(x)))]
+  exprs_fixed <- lapply(privatize(nms_fixed), function(nm) uq(as.name(nm)))
+  names(exprs_fixed) <- nms_fixed
+  function(expr)
+    do.call("substitute", list(expr, exprs_fixed))
+}
+
+uq <- function(x) bquote(!!.(x))
+
+expr_uq <- function(x, env) {
+  eval(bquote(expr(.(x))), list(expr = expr), env)
+}
+
+is_tidy_call <- local({
+  sym_eval_tidy <- as.name("eval_tidy")
+  function(x)
+    is.call(x) && identical(x[[1]], sym_eval_tidy)
+})
