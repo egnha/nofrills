@@ -78,3 +78,33 @@ subst <- function(expr, vals)
     class(x) <- c(this, class(x)[-wh_this])
   x
 }
+
+subclass <- function(class, x) {
+  superclass <- class(x)
+  wh_class <- which(superclass == class)
+  if (isTRUE(wh_class == 0L))
+    return(c(class, superclass))
+  if (isTRUE(wh_class == 1L))
+    return(superclass)
+  c(class, superclass[-wh_class])
+}
+
+assign_getter <- function(nm, property = nm, env = parent.frame()) {
+  force(property)
+  getter <- function(x) attr(x, property, exact = TRUE)
+  assign(nm, getter, envir = env)
+}
+
+assign_setter <- function(nm, property = nm, env = parent.frame()) {
+  force(property)
+  setter <- function(x, value) {
+    attr(x, property) <- value
+    invisible(x)
+  }
+  assign(paste0(nm, "<-"), setter, envir = env)
+}
+
+is_caller <- function(nm) {
+  sym <- as.name(nm)
+  function(x) is.call(x) && identical(x[[1]], sym)
+}
