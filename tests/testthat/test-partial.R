@@ -123,10 +123,6 @@ test_that("partial() is operationally idempotent", {
   f <- function(x, y, ..., z = 3) c(x, y, ..., z)
 
   expect_equal(
-    partial(partial(f), 1),
-    partial(f, 1)
-  )
-  expect_equal(
     departial(partial(partial(f), 1)),
     departial(partial(f, 1))
   )
