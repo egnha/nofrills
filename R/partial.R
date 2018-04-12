@@ -91,12 +91,6 @@
 #'
 #' @export
 partial <- local({
-  dots_match <- function(call, fmls) {
-    call <- match.call(fn_template_partial, call)
-    call <- call[names(call) != "__f"]
-    match.call(fn_template(fmls), call)
-  }
-  quos_dots_match <- call_in_caller_env(quos, dots_match)
   partial <- function(`__f`, ...) {
     f <- closure(`__f`)
     fmls <- formals(f)
@@ -107,8 +101,18 @@ partial <- local({
       departial_(`__f`) %||% f, substitute(`__f`), fmls, fix, environment(f)
     ) %as% "PartialFunction"
   }
-  fn_template <- function(fmls) new_function_(fmls, NULL)
-  fn_template_partial <- fn_template(formals(partial))
+
+  quos_dots_match <- local({
+    dots_match <- function(call, fmls) {
+      call <- match.call(fn_template_partial, call)
+      call <- call[names(call) != "__f"]
+      match.call(fn_template(fmls), call)
+    }
+    fn_template <- function(fmls) new_function_(fmls, NULL)
+    fn_template_partial <- fn_template(formals(partial))
+
+    call_in_caller_env(quos, dots_match)
+  })
 
   partial
 })
