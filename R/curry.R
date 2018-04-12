@@ -52,23 +52,13 @@
 #'
 #' @export
 curry <- local({
-  partialize <- function(f) {
-    force(f)
-    # '__f' is function-argument name of partial()
-    function(call) `[[<-`(call, "__f", f)
-  }
-  names_free_formals <- function(f) {
-    fmls <- formals(f)
-    nms <- names(fmls)
-    nms[nms != "..." & fmls[] == quote(expr = )]
-  }
   `__curry__` <- function(f) {
     f_closure <- closure(f)
     if (is_curried_(f_closure))
       return(f)
     `__precurry__` <- f
-    `__partialize__` <- call_in_caller_env(partial, partialize(f))
     `__nms_free_fmls__` <- names_free_formals(f_closure)
+    `__partialize__` <- partialize(f)
     f_curried <- function() {
       mc <- match.call()
       if (length(mc) == 1)
@@ -79,7 +69,25 @@ curry <- local({
       `__curry__`(p)
     }
     formals(f_curried) <- formals(f_closure)
+    class(f_curried) <- subclass("CurriedFunction", f)
     f_curried
+  }
+
+  names_free_formals <- function(f) {
+    fmls <- formals(f)
+    nms <- names(fmls)
+    nms[nms != "..." & fmls[] == quote(expr = )]
+  }
+
+  partialize <- function(f) {
+    expr_curry <- new_expr_partial(f, parent.frame())
+
+    function() {
+      call <- `[[<-`(sys.call(-1), "__f", f)
+      p <- eval(`[[<-`(call, 1, partial), parent.frame(2))
+      expr_partial(p) <- expr_curry
+      p
+    }
   }
 
   `__curry__`
@@ -107,13 +115,12 @@ is_curried_ <- function(f) {
 
 #' @rdname curry
 #' @export
-uncurry <- local({
-  uncurry_ <- getter("__precurry__", environment)
-  function(f) {
-    is.function(f) %because% "Only functions can be uncurried"
-    uncurry_(f) %||% f
-  }
-})
+uncurry <- function(f) {
+  is.function(f) %because% "Only functions can be uncurried"
+  uncurry_(f) %||% f
+}
+
+uncurry_ <- getter("__precurry__", environment)
 
 #' @description
 #' `fn_curry()` produces a curried function from an [fn()]-style function
@@ -141,3 +148,15 @@ uncurry <- local({
 #' @rdname fn
 #' @export
 fn_curry <- fn %>>>% curry
+
+#' @export
+print.CurriedFunction <- function(x, ...) {
+  cat("<Curried Function>\n\n")
+  uc <- uncurry_(x)
+  if (inherits(uc, "PartialFunction"))
+    expr_print(expr_partial_closure(uc))
+  else
+    print.default(uc)
+  cat("\n(Apply 'uncurry()' to restore conventional calling behavior)")
+  invisible(x)
+}

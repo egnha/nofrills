@@ -98,7 +98,7 @@ partial <- local({
     if (is_empty(fix))
       return(`__f`)
     p <- partial_(departial_(`__f`) %||% f, fmls, fix, environment(f))
-    expr_partial(p) <- expr_partial(`__f`) %||% new_expr_partial(`__f`)
+    expr_partial(p) <- new_expr_partial(`__f`)
     class(p) <- subclass("PartialFunction", `__f`)
     p
   }
@@ -115,19 +115,24 @@ partial <- local({
     call_in_caller_env(quos, dots_match)
   })
 
-  assign_setter("expr_partial", ".PartialExpression")
-  new_expr_partial <- function(f) {
-    expr <- subst(substitute(f), parent.frame())
+  partial
+})
+
+new_expr_partial <- local({
+  new_expr_partial_ <- function(expr) {
     if (is_anon_call(expr))
       expr <- call("(", call("function", expr[[2]], quote(...)))
     expr
   }
   is_anon_call <- is_caller("function")
 
-  partial
+  function(f, env = parent.frame()) {
+    expr_partial(f) %||% new_expr_partial_(subst(substitute(f), env))
+  }
 })
 
 assign_getter("expr_partial", ".PartialExpression")
+assign_setter("expr_partial", ".PartialExpression")
 
 partial_ <- local({
   partial_ <- function(f_bare, fmls, fix, parent) {
