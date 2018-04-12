@@ -147,7 +147,9 @@ uncurry_ <- getter("__precurry__", environment)
 #'
 #' @rdname fn
 #' @export
-fn_curry <- fn %>>>% curry
+fn_curry <- function(..., ..env = parent.frame()) {
+  curry(fn(..., ..env = ..env))
+}
 
 #' @export
 print.CurriedFunction <- function(x, ...) {
