@@ -60,7 +60,7 @@ curry <- local({
   names_free_formals <- function(f) {
     fmls <- formals(f)
     nms <- names(fmls)
-    nms[nms != "..." & as.list(fmls) == quote(expr = )]
+    nms[nms != "..." & fmls[] == quote(expr = )]
   }
   `__curry__` <- function(f) {
     f_closure <- closure(f)
