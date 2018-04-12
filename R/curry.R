@@ -58,7 +58,7 @@ curry <- local({
       return(f)
     `__precurry__` <- f
     `__nms_free_fmls__` <- names_free_formals(f_closure)
-    `__partialize__` <- partialize(f)
+    `__partialize__` <- partialize(f_closure, f, substitute(f))
     f_curried <- function() {
       mc <- match.call()
       if (length(mc) == 1)
@@ -79,8 +79,8 @@ curry <- local({
     nms[nms != "..." & fmls[] == quote(expr = )]
   }
 
-  partialize <- function(f) {
-    expr_curry <- new_expr_partial(f, parent.frame())
+  partialize <- function(f_closure, f, expr) {
+    expr_curry <- new_expr_partial(f, expr, formals(f_closure))
 
     function() {
       call <- `[[<-`(sys.call(-1), "__f", f_closure)
