@@ -83,7 +83,7 @@ curry <- local({
     expr_curry <- new_expr_partial(f, parent.frame())
 
     function() {
-      call <- `[[<-`(sys.call(-1), "__f", f)
+      call <- `[[<-`(sys.call(-1), "__f", f_closure)
       p <- eval(`[[<-`(call, 1, partial), parent.frame(2))
       expr_partial(p) <- expr_curry
       p
