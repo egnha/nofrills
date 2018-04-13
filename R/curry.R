@@ -57,13 +57,13 @@ curry <- local({
     if (is_curried_(f_closure))
       return(f)
     `__precurry__` <- f
-    `__nms_free_fmls__` <- names_free_formals(f_closure)
+    `__nms_unset_fmls__` <- names_unset_formals(f_closure)
     `__partialize__` <- partialize(f_closure, f, substitute(f))
     f_curried <- function() {
       mc <- match.call()
       if (length(mc) == 1)
         return(`__precurry__`())
-      if (`__nms_free_fmls__` %are% names(mc[-1]))
+      if (`__nms_unset_fmls__` %are% names(mc[-1]))
         return(eval(`[[<-`(mc, 1, `__precurry__`), parent.frame()))
       p <- `__partialize__`()
       `__curry__`(p)
@@ -73,7 +73,7 @@ curry <- local({
     f_curried
   }
 
-  names_free_formals <- function(f) {
+  names_unset_formals <- function(f) {
     fmls <- formals(f)
     nms <- names(fmls)
     nms[nms != "..." & fmls[] == quote(expr = )]
