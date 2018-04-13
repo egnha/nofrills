@@ -80,7 +80,7 @@ curry <- local({
   }
 
   partialize <- function(f_closure, f, expr) {
-    expr_curry <- new_expr_partial(f, expr, formals(f_closure))
+    expr_curry <- expr_partial(f) %||% expr_fn(expr, formals(f_closure))
 
     function() {
       call <- `[[<-`(sys.call(-1), "__f", f_closure)

@@ -98,7 +98,7 @@ partial <- local({
     if (is_empty(fix))
       return(`__f`)
     p <- partial_(departial_(`__f`) %||% f, fmls, fix, environment(f))
-    expr_partial(p) <- new_expr_partial(`__f`, substitute(`__f`), fmls)
+    expr_partial(p) <- expr_partial(`__f`) %||% expr_fn(substitute(`__f`), fmls)
     class(p) <- subclass("PartialFunction", `__f`)
     p
   }
@@ -118,16 +118,14 @@ partial <- local({
   partial
 })
 
-new_expr_partial <- function(f, expr, fmls) {
-  expr_partial(f) %||% {
-    if (is.name(expr))
-      return(expr)
-    call("(", call("function", fmls, quote(...)))
-  }
-}
-
 assign_getter("expr_partial", ".PartialExpression")
 assign_setter("expr_partial", ".PartialExpression")
+
+expr_fn <- function(expr, fmls) {
+  if (is.name(expr))
+    return(expr)
+  call("(", call("function", fmls, quote(...)))
+}
 
 partial_ <- local({
   partial_ <- function(f_bare, fmls, fix, parent) {
