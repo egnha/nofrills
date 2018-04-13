@@ -104,7 +104,8 @@ compose <- function(...) {
     out
   }
   formals(fn_cmps) <- formals(closure(fn_initial))
-  fn_cmps %as% "CompositeFunction"
+  class(fn_cmps) <- "CompositeFunction" %subclass% class(fn_cmps)
+  fn_cmps
 }
 
 flatten_fns <- local({

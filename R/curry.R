@@ -69,7 +69,7 @@ curry <- local({
       `__curry__`(p)
     }
     formals(f_curried) <- formals(f_closure)
-    class(f_curried) <- subclass("CurriedFunction", f)
+    class(f_curried) <- "CurriedFunction" %subclass% class(f)
     f_curried
   }
 

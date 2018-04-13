@@ -99,7 +99,7 @@ partial <- local({
       return(`__f`)
     p <- partial_(departial_(`__f`) %||% f, fmls, fix, environment(f))
     expr_partial(p) <- expr_partial(`__f`) %||% expr_fn(substitute(`__f`), fmls)
-    class(p) <- subclass("PartialFunction", `__f`)
+    class(p) <- "PartialFunction" %subclass% class(`__f`)
     p
   }
 

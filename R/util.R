@@ -68,19 +68,7 @@ subst <- function(expr, vals)
 `%because%` <- function(assertion, reason)
   if (!assertion) stop(reason, call. = FALSE)
 
-`%as%` <- function(x, this) {
-  wh_this <- inherits(x, this, which = TRUE)
-  if (wh_this == 1L)
-    return(x)
-  if (wh_this == 0L)
-    class(x) <- c(this, class(x))
-  else
-    class(x) <- c(this, class(x)[-wh_this])
-  x
-}
-
-subclass <- function(class, x) {
-  superclass <- class(x)
+`%subclass%` <- function(class, superclass) {
   wh_class <- which(superclass == class)
   if (isTRUE(wh_class == 0L))
     return(c(class, superclass))

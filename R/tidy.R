@@ -51,7 +51,8 @@ tidy <- function(f) {
     eval_tidy(call)
   }
   formals(f_tidy) <- formals(closure(f))
-  f_tidy %as% "TidyFunction"
+  class(f_tidy) <- "TidyFunction" %subclass% class(f_tidy)
+  f_tidy
 }
 
 #' @rdname tidy
