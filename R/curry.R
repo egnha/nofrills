@@ -58,15 +58,14 @@ curry <- local({
       return(f)
     `__precurry__` <- f
     `__nms_unset_fmls__` <- names_unset_formals(f_closure)
-    `__partialize__` <- partialize(f_closure, f, substitute(f))
+    `__curry_partial__` <- curry_partial(f_closure, f, substitute(f))
     f_curried <- function() {
       mc <- match.call()
       if (length(mc) == 1)
         return(`__precurry__`())
       if (`__nms_unset_fmls__` %are% names(mc[-1]))
         return(eval(`[[<-`(mc, 1, `__precurry__`), parent.frame()))
-      p <- `__partialize__`()
-      `__curry__`(p)
+      `__curry_partial__`()
     }
     formals(f_curried) <- formals(f_closure)
     class(f_curried) <- "CurriedFunction" %subclass% class(f)
@@ -79,14 +78,14 @@ curry <- local({
     nms[nms != "..." & fmls[] == quote(expr = )]
   }
 
-  partialize <- function(f_closure, f, expr) {
+  curry_partial <- function(f_closure, f, expr) {
     expr_curry <- expr_partial(f) %||% expr_fn(expr, formals(f_closure))
 
     function() {
       call <- `[[<-`(sys.call(-1), "__f", f_closure)
       p <- eval(`[[<-`(call, 1, partial), parent.frame(2))
       expr_partial(p) <- expr_curry
-      p
+      `__curry__`(p)
     }
   }
 
