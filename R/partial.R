@@ -97,7 +97,7 @@ partial <- local({
     fix <- quos_dots_match(fmls)  # '...' consumed by introspection
     if (is_empty(fix))
       return(`__f`)
-    p <- partial_(departial_(f), fmls, fix, environment(f))
+    p <- partial_(f, fmls, fix)
     expr_partial(p) <- expr_partial(`__f`) %||% expr_fn(substitute(`__f`), fmls)
     class(p) <- "PartialFunction" %subclass% class(`__f`)
     p
@@ -128,7 +128,16 @@ expr_fn <- function(expr, fmls) {
 }
 
 partial_ <- local({
-  partial_ <- function(f_bare, fmls, fix, parent) {
+  body_partial <- quote({
+    environment(`__partial__`) <- `__with_fixed_args__`()
+    eval(`[[<-`(sys.call(), 1, `__partial__`), parent.frame())
+  })
+  call_bare     <- getter("__call_bare__")
+  `call_bare<-` <- setter("__call_bare__")
+
+  partial_ <- function(f, fmls, fix) {
+    parent <- environment(f)
+    f_bare <- departial_(f)
     nms_bare <- names(formals(f_bare))
     if (has_dots(nms_bare)) {
       env <- bind_fixed_args(fix, parent, nondots(nms_bare))
@@ -144,15 +153,6 @@ partial_ <- local({
     env$`__bare__` <- f_bare
     new_function_(fmls_partial, body_partial, env)
   }
-
-  body_partial <- quote({
-    environment(`__partial__`) <- `__with_fixed_args__`()
-    eval(`[[<-`(sys.call(), 1, `__partial__`), parent.frame())
-  })
-  call_bare     <- getter("__call_bare__")
-  `call_bare<-` <- setter("__call_bare__")
-
-  partial_
 })
 
 args        <- getter("__args__")
