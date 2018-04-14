@@ -97,7 +97,7 @@ partial <- local({
     fix <- quos_dots_match(fmls)  # '...' consumed by introspection
     if (is_empty(fix))
       return(`__f`)
-    p <- partial_(departial_(`__f`) %||% f, fmls, fix, environment(f))
+    p <- partial_(departial_(f), fmls, fix, environment(f))
     expr_partial(p) <- expr_partial(`__f`) %||% expr_fn(substitute(`__f`), fmls)
     class(p) <- "PartialFunction" %subclass% class(`__f`)
     p
@@ -228,10 +228,13 @@ privatize <- function(nms) sprintf("..%s..", nms)
 #' @export
 departial <- function(`__f`) {
   is.function(`__f`) %because% "Only functions can be de-partialized"
-  departial_(`__f`) %||% `__f`
+  departial_(`__f`)
 }
 
-departial_ <- getter("__bare__", environment)
+departial_ <- local({
+  get_bare <- getter("__bare__", environment)
+  function(f) get_bare(f) %||% f
+})
 
 #' @export
 print.PartialFunction <- function(x, ...) {
