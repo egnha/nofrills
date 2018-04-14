@@ -97,6 +97,6 @@ is_caller <- function(nm) {
   function(x) is.call(x) && identical(x[[1]], sym)
 }
 
-`%bind%` <- function(env, bindings) {
+`%binds%` <- function(env, bindings) {
   invisible(list2env(bindings, envir = env))
 }

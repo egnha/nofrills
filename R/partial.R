@@ -148,7 +148,7 @@ partial_ <- local({
         as.call(c(quote(`__bare__`), eponymous(nms_bare)))
     }
     fmls_partial <- fmls[names(fmls) %notin% names(fix)]
-    env %bind% list(
+    env %binds% list(
       `__with_fixed_args__` = promise_tidy(nms_bare, fmls_partial, env),
       `__partial__`         = new_function_(fmls_partial, call_bare(env), env),
       `__bare__`            = f_bare
