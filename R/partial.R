@@ -240,7 +240,7 @@ departial_ <- local({
 
 #' @export
 print.PartialFunction <- function(x, ...) {
-  cat("<Partial Application>\n\n")
+  cat("<Partially Applied Function>\n\n")
   expr_print(expr_partial_closure(x))
   cat("\n(Apply 'departial()' to recover the inner function)")
   invisible(x)
