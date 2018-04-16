@@ -230,8 +230,7 @@ print.PartialFunction <- function(x, ...) {
 
 expr_partial_closure <- function(x) {
   make_expr <- environment(x)$`__partial__`
-  env <- new.env(parent = environment(x))
-  env$`__bare__` <- call_with_fixed_args(x)
+  env <- environment(x) %encloses% list(`__bare__` = call_with_fixed_args(x))
   environment(make_expr) <- env
   make_expr()
 }
