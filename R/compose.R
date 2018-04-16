@@ -90,7 +90,7 @@
 #'
 #' @export
 compose <- local({
-  call_iter <- function(n, fmls) {
+  iterated_call <- function(n, fmls) {
     fnames <- enum(n:1)
     expr <- as.call(c(as.name(fnames[[1]]), args(fmls)))
     for (fname in fnames[-1])
@@ -117,7 +117,7 @@ compose <- local({
       return(pipeline[[1]])
     fn_init <- closure(pipeline[[n]])
     fmls <- formals(fn_init)
-    body <- call_iter(n, fmls)
+    body <- iterated_call(n, fmls)
     names(pipeline) <- enum(seq_len(n))
     env <- environment(fn_init) %encloses% pipeline
     makeActiveBinding("__pipeline__", get_pipeline(pipeline, env), env)
