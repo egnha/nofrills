@@ -135,17 +135,17 @@ partial_ <- local({
       all(names(fix)[nzchar(names(fix))] %notin% names(names_fixed(f))) %because%
         "Can't reset previously fixed argument(s)"
       nms_bare <- nondots(nms_bare)
-      nms_fix_private <- rename_privately(names(fix), names_fixed(f))
-      args <- c(args(f, nms_bare), tidy_dots(nms_fix_private, nms_bare))
+      nms_priv <- privatize(names(fix), names_fixed(f))
+      args <- c(args(f, nms_bare), tidy_dots(nms_priv, nms_bare))
       body <- call_bare(args, quote(...))
     } else {
-      nms_fix_private <- rename_privately(names(fix), names_fixed(f))
+      nms_priv <- privatize(names(fix))
       args <- args(f, nms_bare)
       body <- call_bare(args)
     }
-    nms_fix <- c(nms_fix_private, names_fixed(f))
+    nms_fix <- c(nms_priv, names_fixed(f))
     fmls_partial <- formals(f)[names(formals(f)) %notin% names(fix)]
-    env <- list2env(fix %named% nms_fix_private, parent = environment(f))
+    env <- list2env(fix %named% nms_priv, parent = environment(f))
     env %binds% list(
       `__with_fixed_args__` = promise_tidy(nms_fix, nms_bare, env),
       `__partial__`         = new_function_(fmls_partial, body, env),
@@ -160,18 +160,23 @@ partial_ <- local({
 
 assign_getter("names_fixed", ".fixedArgNames")
 
-rename_privately <- local({
+privatize <- local({
+  privatize_ <- function(xs, nms = xs) {
+    sprintf("..%s..", xs) %named% nms
+  }
   n_dots <- function(x) {
     if (is.null(x)) return(0L)
     sum(!nzchar(names(x)))
   }
 
   function(nms, nms_prev) {
+    if (missing(nms_prev))
+      return(privatize_(nms))
     nms_fill <- nms
     is_blank <- !nzchar(nms_fill)
     if ((n_blank <- sum(is_blank)) != 0L)
       nms_fill[is_blank] <- as.character(n_dots(nms_prev) + seq_len(n_blank))
-    sprintf("..%s..", nms_fill) %named% nms
+    privatize_(nms_fill, nms)
   }
 })
 
