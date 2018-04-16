@@ -60,11 +60,10 @@ curry <- local({
     `__nms_unset_fmls__` <- names_unset_formals(f_closure)
     `__curry_partial__` <- curry_partial(f_closure, f, substitute(f))
     f_curried <- function() {
-      mc <- match.call()
-      if (length(mc) == 1)
+      if (length(sys.call()) == 1L)
         return(`__precurry__`())
-      if (`__nms_unset_fmls__` %are% names(mc[-1]))
-        return(eval(`[[<-`(mc, 1, `__precurry__`), parent.frame()))
+      if (`__nms_unset_fmls__` %are% names((mc <- match.call())[-1L]))
+        return(eval(`[[<-`(mc, 1L, `__precurry__`), parent.frame()))
       `__curry_partial__`()
     }
     formals(f_curried) <- formals(f_closure)
