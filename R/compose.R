@@ -89,24 +89,30 @@
 #' stopifnot(isTRUE(all.equal(decompose(compose(fs)), fs)))
 #'
 #' @export
-compose <- function(...) {
-  `__pipeline__` <- flatten_fns(...)
-  n <- length(`__pipeline__`)
-  if (n == 1)
-    return(`__pipeline__`[[1]])
-  fn_initial <- `__pipeline__`[[n]]
-  `__call_fn_initial__` <- call_in_caller_env(fn_initial)
-  `__fns_rest__` <- rev(`__pipeline__`[-n])
-  fn_cmps <- function() {
-    out <- `__call_fn_initial__`()
-    for (f in `__fns_rest__`)
-      out <- f(out)
+compose <- local({
+  body_compose <- quote({
+    out <- `__call_initial__`()
+    for (i in `__rev_indices__`)
+      out <- .subset2(`__pipeline__`, i)(out)
     out
+  })
+
+  function(...) {
+    pipeline <- flatten_fns(...)
+    n <- length(pipeline)
+    if (n == 1L)
+      return(pipeline[[1L]])
+    fn_initial <- pipeline[[n]]
+    env <- environment(fn_initial) %||% baseenv() %encloses% list(
+      `__call_initial__` = call_in_caller_env(fn_initial),
+      `__rev_indices__`  = (n - 1L):1L,
+      `__pipeline__`     = pipeline
+    )
+    fn_cmps <- new_function_(formals(closure(fn_initial)), body_compose, env)
+    class(fn_cmps) <- "CompositeFunction" %subclass% class(fn_cmps)
+    fn_cmps
   }
-  formals(fn_cmps) <- formals(closure(fn_initial))
-  class(fn_cmps) <- "CompositeFunction" %subclass% class(fn_cmps)
-  fn_cmps
-}
+})
 
 flatten_fns <- local({
   are_funs <- function(xs)
