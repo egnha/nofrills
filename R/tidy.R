@@ -75,10 +75,7 @@ is_tidy <- function(x) {
 is_tidy_ <- function(f) {
   if (is_empty(formals(closure(f))))
     return(TRUE)
-  env <- environment(f)
-  if (is.null(env))
-    return(FALSE)  # Non-vacuous primitive functions are never tidy
-  exists("__pretidy__", envir = env, mode = "function")
+  inherits(f, "TidyFunction")
 }
 
 #' @rdname tidy

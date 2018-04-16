@@ -108,7 +108,7 @@ is_curried_ <- function(f) {
   fmls <- formals(f)
   length(fmls) <= 1 ||
     all(fmls[names(fmls) != "..."] != quote(expr = )) ||
-    exists("__precurry__", envir = environment(f), mode = "function")
+    inherits(f, "CurriedFunction")
 }
 
 #' @rdname curry
