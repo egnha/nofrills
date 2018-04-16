@@ -130,20 +130,12 @@ test_that("partial() is operationally idempotent", {
   expect_equal(partial(partial(f), 1)(2), c(1, 2, 3))
 
   expect_equal(
-    partial(partial(f, 1), 2),
-    partial(f, 1, 2)
-  )
-  expect_equal(
     departial(partial(partial(f, 1), 2)),
     departial(partial(f, 1, 2))
   )
   expect_equal(partial(partial(f, 1), 2)(), partial(f, 1, 2)())
   expect_equal(partial(partial(f, 1), 2)(), c(1, 2, 3))
 
-  expect_equal(
-    partial(partial(partial(f, 1), 2), 2.5),
-    partial(f, 1, 2, 2.5)
-  )
   expect_equal(
     departial(partial(partial(partial(f, 1), 2), 2.5)),
     departial(partial(f, 1, 2, 2.5))
@@ -157,10 +149,6 @@ test_that("partial() is operationally idempotent", {
     c(1, 2, 2.5, 3)
   )
 
-  expect_equal(
-    partial(partial(partial(partial(f, 1), 2), 3), z = 4),
-    partial(f, 1, 2, 3, z = 4)
-  )
   expect_equal(
     departial(partial(partial(partial(partial(f, 1), 2), 3), z = 4)),
     departial(partial(f, 1, 2, 3, z = 4))
