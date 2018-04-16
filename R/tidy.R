@@ -39,21 +39,25 @@
 #'   )
 #' )
 #' @export
-tidy <- function(f) {
-  is.function(f) %because% "Only functions can be tidied"
-  if (is_tidy_(f))
-    return(f)
-  `__pretidy__` <- f
-  `__quo__` <- quo
-  f_tidy <- function() {
-    call <- `[[<-`(sys.call(), 1, `__pretidy__`)
+tidy <- local({
+  body_tidy <- quote({
+    call <- `[[<-`(sys.call(), 1L, `__pretidy__`)
     call <- eval(as.call(c(`__quo__`, call)), parent.frame())
-    eval_tidy(call)
+    `__eval_tidy__`(call)
+  })
+  funs <- list(`__eval_tidy__` = eval_tidy, `__quo__` = quo)
+
+  function(f) {
+    is.function(f) %because% "Only functions can be tidied"
+    fmls <- formals(closure(f))
+    if (is_tidy_(f, fmls))
+      return(f)
+    env <- environment(f) %||% baseenv() %encloses% c(funs, `__pretidy__` = f)
+    f_tidy <- new_function_(fmls, body_tidy, env)
+    class(f_tidy) <- "TidyFunction" %subclass% class(f_tidy)
+    f_tidy
   }
-  formals(f_tidy) <- formals(closure(f))
-  class(f_tidy) <- "TidyFunction" %subclass% class(f_tidy)
-  f_tidy
-}
+})
 
 #' @rdname tidy
 #' @param x Object to test: Is it a tidy function?
@@ -72,8 +76,8 @@ is_tidy <- function(x) {
   FALSE
 }
 
-is_tidy_ <- function(f) {
-  if (is_empty(formals(closure(f))))
+is_tidy_ <- function(f, fmls = formals(closure(f))) {
+  if (is_empty(fmls))
     return(TRUE)
   inherits(f, "TidyFunction")
 }
