@@ -224,9 +224,9 @@ get_empty_head <- function(nm) {
 }
 get_nonempty_head <- function(arg, nm) {
   if (nzchar(nm))
-    `names<-`(list(arg), nm)
+    list(arg) %named% nm
   else
-    `names<-`(blank, expr_name(arg))
+    blank %named% expr_name(arg)
 }
 
 make_function <- function(args, body, env) {

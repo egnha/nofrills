@@ -43,10 +43,8 @@ nondots <- function(xs)
 has_dots <- function(x)
   match("...", x, nomatch = 0L) > 0L
 
-eponymous <- function(nms) {
-  names(nms) <- nms
-  lapply(nms, as.name)
-}
+eponymous <- function(nms)
+  lapply(nms, as.name) %named% nms
 
 opposite <- function(f) {
   formals(f) <- rev(formals(f))
