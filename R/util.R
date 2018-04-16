@@ -29,14 +29,6 @@ getter <- function(nm, maybe_transform = NULL) {
   function(env) .subset2(maybe_transform(env), nm)
 }
 
-setter <- function(nm) {
-  force(nm)
-  function(x, value) {
-    assign(nm, value, envir = x)
-    invisible(x)
-  }
-}
-
 nondots <- function(xs)
   xs[xs != "..."]
 
