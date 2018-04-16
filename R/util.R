@@ -39,9 +39,6 @@ opposite <- function(f) {
 box <- function(x)
   if (is.list(x)) x else list(x)
 
-subst <- function(expr, vals)
-  do.call("substitute", list(expr, vals))
-
 `%notin%` <- function(these, those)
   match(these, those, nomatch = 0L) == 0L
 

@@ -12,6 +12,7 @@ exprs_ <- function(...)
 
 quo_get_expr_ <- local({
   quote_uq <- list(QUQ = as.name("!!"), QUQS = as.name("!!!"))
+
   function(x)
-    subst(quo_get_expr(x), quote_uq)
+    do.call("substitute", list(quo_get_expr(x), quote_uq))
 })
