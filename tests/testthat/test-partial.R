@@ -119,6 +119,13 @@ test_that("dots persist", {
   )
 })
 
+test_that("fixed named dot-argument doesn't pollute function's lexical scope", {
+  a <- "In lexical scope"
+  f <- function(x = a, ...) c(x, ...)
+  fp <- partial(f, a = "Not in lexical scope")
+  expect_identical(fp(), c("In lexical scope", a = "Not in lexical scope"))
+})
+
 test_that("partial() is operationally idempotent", {
   f <- function(x, y, ..., z = 3) c(x, y, ..., z)
 
