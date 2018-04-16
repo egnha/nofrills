@@ -22,13 +22,6 @@ call_in_caller_env <- function(f, maybe_transform = NULL) {
   }
 }
 
-getter <- function(nm, maybe_transform = NULL) {
-  force(nm)
-  if (is.null(maybe_transform))
-    return(function(env) .subset2(env, nm))
-  function(env) .subset2(maybe_transform(env), nm)
-}
-
 nondots <- function(xs)
   xs[xs != "..."]
 
@@ -65,6 +58,11 @@ subst <- function(expr, vals)
   if (isTRUE(wh_class == 1L))
     return(superclass)
   c(class, superclass[-wh_class])
+}
+
+getter_env <- function(nm) {
+  force(nm)
+  function(x) .subset2(environment(x), nm)
 }
 
 assign_getter <- function(nm, property = nm, env = parent.frame()) {

@@ -97,7 +97,7 @@ untidy <- function(f) {
   untidy_(f) %||% f
 }
 
-untidy_ <- getter("__pretidy__", environment)
+untidy_ <- getter_env("__pretidy__")
 
 #' @export
 print.TidyFunction <- function(x, ...) {

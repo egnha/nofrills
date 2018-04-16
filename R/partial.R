@@ -216,7 +216,7 @@ departial <- function(`__f`) {
 }
 
 departial_ <- local({
-  get_bare <- getter("__bare__", environment)
+  get_bare <- getter_env("__bare__")
   function(f) get_bare(f) %||% f
 })
 
@@ -228,12 +228,16 @@ print.PartialFunction <- function(x, ...) {
   invisible(x)
 }
 
-expr_partial_closure <- function(x) {
-  make_expr <- environment(x)$`__partial__`
-  env <- environment(x) %encloses% list(`__bare__` = call_with_fixed_args(x))
-  environment(make_expr) <- env
-  make_expr()
-}
+expr_partial_closure <- local({
+  get_partial_closure <- getter_env("__partial__")
+
+  function(x) {
+    make_expr <- get_partial_closure(x)
+    env <- environment(x) %encloses% list(`__bare__` = call_with_fixed_args(x))
+    environment(make_expr) <- env
+    make_expr()
+  }
+})
 
 call_with_fixed_args <- function(x) {
   formals_fixed <- function(env) {

@@ -121,7 +121,7 @@ uncurry <- function(f) {
   uncurry_(f) %||% f
 }
 
-uncurry_ <- getter("__precurry__", environment)
+uncurry_ <- getter_env("__precurry__")
 
 #' @description
 #' `fn_curry()` produces a curried function from an [fn()]-style function

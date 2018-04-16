@@ -141,9 +141,8 @@ decompose <- function(f) {
 }
 
 decompose_ <- local({
-  get_pipeline <- getter("__pipeline__")
-  function(x)
-    get_pipeline(environment(x)) %||% x
+  pipeline <- getter_env("__pipeline__")
+  function(x) pipeline(x) %||% x
 })
 
 #' @export
