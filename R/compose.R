@@ -102,12 +102,13 @@ compose <- local({
     names(args)[names(args) == "..."] <- ""
     args
   }
-  enum <- function(x) sprintf("__%s__", x)
-  get_pipeline <- function(env) {
-    nms <- sort(names(env))
+  get_pipeline <- function(pipeline, env) {
+    force(env)
+    nms <- names(pipeline)
     function(.)
       lapply(nms, get0, envir = env, mode = "function", inherits = FALSE)
   }
+  enum <- function(x) sprintf("__%s__", x)
 
   function(...) {
     pipeline <- flatten_fns(...)
@@ -117,8 +118,9 @@ compose <- local({
     fn_init <- closure(pipeline[[n]])
     fmls <- formals(fn_init)
     body <- call_iter(n, fmls)
-    env <- environment(fn_init) %encloses% (pipeline %named% enum(seq_len(n)))
-    makeActiveBinding("__pipeline__", get_pipeline(env), env)
+    names(pipeline) <- enum(seq_len(n))
+    env <- environment(fn_init) %encloses% pipeline
+    makeActiveBinding("__pipeline__", get_pipeline(pipeline, env), env)
     fn_cmps <- new_function_(fmls, body, env)
     class(fn_cmps) <- c("CompositeFunction", "function")
     fn_cmps
