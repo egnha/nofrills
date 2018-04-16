@@ -102,13 +102,14 @@ compose <- local({
     names(args)[names(args) == "..."] <- ""
     args
   }
+  enum <- function(x) sprintf("__%s__", x)
+
   get_pipeline <- function(pipeline, env) {
     force(env)
     nms <- names(pipeline)
     function(.)
       lapply(nms, get0, envir = env, mode = "function", inherits = FALSE)
   }
-  enum <- function(x) sprintf("__%s__", x)
 
   function(...) {
     pipeline <- flatten_fns(...)
