@@ -109,7 +109,7 @@ compose <- local({
       `__pipeline__`     = pipeline
     )
     fn_cmps <- new_function_(formals(closure(fn_initial)), body_compose, env)
-    class(fn_cmps) <- "CompositeFunction" %subclass% class(fn_cmps)
+    class(fn_cmps) <- c("CompositeFunction", "function")
     fn_cmps
   }
 })
