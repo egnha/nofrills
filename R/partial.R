@@ -96,7 +96,7 @@ partial <- function(`__f`, ...) {
   if (is_empty(fix))
     return(`__f`)
   p <- partial_(f, fix)
-  expr_partial(p) <- expr_partial(f) %||% expr_fn(substitute(`__f`), f)
+  expr_partial(p) <- expr_partial(f) %||% expr_fn(substitute(`__f`), formals(f))
   class(p) <- "PartialFunction" %subclass% class(`__f`)
   p
 }
@@ -203,9 +203,9 @@ map_eval_tidy <- local({
 assign_getter("expr_partial", ".exprPartialApplication")
 assign_setter("expr_partial", ".exprPartialApplication")
 
-expr_fn <- function(expr, f) {
+expr_fn <- function(expr, fmls) {
   if (is.name(expr)) return(expr)
-  call("(", call("function", formals(f), quote(...)))
+  call("(", call("function", fmls, quote(...)))
 }
 
 #' @rdname partial

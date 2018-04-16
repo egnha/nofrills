@@ -54,35 +54,39 @@
 curry <- local({
   `__curry__` <- function(f) {
     f_closure <- closure(f)
-    if (is_curried_(f_closure))
+    fmls <- formals(f_closure)
+    if (is_curried_(f_closure, fmls))
       return(f)
-    `__precurry__` <- f
-    `__nms_unset_fmls__` <- names_unset_formals(f_closure)
-    `__curry_partial__` <- curry_partial(f_closure, f, substitute(f))
-    f_curried <- function() {
-      if (length(sys.call()) == 1L)
-        return(`__precurry__`())
-      if (`__nms_unset_fmls__` %are% names((mc <- match.call())[-1L]))
-        return(eval(`[[<-`(mc, 1L, `__precurry__`), parent.frame()))
-      `__curry_partial__`()
-    }
-    formals(f_curried) <- formals(f_closure)
+    env <- environment(f_closure) %encloses% list(
+      `%are%`             = `%are%`,
+      `__precurry__`      = f,
+      `__nms_unset__`     = names_unset(fmls),
+      `__curry_partial__` = curry_partial(f_closure, f, substitute(f), fmls)
+    )
+    f_curried <- new_function_(fmls, body_curry, env)
     class(f_curried) <- "CurriedFunction" %subclass% class(f)
     f_curried
   }
 
-  names_unset_formals <- function(f) {
-    fmls <- formals(f)
+  body_curry <- quote({
+    if (length(sys.call()) == 1L)
+      return(`__precurry__`())
+    if (`__nms_unset__` %are% names((mc <- match.call())[-1L]))
+      return(eval(`[[<-`(mc, 1L, `__precurry__`), parent.frame()))
+    `__curry_partial__`()
+  })
+
+  names_unset <- function(fmls) {
     nms <- names(fmls)
     nms[nms != "..." & fmls[] == quote(expr = )]
   }
 
-  curry_partial <- function(f_closure, f, expr) {
-    expr_curry <- expr_partial(f) %||% expr_fn(expr, f_closure)
+  curry_partial <- function(f_closure, f, expr, fmls) {
+    expr_curry <- expr_partial(f) %||% expr_fn(expr, fmls)
 
     function() {
-      call <- `[[<-`(sys.call(-1), "__f", f_closure)
-      p <- eval(`[[<-`(call, 1, partial), parent.frame(2))
+      call <- `[[<-`(sys.call(-1L), "__f", f_closure)
+      p <- eval(`[[<-`(call, 1L, partial), parent.frame(2))
       expr_partial(p) <- expr_curry
       `__curry__`(p)
     }
@@ -104,8 +108,7 @@ is_curried <- function(x) {
   FALSE
 }
 
-is_curried_ <- function(f) {
-  fmls <- formals(f)
+is_curried_ <- function(f, fmls = formals(f)) {
   length(fmls) <= 1 ||
     all(fmls[names(fmls) != "..."] != quote(expr = )) ||
     inherits(f, "CurriedFunction")
