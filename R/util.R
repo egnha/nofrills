@@ -101,4 +101,8 @@ is_caller <- function(nm) {
   invisible(list2env(bindings, envir = env))
 }
 
+`%encloses%` <- function(parent, bindings) {
+  list2env(bindings, parent = parent)
+}
+
 `%named%` <- `names<-`
