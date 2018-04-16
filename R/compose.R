@@ -90,25 +90,36 @@
 #'
 #' @export
 compose <- local({
-  body_compose <- quote({
-    out <- `__call_initial__`()
-    for (i in `__rev_indices__`)
-      out <- .subset2(`__pipeline__`, i)(out)
-    out
-  })
+  call_iter <- function(n, fmls) {
+    fnames <- enum(n:1)
+    expr <- as.call(c(as.name(fnames[[1]]), args(fmls)))
+    for (fname in fnames[-1])
+      expr <- call(fname, expr)
+    expr
+  }
+  args <- function(fmls) {
+    args <- eponymous(names(fmls))
+    names(args)[names(args) == "..."] <- ""
+    args
+  }
+  enum <- function(x) sprintf("__%s__", x)
+  get_pipeline <- function(env) {
+    nms <- sort(names(env))
+    function(.)
+      lapply(nms, get0, envir = env, mode = "function", inherits = FALSE)
+  }
 
   function(...) {
     pipeline <- flatten_fns(...)
     n <- length(pipeline)
-    if (n == 1L)
-      return(pipeline[[1L]])
-    fn_initial <- pipeline[[n]]
-    env <- environment(fn_initial) %||% baseenv() %encloses% list(
-      `__call_initial__` = call_in_caller_env(fn_initial),
-      `__rev_indices__`  = (n - 1L):1L,
-      `__pipeline__`     = pipeline
-    )
-    fn_cmps <- new_function_(formals(closure(fn_initial)), body_compose, env)
+    if (n == 1)
+      return(pipeline[[1]])
+    fn_init <- closure(pipeline[[n]])
+    fmls <- formals(fn_init)
+    body <- call_iter(n, fmls)
+    env <- environment(fn_init) %encloses% (pipeline %named% enum(seq_len(n)))
+    makeActiveBinding("__pipeline__", get_pipeline(env), env)
+    fn_cmps <- new_function_(fmls, body, env)
     class(fn_cmps) <- c("CompositeFunction", "function")
     fn_cmps
   }
