@@ -128,12 +128,15 @@ partial_ <- local({
     as.call(c(quote(`__bare__`), ...))
   }
 
+  no_name_reuse <- function(f, fix) {
+    all(names(fix)[nzchar(names(fix))] %notin% names(names_fixed(f)))
+  }
+
   function(f, fix) {
     f_bare <- departial_(f)
     nms_bare <- names(formals(f_bare))
     if (has_dots(nms_bare)) {
-      all(names(fix)[nzchar(names(fix))] %notin% names(names_fixed(f))) %because%
-        "Can't reset previously fixed argument(s)"
+      no_name_reuse(f, fix) %because% "Can't reset previously fixed argument(s)"
       nms_bare <- nondots(nms_bare)
       nms_priv <- privatize(names(fix), names_fixed(f))
       args <- c(args(f, nms_bare), tidy_dots(nms_priv, nms_bare))
