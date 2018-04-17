@@ -91,10 +91,10 @@
 #'
 #' @export
 partial <- function(`__f`, ...) {
+  if (missing(...))
+    return(`__f`)
   f <- closure(`__f`)
   fix <- quos_dots_match(f)
-  if (is_empty(fix))
-    return(`__f`)
   p <- partial_(f, fix)
   expr_partial(p) <- expr_partial(f) %||% expr_fn(substitute(`__f`), formals(f))
   class(p) <- "PartialFunction" %subclass% class(`__f`)
