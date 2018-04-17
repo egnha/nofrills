@@ -185,19 +185,19 @@ privatize <- local({
 
 tidy_dots <- function(nms, nms_nondots) {
   dots <- nms[names(nms) %notin% nms_nondots]
-  map_eval_tidy(dots)
+  map_eneval_tidy(dots)
 }
 
 promise_tidy <- function(nms, nms_nondots, parent) {
   nondots <- nms[names(nms) %in% nms_nondots]
-  promises <- map_eval_tidy(nondots)
+  promises <- map_eneval_tidy(nondots)
   env <- parent %encloses% list(eval_tidy = eval_tidy)
   new_function_(promises, quote(environment()), env)
 }
 
-map_eval_tidy <- local({
-  as_eval_tidy <- function(nm) call("eval_tidy", as.name(nm))
-  function(xs) lapply(xs, as_eval_tidy)
+map_eneval_tidy <- local({
+  eneval_tidy <- function(nm) call("eval_tidy", as.name(nm))
+  function(xs) lapply(xs, eneval_tidy)
 })
 
 assign_getter("expr_partial", ".exprPartialApplication")
