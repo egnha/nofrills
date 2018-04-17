@@ -122,7 +122,7 @@ compose <- local({
     names(pipeline) <- enum(seq_len(n))
     env <- environment(fn_init) %encloses% pipeline
     makeActiveBinding("__pipeline__", get_pipeline(pipeline, env), env)
-    fn_cmps <- new_function_(fmls, body, env)
+    fn_cmps <- new_fn(fmls, body, env)
     class(fn_cmps) <- c("CompositeFunction", "function")
     fn_cmps
   }

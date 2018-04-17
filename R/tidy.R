@@ -53,7 +53,7 @@ tidy <- local({
     if (is_tidy_(f, fmls))
       return(f)
     env <- environment(f) %||% baseenv() %encloses% c(funs, `__pretidy__` = f)
-    f_tidy <- new_function_(fmls, body_tidy, env)
+    f_tidy <- new_fn(fmls, body_tidy, env)
     class(f_tidy) <- "TidyFunction" %subclass% class(f)
     f_tidy
   }

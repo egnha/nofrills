@@ -1,6 +1,9 @@
-# rlang::new_function() without checks
-new_function_ <- function(args, body, env = parent.frame()) {
-  eval(call("function", as.pairlist(args), body), env)
+new_fn <- function(args, body, env, ...) {
+  if (!is.pairlist(args))
+    args <- as.pairlist(args)
+  if (missing(...))
+    return(eval(call("function", args, body), env))
+  eval(call("function", args, body), as.list(c(...)), env)
 }
 
 closure <- function(f) {

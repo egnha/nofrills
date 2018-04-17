@@ -151,10 +151,10 @@ partial_ <- local({
     env <- environment(f) %encloses% (fix %named% nms_priv)
     env %binds% list(
       `__with_fixed_args__` = promise_tidy(nms_fix, nms_bare, env),
-      `__partial__`         = new_function_(fmls_partial, body, env),
+      `__partial__`         = new_fn(fmls_partial, body, env),
       `__bare__`            = f_bare
     )
-    p <- new_function_(fmls_partial, body_partial, env)
+    p <- new_fn(fmls_partial, body_partial, env)
     names_fixed(p) <- nms_fix
     bare_args(p)   <- args
     p
@@ -188,11 +188,10 @@ tidy_dots <- function(nms, nms_nondots) {
   map_eneval_tidy(dots)
 }
 
-promise_tidy <- function(nms, nms_nondots, parent) {
+promise_tidy <- function(nms, nms_nondots, env) {
   nondots <- nms[names(nms) %in% nms_nondots]
   promises <- map_eneval_tidy(nondots)
-  env <- parent %encloses% list(eval_tidy = eval_tidy)
-  new_function_(promises, quote(environment()), env)
+  new_fn(promises, quote(environment()), env, eval_tidy = eval_tidy)
 }
 
 map_eneval_tidy <- local({

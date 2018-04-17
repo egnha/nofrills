@@ -63,7 +63,7 @@ curry <- local({
       `__nms_unset__`     = names_unset(fmls),
       `__curry_partial__` = curry_partial(f_closure, f, substitute(f), fmls)
     )
-    f_curried <- new_function_(fmls, body_curry, env)
+    f_curried <- new_fn(fmls, body_curry, env)
     class(f_curried) <- "CurriedFunction" %subclass% class(f)
     f_curried
   }
