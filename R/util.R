@@ -1,4 +1,4 @@
-new_fn <- function(..args, ..body, ..env, ...) {
+new_fn <- function(..args, ..body, ..env = NULL, ...) {
   if (!is.pairlist(..args))
     ..args <- as.pairlist(..args)
   if (missing(...))
