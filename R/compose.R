@@ -108,7 +108,7 @@ compose <- local({
     force(env)
     nms <- names(pipeline)
     function(.)
-      lapply(nms, get, envir = env, mode = "function", inherits = FALSE)
+      unname(mget(nms, envir = env, mode = "function", inherits = FALSE))
   }
 
   function(...) {
