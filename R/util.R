@@ -1,9 +1,9 @@
-new_fn <- function(args, body, env, ...) {
-  if (!is.pairlist(args))
-    args <- as.pairlist(args)
+new_fn <- function(..args, ..body, ..env, ...) {
+  if (!is.pairlist(..args))
+    ..args <- as.pairlist(..args)
   if (missing(...))
-    return(eval(call("function", args, body), env))
-  eval(call("function", args, body), as.list(c(...)), env)
+    return(eval(call("function", ..args, ..body), ..env))
+  eval(call("function", ..args, ..body), as.list(c(...)), ..env)
 }
 
 closure <- function(f) {
