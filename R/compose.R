@@ -104,6 +104,15 @@ compose <- local({
   }
   enum <- function(x) sprintf("__%s__", x)
 
+  flatten_fns <- function(...) {
+    fns <- unlist(lapply(list2(...), decompose_))
+    are_funs(fns) %because% "Only functions or lists thereof can be composed"
+    fns
+  }
+  are_funs <- function(xs) {
+    !is_empty(xs) && all(vapply(xs, is.function, logical(1)))
+  }
+
   get_pipeline <- function(pipeline, env) {
     force(env)
     nms <- names(pipeline)
@@ -125,17 +134,6 @@ compose <- local({
     fn_cmps <- new_fn(fmls, body, env)
     class(fn_cmps) <- c("CompositeFunction", "function")
     fn_cmps
-  }
-})
-
-flatten_fns <- local({
-  are_funs <- function(xs)
-    !is_empty(xs) && all(vapply(xs, is.function, logical(1)))
-
-  function(...) {
-    fns <- unlist(lapply(list2(...), decompose_))
-    are_funs(fns) %because% "Only functions or lists thereof can be composed"
-    fns
   }
 })
 
