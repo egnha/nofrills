@@ -12,19 +12,6 @@ closure <- function(f) {
   as_closure(f, parent.frame())
 }
 
-call_in_caller_env <- function(f, maybe_transform = NULL) {
-  force(f)
-  if (is.null(maybe_transform))
-    return(
-      function()
-        eval(`[[<-`(sys.call(-1), 1, f), parent.frame(2))
-    )
-  function(...) {
-    call <- maybe_transform(sys.call(-1), ...)
-    eval(`[[<-`(call, 1, f), parent.frame(2))
-  }
-}
-
 nondots <- function(xs)
   xs[xs != "..."]
 
