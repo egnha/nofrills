@@ -90,25 +90,22 @@
 #' )
 #'
 #' @export
-partial <- function(`__f`, ...) {
-  if (missing(...))
-    return(`__f`)
-  f <- closure(`__f`)
-  fix <- quos_dots_match(f)
-  p <- partial_(f, fix)
-  expr_partial(p) <- expr_partial(f) %||% expr_fn(substitute(`__f`), formals(f))
-  class(p) <- "PartialFunction" %subclass% class(`__f`)
-  p
-}
-
-quos_dots_match <- local({
-  dots_match <- function(call, f) {
-    call <- match.call(partial, call)
-    call <- call[names(call) != "__f"]
-    match.call(f, call)
+partial <- local({
+  quos_dots_match <- function(f, mc) {
+    call_dots <- mc[names(mc) != "__f"]
+    eval(`[[<-`(match.call(f, call_dots), 1, quos), parent.frame(2))
   }
 
-  call_in_caller_env(quos, dots_match)
+  function(`__f`, ...) {
+    if (missing(...))
+      return(`__f`)
+    f <- closure(`__f`)
+    fix <- quos_dots_match(f, match.call())
+    p <- partial_(f, fix)
+    expr_partial(p) <- expr_partial(f) %||% expr_fn(substitute(`__f`), formals(f))
+    class(p) <- "PartialFunction" %subclass% class(`__f`)
+    p
+  }
 })
 
 partial_ <- local({
