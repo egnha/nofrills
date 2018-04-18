@@ -163,7 +163,7 @@ print.CompositeFunction <- function(x, ...) {
   cat("Composition of functions, listed in calling order:\n")
   for (i in seq_along(fns)) {
     cat("\n", i, ": ", sep = "")
-    print.default(fns[[i]])
+    print(fns[[i]])
   }
   cat("\n(Use 'decompose()' to recover the list of composite functions.)")
   invisible(x)

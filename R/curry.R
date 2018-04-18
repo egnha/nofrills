@@ -158,7 +158,7 @@ print.CurriedFunction <- function(x, ...) {
   if (inherits(uc, "PartialFunction"))
     expr_print(expr_partial_closure(uc))
   else
-    print.default(closure(uc))
+    print(closure(uc))
   cat("\n(Apply 'uncurry()' to restore conventional calling behavior)")
   invisible(x)
 }
