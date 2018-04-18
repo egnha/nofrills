@@ -93,7 +93,8 @@
 partial <- local({
   quos_dots_match <- function(f, mc) {
     call_dots <- mc[names(mc) != "__f"]
-    eval(`[[<-`(match.call(f, call_dots), 1, quos), parent.frame(2))
+    call_args <- match.call(f, call_dots)
+    eval(`[[<-`(call_args, 1, quos), parent.frame(2))
   }
 
   function(`__f`, ...) {
