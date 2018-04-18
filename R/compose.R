@@ -139,11 +139,38 @@ compose <- local({
 
 #' @rdname compose
 #' @export
-`%<<<%` <- function(snd, fst) compose(snd, fst)
+`%<<<%` <- function(snd, fst) {
+  compose_implicit_partial(parent.frame(), substitute(snd), substitute(fst))
+}
 
 #' @rdname compose
 #' @export
 `%>>>%` <- opposite(`%<<<%`)
+
+compose_implicit_partial <- local({
+  implicit_partial <- function(expr, env) {
+    if (is_literal(expr))
+      return(eval(expr, env))
+    call_partially <- as.call(c(partial, as.list(expr)))
+    eval(call_partially, env)
+  }
+
+  is_literal <- function(expr) {
+    !is.call(expr) || is_composition(expr) || is_paren(expr) || is_curly(expr)
+  }
+  is_composition <- function(call) {
+    is_forward_compose(call) || is_backward_compose(call)
+  }
+  is_forward_compose  <- is_caller("%>>>%")
+  is_backward_compose <- is_caller("%<<<%")
+  is_paren <- is_caller("(")
+  is_curly <- is_caller("{")
+
+  function(env, ...) {
+    fns <- lapply(list(...), implicit_partial, env = env)
+    do.call("compose", fns)
+  }
+})
 
 #' @rdname compose
 #' @export

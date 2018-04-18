@@ -69,7 +69,7 @@ assign_setter <- function(nm, property = nm, env = parent.frame()) {
 
 is_caller <- function(nm) {
   sym <- as.name(nm)
-  function(x) is.call(x) && identical(x[[1]], sym)
+  function(x) identical(x[[1]], sym)
 }
 
 `%binds%` <- function(env, bindings) {

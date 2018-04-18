@@ -271,7 +271,7 @@ subst_formal_args <- local({
   is_tidy_call <- is_caller("eval_tidy")
 
   function(arg)
-    if (is_tidy_call(arg)) eval(arg, unquote) else arg
+    if (is.call(arg) && is_tidy_call(arg)) eval(arg, unquote) else arg
 })
 
 uq <- function(x) bquote(!!.(x))
