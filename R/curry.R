@@ -69,9 +69,9 @@ curry <- local({
   }
 
   body_curry <- quote({
-    if (length(sys.call()) == 1L)
+    if (length(mc <- match.call()) == 1L)
       return(`__precurry__`())
-    if (`__nms_unset__` %are% names((mc <- match.call())[-1L]))
+    if (`__nms_unset__` %are% names(mc))
       return(eval(`[[<-`(mc, 1L, `__precurry__`), parent.frame()))
     `__curry_partial__`()
   })
