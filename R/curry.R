@@ -73,7 +73,7 @@ curry <- local({
       return(`__precurry__`())
     if (`__nms_unset__` %are% names(mc))
       return(eval(`[[<-`(mc, 1L, `__precurry__`), parent.frame()))
-    `__curry_partial__`()
+    `__curry_partial__`(mc)
   })
 
   names_unset <- function(fmls) {
@@ -84,8 +84,8 @@ curry <- local({
   curry_partial <- function(f_closure, f, expr, fmls) {
     expr_curry <- expr_partial(f) %||% expr_fn(expr, fmls)
 
-    function() {
-      call <- `[[<-`(sys.call(-1L), "__f", f_closure)
+    function(mc) {
+      call <- `[[<-`(mc, "__f", f_closure)
       p <- eval(`[[<-`(call, 1L, partial), parent.frame(2))
       expr_partial(p) <- expr_curry
       `__curry__`(p)
