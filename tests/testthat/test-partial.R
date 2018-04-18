@@ -239,6 +239,83 @@ test_that("arguments values are matched according to R's calling convention", {
   )
 })
 
+test_that("arguments values are matched across function calls", {
+  f <- function(x, yyy, ..., zzz = 0) c(x, yyy, ..., zzz)
+
+  partial_f <- local({
+    top <- function(...) mid(...)
+    mid <- function(...) bot(f, ...)
+    bot <- function(...) partial(...)
+
+    function(...) top(...)
+  })
+
+  out <- c(1, 2, 0)
+  expect_equal(partial_f(x = 1)(2), out)
+  expect_equal(out, partial_f(1)(2))
+
+  # 'yyy' may be partially matched
+  expect_all_equal(
+    c(1, 2, 0),
+    partial_f(x = 1, yyy = 2)(),
+    partial_f(x = 1, y = 2)(),
+    partial_f(x = 1, 2)(),
+    partial_f(2, x = 1)(),
+    partial_f(yyy = 2, 1)(),
+    partial_f(y = 2, 1)(),
+    partial_f(1, yyy = 2)(),
+    partial_f(1, y = 2)(),
+    partial_f(1, 2)()
+  )
+
+  expect_all_equal(
+    out <- c(1, 2, 3, 0),
+    partial_f(x = 1, yyy = 2, 3)(),
+    partial_f(x = 1, y = 2, 3)(),
+    partial_f(1, 2, 3)(),
+    partial_f(x = 1, 2, 3)(),
+    partial_f(2, x = 1, 3)(),
+    partial_f(yyy = 2, 1, 3)(),
+    partial_f(y = 2, 1, 3)(),
+    partial_f(1, yyy = 2, 3)(),
+    partial_f(1, y = 2, 3)(),
+    partial_f(3, x = 1, yyy = 2)(),
+    partial_f(3, x = 1, y = 2)(),
+    partial_f(3, yyy = 2, x = 1)(),
+    partial_f(3, y = 2, x = 1)()
+  )
+
+  # 'z' not matched to 'zzz', since 'zzz' follows '...'
+  expect_all_equal(
+    c(1, 2, z = 3, 0),
+    partial_f(x = 1, yyy = 2, z = 3)(),
+    partial_f(x = 1, y = 2, z = 3)(),
+    partial_f(1, 2, z = 3)(),
+    partial_f(1, z = 3, 2)(),
+    partial_f(z = 3, 1, 2)(),
+    partial_f(x = 1, z = 3, 2)(),
+    partial_f(x = 1, 2, z = 3)(),
+    partial_f(2, x = 1, z = 3)(),
+    partial_f(yyy = 2, z = 3, 1)(),
+    partial_f(y = 2, z = 3, 1)(),
+    partial_f(yyy = 2, 1, z = 3)(),
+    partial_f(y = 2, 1, z = 3)(),
+    partial_f(1, yyy = 2, z = 3)(),
+    partial_f(1, y = 2, z = 3)()
+  )
+
+  # 'zzz' must be matched exactly, since it follows '...'
+  expect_all_equal(
+    c(1, 2, 3),
+    partial_f(zzz = 3)(1, 2),
+    partial_f(1, zzz = 3)(2),
+    partial_f(zzz = 3, 1)(2),
+    partial_f(1, 2, zzz = 3)(),
+    partial_f(1, zzz = 3, 2)(),
+    partial_f(zzz = 3, 1, 2)()
+  )
+})
+
 test_that("argument values are captured lazily (by default)", {
   expect_error(partial(identity, x = stop("!")), NA)
   expect_error(partial(identity, x = stop("!"))(), "!")
