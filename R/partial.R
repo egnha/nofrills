@@ -268,7 +268,7 @@ call_with_fixed_args <- function(x) {
 
 subst_formal_args <- local({
   unquote <- list(eval_tidy = function(arg) uq(substitute(arg)))
-  is_tidy_call <- is_caller("eval_tidy")
+  is_tidy_call <- check_head("eval_tidy")
 
   function(arg)
     if (is.call(arg) && is_tidy_call(arg)) eval(arg, unquote) else arg

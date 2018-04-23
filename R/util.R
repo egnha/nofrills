@@ -67,7 +67,7 @@ assign_setter <- function(nm, property = nm, env = parent.frame()) {
   assign(paste0(nm, "<-"), setter, envir = env)
 }
 
-is_caller <- function(nm) {
+check_head <- function(nm) {
   sym <- as.name(nm)
   function(x) identical(x[[1]], sym)
 }

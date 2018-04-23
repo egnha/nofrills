@@ -161,10 +161,10 @@ compose_implicit_partial <- local({
   is_composition <- function(call) {
     is_forward_compose(call) || is_backward_compose(call)
   }
-  is_forward_compose  <- is_caller("%>>>%")
-  is_backward_compose <- is_caller("%<<<%")
-  is_paren <- is_caller("(")
-  is_curly <- is_caller("{")
+  is_forward_compose  <- check_head("%>>>%")
+  is_backward_compose <- check_head("%<<<%")
+  is_paren <- check_head("(")
+  is_curly <- check_head("{")
 
   function(env, ...) {
     fns <- lapply(list(...), implicit_partial, env = env)
