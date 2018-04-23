@@ -40,7 +40,7 @@ box <- function(x)
 
 `%subclass%` <- function(class, superclass) {
   wh_class <- which(superclass == class)
-  if (isTRUE(wh_class == 0L))
+  if (is_empty(wh_class))
     return(c(class, superclass))
   if (isTRUE(wh_class == 1L))
     return(superclass)
