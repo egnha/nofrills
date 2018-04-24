@@ -95,7 +95,7 @@ compose <- local({
     expr <- as.call(c(as.name(fnames[[1]]), args(fmls)))
     for (fname in fnames[-1])
       expr <- call(fname, expr)
-    expr
+    list(expr = expr, fnames = rev(fnames))
   }
   args <- function(fmls) {
     args <- eponymous(names(fmls))
@@ -127,11 +127,11 @@ compose <- local({
       return(pipeline[[1]])
     fn_init <- closure(pipeline[[n]])
     fmls <- formals(fn_init)
-    body <- iterated_call(n, fmls)
-    names(pipeline) <- enum(seq_len(n))
+    call <- iterated_call(n, fmls)
+    names(pipeline) <- call$fnames
     env <- environment(fn_init) %encloses% pipeline
     makeActiveBinding("__pipeline__", get_pipeline(pipeline, env), env)
-    fn_cmps <- new_fn(fmls, body, env)
+    fn_cmps <- new_fn(fmls, call$expr, env)
     class(fn_cmps) <- c("CompositeFunction", "function")
     fn_cmps
   }
