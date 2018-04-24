@@ -40,15 +40,56 @@ test_that("for a single function, composition is identity", {
     expect_equal(compose(f), f)
 })
 
-test_that("error is signalled when composing a non-function (list)", {
+test_that("error is signalled when composing an empty sequence of functions", {
   expect_errors_with_message(
-    "Only functions or lists thereof can be composed",
+    "Must specify functions to compose",
     compose(),
     compose(NULL),
     compose(list()),
-    compose(quote(function() {})),
-    compose(identity, quote(function() {}))
+    compose(!!! list())
   )
+})
+
+test_that("NULL is void in a sequence of functions", {
+  expect_error(compose(NULL), "Must specify functions to compose")
+
+  expect_identical(compose(NULL, identity), identity)
+  expect_identical(compose(identity, NULL), identity)
+
+  inc <- function(x) x + 1
+  cmp0 <- compose(log, inc)
+  cmps <- list(
+    compose(NULL, log, inc),
+    compose(log, NULL, inc),
+    compose(log, inc, NULL)
+  )
+  vals <- {set.seed(1); runif(10)}
+
+  # Function equality by equality of return values
+  for (cmp in cmps)
+    for (val in vals)
+      expect_equal(cmp(val), cmp0(val))
+})
+
+test_that("error is signalled when composing a non-decomposable object", {
+  errmsg <- function(x) {
+    cls <- paste(deparse(class(x)), collapse = "")
+    sprintf("Cannot decompose object of class %s", cls)
+  }
+
+  nondecomposable <- list(
+    as.data.frame(1:3),
+    quote(x),
+    quote(function() NULL),
+    structure(NA, class = "foo")
+  )
+
+  for (obj in nondecomposable) {
+    msg <- errmsg(obj)
+    expect_error(compose(obj), msg)
+    expect_error(compose(identity, obj), msg)
+    expect_error(compose(obj, identity), msg)
+  }
 })
 
 test_that("composition is associative", {
@@ -84,7 +125,8 @@ test_that("nested compositions are flattened", {
 
   # Test by value
   cmps <- Reduce(compose, gs, accumulate = TRUE)
-  for (i in seq_along(gs))
+  expect_equivalent(decompose(cmps[[1]]), gs[[1]])
+  for (i in seq_along(gs)[-1])
     expect_equivalent(decompose(cmps[[i]]), gs[seq_len(i)])
 })
 
@@ -118,22 +160,36 @@ test_that("environment of composition is child of initial-function environment",
   }
 })
 
-context("Decomposing compositions")
-
-test_that("decomposing a non-composite function wraps it in a list", {
-  for (f in fn_kinds[c("closure", "special", "builtin")])
-    expect_identical(decompose(f), list(f))
+test_that("one-sided formula of a function is lifted", {
+  add <- function(a, b) a / b
+  cmp <- compose(~add, list)
+  vals <- {set.seed(1); runif(10)}
+  for (val in vals)
+    expect_equal(cmp(val, val + 1), add(val, val + 1))
 })
 
-test_that("error is signalled when decomposing a non-function", {
-  expect_errors_with_message(
-    "Only functions can be decomposed",
-    decompose(NULL),
-    decompose(list()),
-    decompose(list(NULL)),
-    decompose(list(identity)),
-    decompose(quote(function() {}))
+context("Decomposing compositions")
+
+test_that("decomposing a non-composite function wraps it unchanged", {
+  for (f in fn_kinds[c("closure", "special", "builtin")])
+    expect_identical(decompose(f), f)
+})
+
+test_that("error is signalled when decomposing a non-decomposable object", {
+  errmsg <- function(x) {
+    cls <- paste(deparse(class(x)), collapse = "")
+    sprintf("Cannot decompose object of class %s", cls)
+  }
+
+  nondecomposable <- list(
+    as.data.frame(1:3),
+    quote(x),
+    quote(function() NULL),
+    structure(NA, class = "foo")
   )
+
+  for (obj in nondecomposable)
+    expect_error(decompose(obj), errmsg(obj))
 })
 
 test_that("list of composite functions is flat", {
@@ -145,7 +201,7 @@ test_that("decompose() inverts compose()", {
   expect_equivalent(decompose(compose(fs)), fs)
   expect_equivalent(decompose(compose(fs[[1]], fs[[2]], fs[[3]])), fs)
   expect_equivalent(decompose(compose(fs[[1]], fs[[2]])), fs[1:2])
-  expect_equivalent(decompose(compose(fs[[1]])), fs[1])
+  expect_equivalent(decompose(compose(fs[[1]])), fs[[1]])
 })
 
 test_that("compose() inverts decompose()", {
