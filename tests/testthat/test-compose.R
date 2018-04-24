@@ -1,7 +1,20 @@
-make_funs <- function(n)
+make_funs <- function(n) {
   lapply(seq_len(n), function(i) {force(i); function(. = NULL) c(i, .)})
+}
+
 fs <- make_funs(3)
-cmp <- function() fs[[1]](fs[[2]](fs[[3]]()))
+
+fn_kinds <- list(
+  closure     = identity,
+  special     = log,
+  builtin     = c,
+  composition = compose(fs)
+)
+
+cmp <- function() {
+  fs[[1]](fs[[2]](fs[[3]]()))
+}
+
 cmps <- list(
   # Conventional composition
   compose(fs[[1]], compose(fs[[2]], compose(fs[[3]]))),
@@ -18,12 +31,6 @@ cmps <- list(
    {fs[[3]]} %>>>%  {fs[[2]]}  %>>>% {fs[[1]]},
   ({fs[[3]]} %>>>%  {fs[[2]]}) %>>>% {fs[[1]]},
    {fs[[3]]} %>>>% ({fs[[2]]}  %>>>% {fs[[1]]})
-)
-fn_kinds <- list(
-  closure     = identity,
-  special     = log,
-  builtin     = c,
-  composition = compose(fs)
 )
 
 context("Composing functions")
