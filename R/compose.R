@@ -151,8 +151,7 @@ compose_implicit_partial <- local({
   implicit_partial <- function(expr, env) {
     if (is_literal(expr))
       return(eval(expr, env))
-    call_partially <- as.call(c(partial, as.list(expr)))
-    eval(call_partially, env)
+    eval(as.call(c(partial, as.list(expr))), env)
   }
 
   is_literal <- function(expr) {
@@ -168,7 +167,7 @@ compose_implicit_partial <- local({
 
   function(env, ...) {
     fns <- lapply(list(...), implicit_partial, env = env)
-    do.call("compose", fns)
+    do.call(compose, fns)
   }
 })
 
