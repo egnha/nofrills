@@ -106,6 +106,18 @@ test_that("composition has formals of innermost function (as a closure)", {
   expect_identical(formals(compose(outer, c)), formals(rlang::as_closure(c)))
 })
 
+test_that("environment of composition is child of initial-function environment", {
+  fns <- c(
+    fn_kinds[names(fn_kinds) != "composition"],
+    local(function() NULL)
+  )
+  for (f in fns) {
+    cmp <- compose(identity, f)
+    env <- if (is.null(environment(f))) baseenv() else environment(f)
+    expect_identical(parent.env(environment(cmp)), env)
+  }
+})
+
 context("Decomposing compositions")
 
 test_that("decomposing a non-composite function wraps it in a list", {
