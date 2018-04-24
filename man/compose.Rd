@@ -2,18 +2,18 @@
 % Please edit documentation in R/compose.R
 \name{compose}
 \alias{compose}
+\alias{decompose}
 \alias{\%<<<\%}
 \alias{\%>>>\%}
-\alias{decompose}
 \title{Compose functions}
 \usage{
 compose(...)
 
+decompose(x)
+
 snd \%<<<\% fst
 
 fst \%>>>\% snd
-
-decompose(f)
 }
 \arguments{
 \item{...}{Functions or lists thereof to compose. Lists of functions are
@@ -21,7 +21,9 @@ automatically spliced in. (Explicit \link[rlang:quasiquotation]{splicing} via
 \code{!!!} is also supported.) Following convention, functions are composed from
 right to left.}
 
-\item{fst, snd, f}{Functions.}
+\item{x}{Object to decompose.}
+
+\item{fst, snd}{Functions.}
 }
 \value{
 \code{compose()}, \code{\%<<<\%} and \code{\%>>>\%} return a function

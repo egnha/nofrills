@@ -19,7 +19,7 @@
 #'   automatically spliced in. (Explicit [splicing][rlang::quasiquotation] via
 #'   `!!!` is also supported.) Following convention, functions are composed from
 #'   right to left.
-#' @param fst,snd,f Functions.
+#' @param fst,snd Functions.
 #'
 #' @return `compose()`, \code{\%<<<\%} and \code{\%>>>\%} return a function
 #'   composition, whose [formals][base::formals()] match those of the initial
@@ -105,12 +105,8 @@ compose <- local({
   enum <- function(x) sprintf("__%s__", x)
 
   flatten_fns <- function(...) {
-    fns <- unlist(lapply(list2(...), decompose_))
-    are_funs(fns) %because% "Only functions or lists thereof can be composed"
-    fns
-  }
-  are_funs <- function(xs) {
-    !is_empty(xs) && all(vapply(xs, is.function, logical(1)))
+    fns <- lapply(list2(...), decompose)
+    unlist(do.call(c, fns))  # Collapse NULL's by invoking 'c'
   }
 
   get_pipeline <- function(pipeline, env) {
@@ -123,6 +119,7 @@ compose <- local({
   function(...) {
     pipeline <- flatten_fns(...)
     n <- length(pipeline)
+    (n > 0) %because% "Must specify functions to compose"
     if (n == 1)
       return(pipeline[[1]])
     fn_init <- closure(pipeline[[n]])
@@ -136,6 +133,80 @@ compose <- local({
     fn_cmps
   }
 })
+
+#' @rdname compose
+#' @param x Object to decompose.
+#'
+#' @export
+decompose <- function(x) {
+  UseMethod("decompose")
+}
+
+#' @export
+decompose.list <- function(x) {
+  lapply(x, decompose)
+}
+
+#' @export
+decompose.CompositeFunction <- getter_env("__pipeline__")
+
+#' @export
+decompose.function <- function(x) x
+
+#' @export
+decompose.formula <- function(x) {
+  (length(x) == 2) %because% "Only one-sided formulas can be decomposed"
+  rhs <- eval(x[[2]], environment(x))
+  lift(rhs)
+}
+lift <- function(f) {
+  is.function(f) %because% "Only functions can be lifted"
+  pipeline <- decompose(f)
+  if (!inherits(f, "CompositeFunction"))
+    return(lift_(pipeline))
+  n <- length(pipeline)
+  pipeline[[n]] <- lift_(pipeline[[n]])
+  pipeline
+}
+lift_ <- function(f) {
+  evalq(function(args) do.call(`__f__`, args), list(`__f__` = f), baseenv())
+}
+utils::globalVariables("__f__")  # Appease 'R CMD check'
+
+selector <- function(x) {
+  if (length(x) == 0)
+    return(NULL)
+  rename <- names(x)
+  if (is.null(rename))
+    return(evalq(function(x) x[select], list(select = x), baseenv()))
+  evalq(
+    function(x) `names<-`(x[select], rename),
+    list(select = x, rename = rename),
+    baseenv()
+  )
+}
+utils::globalVariables(c("select", "rename"))
+
+#' @export
+decompose.logical <- selector
+#' @export
+decompose.character <- selector
+#' @export
+decompose.integer <- selector
+#' @export
+decompose.numeric <- selector
+
+#' @export
+decompose.NULL <- function(x) NULL
+
+#' @export
+decompose.default <- function(x) {
+  if (missing(x))
+    stop("Must specify object to decompose", call. = FALSE)
+  cls <- paste(deparse(class(x)), collapse = "")
+  msg <- sprintf("Cannot decompose object of class %s", cls)
+  stop(msg, call. = FALSE)
+}
 
 #' @rdname compose
 #' @export
@@ -169,18 +240,6 @@ compose_implicit_partial <- local({
     fns <- lapply(list(...), implicit_partial, env = env)
     do.call(compose, fns)
   }
-})
-
-#' @rdname compose
-#' @export
-decompose <- function(f) {
-  is.function(f) %because% "Only functions can be decomposed"
-  box(decompose_(f))
-}
-
-decompose_ <- local({
-  pipeline <- getter_env("__pipeline__")
-  function(x) pipeline(x) %||% x
 })
 
 #' @export
