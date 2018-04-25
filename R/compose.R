@@ -201,17 +201,17 @@ fn_interp.default <- function(x) {
   stop(msg, call. = FALSE)
 }
 
-#' @rdname compose
 #' @param fst,snd Functions.
+#' @rdname compose
 #' @export
-`%<<<%` <- function(snd, fst) compose(snd, fst)
+`%>>>%` <- function(fst, snd) compose(snd, fst)
 
 #' @rdname compose
 #' @export
-`%>>>%` <- opposite(`%<<<%`)
+`%<<<%` <- opposite(`%>>>%`)
 
-#' @rdname compose
 #' @param f Function.
+#' @rdname compose
 #' @export
 decompose <- local({
   pipeline <- getter_env("__pipeline__")
