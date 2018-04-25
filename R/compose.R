@@ -204,36 +204,12 @@ fn_interp.default <- function(x) {
 #' @param fst,snd Functions.
 #' @export
 `%<<<%` <- function(snd, fst) {
-  compose_implicit_partial(parent.frame(), substitute(snd), substitute(fst))
+  compose(snd, fst)
 }
 
 #' @rdname compose
 #' @export
 `%>>>%` <- opposite(`%<<<%`)
-
-compose_implicit_partial <- local({
-  implicit_partial <- function(expr, env) {
-    if (is_literal(expr))
-      return(eval(expr, env))
-    eval(as.call(c(partial, as.list(expr))), env)
-  }
-
-  is_literal <- function(expr) {
-    !is.call(expr) || is_composition(expr) || is_paren(expr) || is_curly(expr)
-  }
-  is_composition <- function(call) {
-    is_forward_compose(call) || is_backward_compose(call)
-  }
-  is_forward_compose  <- check_head("%>>>%")
-  is_backward_compose <- check_head("%<<<%")
-  is_paren <- check_head("(")
-  is_curly <- check_head("{")
-
-  function(env, ...) {
-    fns <- lapply(list(...), implicit_partial, env = env)
-    do.call(compose, fns)
-  }
-})
 
 #' @rdname compose
 #' @param f Function.

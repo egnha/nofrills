@@ -24,13 +24,13 @@ cmps <- list(
   compose(compose(fs[[1]], fs[[2]], fs[[3]])),
   compose(fs[[1]], fs[[2]], fs[[3]]),
   # Backward composition
-   {fs[[1]]} %<<<%  {fs[[2]]}  %<<<% {fs[[3]]},
-  ({fs[[1]]} %<<<%  {fs[[2]]}) %<<<% {fs[[3]]},
-   {fs[[1]]} %<<<% ({fs[[2]]}  %<<<% {fs[[3]]}),
+   fs[[1]] %<<<%  fs[[2]]  %<<<% fs[[3]],
+  (fs[[1]] %<<<%  fs[[2]]) %<<<% fs[[3]],
+   fs[[1]] %<<<% (fs[[2]]  %<<<% fs[[3]]),
   # Forward composition
-   {fs[[3]]} %>>>%  {fs[[2]]}  %>>>% {fs[[1]]},
-  ({fs[[3]]} %>>>%  {fs[[2]]}) %>>>% {fs[[1]]},
-   {fs[[3]]} %>>>% ({fs[[2]]}  %>>>% {fs[[1]]})
+   fs[[3]] %>>>%  fs[[2]]  %>>>% fs[[1]],
+  (fs[[3]] %>>>%  fs[[2]]) %>>>% fs[[1]],
+   fs[[3]] %>>>% (fs[[2]]  %>>>% fs[[1]])
 )
 
 context("Composing functions")
@@ -106,19 +106,19 @@ test_that("nested compositions are flattened", {
   cmps <- list(
     compose(gs[[1]], gs[[2]], gs[[3]], gs[[4]]),
     compose(compose(gs[[1]], gs[[2]], gs[[3]], gs[[4]])),
-    compose({gs[[1]]} %<<<% {gs[[2]]} %<<<% {gs[[3]]} %<<<% {gs[[4]]}),
-    compose({gs[[4]]} %>>>% {gs[[3]]} %>>>% {gs[[2]]} %>>>% {gs[[1]]}),
+    compose(gs[[1]] %<<<% gs[[2]] %<<<% gs[[3]] %<<<% gs[[4]]),
+    compose(gs[[4]] %>>>% gs[[3]] %>>>% gs[[2]] %>>>% gs[[1]]),
     compose(gs[[1]], compose(gs[[2]], gs[[3]], gs[[4]])),
-    compose({gs[[1]]} %<<<% {compose(gs[[2]], gs[[3]], gs[[4]])}),
-    compose({compose(gs[[2]], gs[[3]], gs[[4]])} %>>>% {gs[[1]]}),
-    compose(gs[[1]], compose(gs[[2]], {gs[[3]]} %<<<% {gs[[4]]})),
-    compose(gs[[1]], compose(gs[[2]], {gs[[4]]} %>>>% {gs[[3]]})),
+    compose(gs[[1]] %<<<% compose(gs[[2]], gs[[3]], gs[[4]])),
+    compose(compose(gs[[2]], gs[[3]], gs[[4]]) %>>>% gs[[1]]),
+    compose(gs[[1]], compose(gs[[2]], gs[[3]] %<<<% gs[[4]])),
+    compose(gs[[1]], compose(gs[[2]], gs[[4]] %>>>% gs[[3]])),
     compose(gs[[1]], compose(gs[[2]], compose(gs[[3]], gs[[4]]))),
-    compose(gs[[1]], {gs[[2]]} %<<<% {compose(gs[[3]], gs[[4]])}),
-    compose(gs[[1]], {compose(gs[[3]], gs[[4]])} %>>>% {gs[[2]]}),
+    compose(gs[[1]], gs[[2]] %<<<% compose(gs[[3]], gs[[4]])),
+    compose(gs[[1]], compose(gs[[3]], gs[[4]]) %>>>% gs[[2]]),
     compose(gs[[1]], compose(gs[[2]], compose(gs[[3]], compose(gs[[4]])))),
-    compose({gs[[1]]} %<<<% ({gs[[2]]} %<<<% ({gs[[3]]} %<<<% {gs[[4]]}))),
-    compose((({gs[[4]]} %>>>% {gs[[3]]}) %>>>% {gs[[2]]}) %>>>% {gs[[1]]})
+    compose(gs[[1]] %<<<% (gs[[2]] %<<<% (gs[[3]] %<<<% gs[[4]]))),
+    compose(((gs[[4]] %>>>% gs[[3]]) %>>>% gs[[2]]) %>>>% gs[[1]])
   )
   for (cmp in cmps)
     expect_equivalent(decompose(cmp), gs)
@@ -203,55 +203,4 @@ test_that("compose() inverts decompose()", {
   # Test by value
   for (f in fn_kinds)
     expect_equal(compose(decompose(f)), f)
-})
-
-test_that("compose operators implicitly partialize operands that are calls", {
-  inc <- function(shift, x) x + shift
-  log2 <- function(x) log(x, base = 2)
-
-  f0 <- function(x) log(abs(x) + 1, base = 2)
-  fns <- list(
-    abs %>>>% inc(1) %>>>% log(base = 2),
-    log(base = 2) %<<<% inc(1) %<<<% abs,
-    (abs %>>>% inc(1)) %>>>% log(base = 2),
-    log(base = 2) %<<<% (inc(1) %<<<% abs),
-    abs %>>>% (inc(1) %>>>% log(base = 2)),
-    (log(base = 2) %<<<% inc(1)) %<<<% abs
-  )
-
-  set.seed(1)
-  vals <- runif(10, 0, 100)
-  for (f in fns) {
-    for (x in vals) {
-      expect_equal(f(x), f0(x))
-    }
-  }
-})
-
-test_that("compose-operator operands are called normally when in braces", {
-  f0 <- function(x) log(abs(x) + 1, base = 2)
-
-  boxed_log <- list(function(x) log(x, base = 2))
-  fns <- list(
-    {identity(abs)} %>>>% {function(x) x + 1} %>>>% log(base = 2),
-    {identity(abs)} %>>>% {function(x) x + 1} %>>>% {boxed_log[[1]]},
-    log(base = 2) %<<<% {function(x) x + 1} %<<<% {identity(abs)},
-    {boxed_log[[1]]} %<<<% {function(x) x + 1} %<<<% {identity(abs)},
-    ({identity(abs)} %>>>% {function(x) x + 1}) %>>>% log(base = 2),
-    ({identity(abs)} %>>>% {function(x) x + 1}) %>>>% {boxed_log[[1]]},
-    log(base = 2) %<<<% ({function(x) x + 1} %<<<% {identity(abs)}),
-    {boxed_log[[1]]} %<<<% ({function(x) x + 1} %<<<% {identity(abs)}),
-    {identity(abs)} %>>>% ({function(x) x + 1} %>>>% log(base = 2)),
-    {identity(abs)} %>>>% ({function(x) x + 1} %>>>% {boxed_log[[1]]}),
-    (log(base = 2) %<<<% {function(x) x + 1}) %<<<% {identity(abs)},
-    ({boxed_log[[1]]} %<<<% {function(x) x + 1}) %<<<% {identity(abs)}
-  )
-
-  set.seed(1)
-  vals <- runif(10, 0, 100)
-  for (f in fns) {
-    for (x in vals) {
-      expect_equal(f(x), f0(x))
-    }
-  }
 })
