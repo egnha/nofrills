@@ -71,20 +71,20 @@ test_that("NULL is void in a sequence of functions", {
       expect_equal(cmp(val), cmp0(val))
 })
 
-test_that("error is signalled when composing a non-decomposable object", {
+test_that("error is signalled when composing a non-interpretable object", {
   errmsg <- function(x) {
     cls <- paste(deparse(class(x)), collapse = "")
     sprintf("Cannot interpret object of class %s as a function", cls)
   }
 
-  nondecomposable <- list(
+  noninterp <- list(
     as.data.frame(1:3),
     quote(x),
     quote(function() NULL),
     structure(NA, class = "foo")
   )
 
-  for (obj in nondecomposable) {
+  for (obj in noninterp) {
     msg <- errmsg(obj)
     expect_error(compose(obj), msg)
     expect_error(compose(identity, obj), msg)
