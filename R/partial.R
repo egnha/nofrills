@@ -135,7 +135,7 @@ partial_ <- local({
     nms_bare <- names(formals(f_bare))
     if (has_dots(nms_bare)) {
       no_name_reuse(f, fix) %because% "Can't reset previously fixed argument(s)"
-      nms_bare <- nondots(nms_bare)
+      nms_bare <- nms_bare[nms_bare != "..."]
       nms_priv <- privatize(names(fix), names_fixed(f))
       args <- c(args(f, nms_bare), tidy_dots(nms_priv, nms_bare))
       body <- call_bare(args, quote(...))

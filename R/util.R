@@ -12,9 +12,6 @@ closure <- function(f) {
   as_closure(f, parent.frame())
 }
 
-nondots <- function(xs)
-  xs[xs != "..."]
-
 has_dots <- function(x)
   match("...", x, nomatch = 0L) > 0L
 
