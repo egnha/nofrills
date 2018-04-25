@@ -74,7 +74,7 @@ test_that("NULL is void in a sequence of functions", {
 test_that("error is signalled when composing a non-decomposable object", {
   errmsg <- function(x) {
     cls <- paste(deparse(class(x)), collapse = "")
-    sprintf("Cannot decompose object of class %s", cls)
+    sprintf("Cannot interpret object of class %s as a function", cls)
   }
 
   nondecomposable <- list(
@@ -125,8 +125,7 @@ test_that("nested compositions are flattened", {
 
   # Test by value
   cmps <- Reduce(compose, gs, accumulate = TRUE)
-  expect_equivalent(decompose(cmps[[1]]), gs[[1]])
-  for (i in seq_along(gs)[-1])
+  for (i in seq_along(gs))
     expect_equivalent(decompose(cmps[[i]]), gs[seq_len(i)])
 })
 
@@ -170,26 +169,19 @@ test_that("one-sided formula of a function is lifted", {
 
 context("Decomposing compositions")
 
-test_that("decomposing a non-composite function wraps it unchanged", {
+test_that("decomposing a non-composite function wraps it in a list", {
   for (f in fn_kinds[c("closure", "special", "builtin")])
-    expect_identical(decompose(f), f)
+    expect_identical(decompose(f), list(f))
 })
 
-test_that("error is signalled when decomposing a non-decomposable object", {
-  errmsg <- function(x) {
-    cls <- paste(deparse(class(x)), collapse = "")
-    sprintf("Cannot decompose object of class %s", cls)
-  }
-
-  nondecomposable <- list(
-    as.data.frame(1:3),
-    quote(x),
-    quote(function() NULL),
-    structure(NA, class = "foo")
+test_that("error is signalled when decomposing a non-function", {
+  expect_errors_with_message(
+    "Only functions can be decomposed",
+    decompose(NULL),
+    decompose(~function() NULL),
+    decompose(quote(function() NULL)),
+    decompose(list(function() NULL))
   )
-
-  for (obj in nondecomposable)
-    expect_error(decompose(obj), errmsg(obj))
 })
 
 test_that("list of composite functions is flat", {
@@ -201,7 +193,7 @@ test_that("decompose() inverts compose()", {
   expect_equivalent(decompose(compose(fs)), fs)
   expect_equivalent(decompose(compose(fs[[1]], fs[[2]], fs[[3]])), fs)
   expect_equivalent(decompose(compose(fs[[1]], fs[[2]])), fs[1:2])
-  expect_equivalent(decompose(compose(fs[[1]])), fs[[1]])
+  expect_equivalent(decompose(compose(fs[[1]])), fs[1])
 })
 
 test_that("compose() inverts decompose()", {
