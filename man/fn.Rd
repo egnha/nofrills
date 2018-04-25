@@ -185,8 +185,8 @@ as_this <- classify_as("this")
 stopifnot(inherits(as_this(NA), "this"))
 
 # Evaluate functions on a given set of arguments
-do_call <- fn_curry(... = , ..f ~ do.call(..f, list(...)))
-apply_fn <- do_call(1, 2)
+do_call <- fn_curry(args, ..f ~ do.call(..f, args))
+apply_fn <- do_call(list(1, 2))
 stopifnot(
   apply_fn(..f = `*`) == 2,
   apply_fn(..f = `/`) == 0.5,
