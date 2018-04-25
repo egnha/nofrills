@@ -4,6 +4,7 @@
 \alias{compose}
 \alias{\%<<<\%}
 \alias{\%>>>\%}
+\alias{decompose}
 \title{Compose functions}
 \usage{
 compose(...)
@@ -11,6 +12,8 @@ compose(...)
 snd \%<<<\% fst
 
 fst \%>>>\% snd
+
+decompose(f)
 }
 \arguments{
 \item{...}{Functions or lists thereof to compose. Lists of functions are
@@ -19,6 +22,8 @@ automatically spliced in. (Explicit \link[rlang:quasiquotation]{splicing} via
 right to left.}
 
 \item{fst, snd}{Functions.}
+
+\item{f}{Function.}
 }
 \value{
 \code{compose()}, \code{\%<<<\%} and \code{\%>>>\%} return a function

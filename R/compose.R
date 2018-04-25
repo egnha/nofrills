@@ -19,7 +19,6 @@
 #'   automatically spliced in. (Explicit [splicing][rlang::quasiquotation] via
 #'   `!!!` is also supported.) Following convention, functions are composed from
 #'   right to left.
-#' @param fst,snd Functions.
 #'
 #' @return `compose()`, \code{\%<<<\%} and \code{\%>>>\%} return a function
 #'   composition, whose [formals][base::formals()] match those of the initial
@@ -203,6 +202,7 @@ fn_interp.default <- function(x) {
 }
 
 #' @rdname compose
+#' @param fst,snd Functions.
 #' @export
 `%<<<%` <- function(snd, fst) {
   compose_implicit_partial(parent.frame(), substitute(snd), substitute(fst))
@@ -233,6 +233,17 @@ compose_implicit_partial <- local({
   function(env, ...) {
     fns <- lapply(list(...), implicit_partial, env = env)
     do.call(compose, fns)
+  }
+})
+
+#' @rdname compose
+#' @param f Function.
+#' @export
+decompose <- local({
+  pipeline <- getter_env("__pipeline__")
+  function(f) {
+    is.function(f) %because% "Only functions can be decomposed"
+    box(pipeline(f) %||% f)
   }
 })
 
