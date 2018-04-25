@@ -59,6 +59,7 @@ assign_getter <- function(nm, property = nm, env = parent.frame()) {
   force(property)
   getter <- function(x) attr(x, property, exact = TRUE)
   assign(nm, getter, envir = env)
+  invisible(getter)
 }
 
 assign_setter <- function(nm, property = nm, env = parent.frame()) {
@@ -68,6 +69,7 @@ assign_setter <- function(nm, property = nm, env = parent.frame()) {
     invisible(x)
   }
   assign(paste0(nm, "<-"), setter, envir = env)
+  invisible(setter)
 }
 
 check_head <- function(nm) {
