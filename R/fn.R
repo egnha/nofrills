@@ -167,11 +167,11 @@
 #' @export
 fn <- function(..., ..env = parent.frame()) {
   is.environment(..env) %because% "'..env' must be an environment"
-  d <- get_fn_declaration(...)
-  make_function(d$args, d$body, ..env)
+  fun <- fn_parts(...)
+  make_function(fun$args, fun$body, ..env)
 }
 
-get_fn_declaration <- function(...) {
+fn_parts <- function(...) {
   xs <- get_exprs(...)
   args <- get_args(xs$front)
   remains <- behead(xs$back)
@@ -198,46 +198,36 @@ validate <- function(xs, n = length(xs)) {
 get_args <- function(xs) {
   if (is_empty(xs))
     return(NULL)
-  standardize_bare_arguments(xs)
-}
-standardize_bare_arguments <- function(xs) {
   no_name <- !nzchar(names(xs))
-  names(xs)[no_name] <- vapply(xs[no_name], expr_name, character(1))
+  names(xs)[no_name] <- vapply(xs[no_name], expr_name, "")
   xs[no_name] <- blank
   xs
 }
 
 behead <- function(x) {
-  list(head = get_head(x), body = f_rhs(x[[1]]))
-}
-get_head <- function(x) {
   nm <- names(x)
-  arg <- f_lhs(x[[1]])
-  if (is_onesided(x[[1]]))
-    get_empty_head(nm)
-  else
-    get_nonempty_head(arg, nm)
+  fml <- x[[1]]
+  if (length(fml) == 2) {
+    (!nzchar(nm)) %because% "Default value of final argument expected"
+    head <- NULL
+  } else {
+    head <- nonempty_head(fml, nm)
+  }
+  list(head = head, body = f_rhs(fml))
 }
-is_onesided <- function(x) {
-  length(x) == 2
-}
-get_empty_head <- function(nm) {
-  (!nzchar(nm)) %because% "Default value of final argument expected"
-  NULL
-}
-get_nonempty_head <- function(arg, nm) {
+nonempty_head <- function(fml, nm) {
+  expr <- f_lhs(fml)
   if (nzchar(nm))
-    list(arg) %named% nm
-  else
-    blank %named% expr_name(arg)
+    return(list(expr) %named% nm)
+  blank %named% expr_name(expr)
 }
 
 make_function <- function(args, body, env) {
-  stopifnot(all(have_name(args)))
-  if (is_closure(body))
+  if (is_closure(body)) {
     body <- call("function", formals(body), base::body(body))
-  else
+  } else {
     is_expr(body) %because% "Body must be an expression or closure"
+  }
   new_fn(args, body, env)
 }
 
