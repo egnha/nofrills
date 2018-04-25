@@ -179,17 +179,20 @@ get_fn_declaration <- function(...) {
 }
 
 get_exprs <- function(...) {
-  xs <- validate(exprs_(...))
+  xs <- exprs_(...)
   n <- length(xs)
+  validate(xs, n)
   list(front = xs[-n], back = xs[n])
 }
-validate <- function(xs, n) {
-  (!is_empty(xs)) %because% "Function must be declared"
-  n <- length(xs)
-  is_fml <- vapply(xs, is_formula, logical(1))
-  all(!is_fml[-n]) %because% "Only the body (as last argument) should be a formula"
-  is_fml[n] %because% "Final argument must be a formula (specifying the body)"
-  xs
+validate <- function(xs, n = length(xs)) {
+  (n > 0) %because%
+    "Function must be declared"
+  is_fml <- vapply(xs, is_formula, TRUE)
+  all(!is_fml[-n]) %because%
+    "Only the body (as last argument) should be a formula"
+  is_fml[n] %because%
+    "Final argument must be a formula (specifying the body)"
+  invisible(xs)
 }
 
 get_args <- function(xs) {
