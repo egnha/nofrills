@@ -110,9 +110,9 @@ partial <- local({
 })
 
 partial_ <- local({
-  assign_getter("bare_args", ".bareCallArgs")
-  assign_setter("bare_args", ".bareCallArgs")
-  assign_setter("names_fixed", ".fixedArgNames")
+  assign_getter("bare_args")
+  assign_setter("bare_args")
+  assign_setter("names_fixed")
 
   body_partial <- quote({
     environment(`__partial__`) <- `__with_fixed_args__`()
@@ -159,7 +159,7 @@ partial_ <- local({
   }
 })
 
-assign_getter("names_fixed", ".fixedArgNames")
+assign_getter("names_fixed")
 
 privatize <- local({
   privatize_ <- function(xs, nms = xs) {
@@ -198,8 +198,8 @@ map_eneval_tidy <- local({
   function(xs) lapply(xs, eneval_tidy)
 })
 
-assign_getter("expr_partial", ".exprPartialApplication")
-assign_setter("expr_partial", ".exprPartialApplication")
+assign_getter("expr_partial")
+assign_setter("expr_partial")
 
 expr_fn <- function(expr, fmls) {
   if (is.name(expr))

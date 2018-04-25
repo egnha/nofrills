@@ -55,14 +55,14 @@ getter_env <- function(nm) {
   function(x) .subset2(environment(x), nm)
 }
 
-assign_getter <- function(nm, property = nm, env = parent.frame()) {
+assign_getter <- function(nm, property = obscure(nm), env = parent.frame()) {
   force(property)
   getter <- function(x) attr(x, property, exact = TRUE)
   assign(nm, getter, envir = env)
   invisible(getter)
 }
 
-assign_setter <- function(nm, property = nm, env = parent.frame()) {
+assign_setter <- function(nm, property = obscure(nm), env = parent.frame()) {
   force(property)
   setter <- function(x, value) {
     attr(x, property) <- value
@@ -70,6 +70,10 @@ assign_setter <- function(nm, property = nm, env = parent.frame()) {
   }
   assign(paste0(nm, "<-"), setter, envir = env)
   invisible(setter)
+}
+
+obscure <- function(nm) {
+  paste0(".__NOFRILLS_", toupper(nm), "__.")
 }
 
 check_head <- function(nm) {
