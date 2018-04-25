@@ -90,7 +90,7 @@
 #' @export
 compose <- local({
   iterated_call <- function(n, fmls) {
-    fnames <- enum(n:1)
+    fnames <- sprintf("__%s__", n:1)
     expr <- as.call(c(as.name(fnames[[1]]), args(fmls)))
     for (fname in fnames[-1])
       expr <- call(fname, expr)
@@ -101,7 +101,6 @@ compose <- local({
     names(args)[names(args) == "..."] <- ""
     args
   }
-  enum <- function(x) sprintf("__%s__", x)
 
   flatten_fns <- function(...) {
     fns <- lapply(list2(...), fn_interp)
