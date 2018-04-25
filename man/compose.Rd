@@ -2,14 +2,11 @@
 % Please edit documentation in R/compose.R
 \name{compose}
 \alias{compose}
-\alias{decompose}
 \alias{\%<<<\%}
 \alias{\%>>>\%}
 \title{Compose functions}
 \usage{
 compose(...)
-
-decompose(x)
 
 snd \%<<<\% fst
 
@@ -20,8 +17,6 @@ fst \%>>>\% snd
 automatically spliced in. (Explicit \link[rlang:quasiquotation]{splicing} via
 \code{!!!} is also supported.) Following convention, functions are composed from
 right to left.}
-
-\item{x}{Object to decompose.}
 
 \item{fst, snd}{Functions.}
 }

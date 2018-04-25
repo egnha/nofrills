@@ -105,7 +105,7 @@ compose <- local({
   enum <- function(x) sprintf("__%s__", x)
 
   flatten_fns <- function(...) {
-    fns <- lapply(list2(...), decompose)
+    fns <- lapply(list2(...), fn_interp)
     unlist(do.call(c, fns))  # Collapse NULL's by invoking 'c'
   }
 
@@ -134,34 +134,30 @@ compose <- local({
   }
 })
 
-#' @rdname compose
-#' @param x Object to decompose.
-#'
-#' @export
-decompose <- function(x) {
-  UseMethod("decompose")
+fn_interp <- function(x) {
+  UseMethod("fn_interp")
 }
 
 #' @export
-decompose.list <- function(x) {
-  lapply(x, decompose)
+fn_interp.list <- function(x) {
+  lapply(x, fn_interp)
 }
 
 #' @export
-decompose.CompositeFunction <- getter_env("__pipeline__")
+fn_interp.CompositeFunction <- getter_env("__pipeline__")
 
 #' @export
-decompose.function <- function(x) x
+fn_interp.function <- function(x) x
 
 #' @export
-decompose.formula <- function(x) {
-  (length(x) == 2) %because% "Only one-sided formulas can be decomposed"
+fn_interp.formula <- function(x) {
+  (length(x) == 2) %because% "Lifted function must be a one-sided formula"
   rhs <- eval(x[[2]], environment(x))
   lift(rhs)
 }
 lift <- function(f) {
   is.function(f) %because% "Only functions can be lifted"
-  pipeline <- decompose(f)
+  pipeline <- fn_interp(f)
   if (!inherits(f, "CompositeFunction"))
     return(lift_(pipeline))
   n <- length(pipeline)
@@ -188,23 +184,21 @@ selector <- function(x) {
 utils::globalVariables(c("select", "rename"))
 
 #' @export
-decompose.logical <- selector
+fn_interp.logical   <- selector
 #' @export
-decompose.character <- selector
+fn_interp.character <- selector
 #' @export
-decompose.integer <- selector
+fn_interp.integer   <- selector
 #' @export
-decompose.numeric <- selector
+fn_interp.numeric   <- selector
 
 #' @export
-decompose.NULL <- function(x) NULL
+fn_interp.NULL <- function(x) NULL
 
 #' @export
-decompose.default <- function(x) {
-  if (missing(x))
-    stop("Must specify object to decompose", call. = FALSE)
+fn_interp.default <- function(x) {
   cls <- paste(deparse(class(x)), collapse = "")
-  msg <- sprintf("Cannot decompose object of class %s", cls)
+  msg <- sprintf("Cannot interpret object of class %s as a function", cls)
   stop(msg, call. = FALSE)
 }
 
