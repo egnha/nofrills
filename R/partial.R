@@ -232,8 +232,8 @@ expr_partial_closure <- local({
 
   function(x) {
     make_expr <- get_partial_closure(x)
-    env <- environment(x) %encloses% list(`__bare__` = call_with_fixed_args(x))
-    environment(make_expr) <- env
+    environment(make_expr) <-
+      environment(x) %encloses% list(`__bare__` = call_with_fixed_args(x))
     make_expr()
   }
 })
