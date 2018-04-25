@@ -10,8 +10,8 @@ test_that("function without arguments is already curried", {
   expect_true(is_curried(f))
 })
 
-test_that("function of a single argument or just dots is already curried", {
-  fs <- list(function(x) NULL, function(...) NULL)
+test_that("function of a single (non-dots) argument is already curried", {
+  fs <- list(function(x) NULL, function(x = "x") NULL)
   for (f in fs) {
     expect_identical(curry(f), f)
     expect_true(is_curried(f))
@@ -20,10 +20,9 @@ test_that("function of a single argument or just dots is already curried", {
 
 test_that("function whose arguments all have values is already curried", {
   fs <- list(
+    function() NULL,
     function(x = 1) NULL,
-    function(x = 1, ...) NULL,
-    function(x = 1, y = 2) NULL,
-    function(x = 1, y = 2, ...) NULL
+    function(x = 1, y = 2) NULL
   )
   for (f in fs) {
     expect_identical(curry(f), f)
@@ -35,9 +34,13 @@ test_that("currying is idempotent", {
   fs <- list(
     function() NULL,
     function(x) NULL,
+    function(x = "x") NULL,
+    function(...) NULL,
     function(x, ...) NULL,
+    function(x = "x", ...) NULL,
     function(x, y, ...) NULL,
-    function(x, y, ..., z = "z") NULL
+    function(x, y = "y", ...) NULL,
+    function(x = "x", y = "y", ...) NULL
   )
   for (f in fs) {
     fc <- curry(f)
@@ -53,114 +56,172 @@ test_that("currying is idempotent", {
 })
 
 test_that("function value is returned for a complete set of arguments", {
-  f <- function(x, ...) c(x, ...)
+  f <- function(x) x
   fc <- curry(f)
   expect_equal(fc(1), f(1))
-  expect_equal(fc(1, 2), f(1, 2))
 
-  f <- function(x = 0, ...) c(x, ...)
+  f <- function(x = 0) x
   fc <- curry(f)
   expect_equal(fc(), f())
   expect_equal(fc(1), f(1))
-
-  f <- function(..., x) c(x, ...)
-  fc <- curry(f)
-  expect_equal(fc(x = 0), f(x = 0))
-  expect_equal(fc(x = 0, 1), f(x = 0, 1))
 
   f <- function(x, y) c(x, y)
   fc <- curry(f)
   expect_equal(fc(1, 2), f(1, 2))
 
-  f <- function(x, y = 1) c(x, y)
+  f <- function(x, y = 2) c(x, y)
   fc <- curry(f)
-  expect_equal(fc(0), f(0))
-  expect_equal(fc(0, 1), f(0, 1))
+  expect_equal(fc(1), f(1))
+  expect_equal(fc(1, 2), f(1, 2))
 
-  f <- function(x = 0, y) c(x, y)
+  f <- function(x = 1, y = 2) c(x, y)
   fc <- curry(f)
-  expect_equal(fc(y = 1), f(y = 1))
-  expect_equal(fc(0, 1), f(0, 1))
-
-  f <- function(x = 0, y = 1) c(x, y)
-  fc <- curry(f)
-  expect_equal(fc(), f())
-
-  f <- function(x, y, ..., z = 2) c(x, y, ..., z)
-  fc <- curry(f)
-  expect_equal(fc(0, 1), f(0, 1))
+  expect_equal(fc(1), f(1))
+  expect_equal(fc(1, 2), f(1, 2))
 })
 
-test_that("curried function is returned for an incomplete set of arguments", {
+test_that("curried function is returned for an incomplete set of arguments, without dots", {
+  f <- function(u, v, w, x, y) c(u, v, w, x, y)
+
+  fc <- curry(f)(1)
+  expect_equal_formals(fc, function(v, w, x, y) {})
+  expect_equal(fc(2, 3, 4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1, 2)
+  expect_equal_formals(fc, function(w, x, y) {})
+  expect_equal(fc(3, 4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(2, u = 1)
+  expect_equal_formals(fc, function(w, x, y) {})
+  expect_equal(fc(3, 4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1)(2)
+  expect_equal_formals(fc, function(w, x, y) {})
+  expect_equal(fc(3, 4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(v = 2)(1)
+  expect_equal_formals(fc, function(w, x, y) {})
+  expect_equal(fc(3, 4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1, 2, 3)
+  expect_equal_formals(fc, function(x, y) {})
+  expect_equal(fc(4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1)(2, 3)
+  expect_equal_formals(fc, function(x, y) {})
+  expect_equal(fc(4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1, 2)(3)
+  expect_equal_formals(fc, function(x, y) {})
+  expect_equal(fc(4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1)(2)(3)
+  expect_equal_formals(fc, function(x, y) {})
+  expect_equal(fc(4, 5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1, 2, 3, 4)
+  expect_equal_formals(fc, function(y) {})
+  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1, 2, 3)(4)
+  expect_equal_formals(fc, function(y) {})
+  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1, 2)(3, 4)
+  expect_equal_formals(fc, function(y) {})
+  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1, 2)(3)(4)
+  expect_equal_formals(fc, function(y) {})
+  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1)(2, 3, 4)
+  expect_equal_formals(fc, function(y) {})
+  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1)(2, 3)(4)
+  expect_equal_formals(fc, function(y) {})
+  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1)(2)(3, 4)
+  expect_equal_formals(fc, function(y) {})
+  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+
+  fc <- curry(f)(1)(2)(3)(4)
+  expect_equal_formals(fc, function(y) {})
+  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+})
+
+test_that("curried function is returned for an incomplete set of arguments, with dots", {
   f <- function(u, v, w, x, y, ...) c(u, v, w, x, y, ...)
 
   fc <- curry(f)(1)
   expect_equal_formals(fc, function(v, w, x, y, ...) {})
-  expect_equal(fc(2, 3, 4, 5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(2, 3, 4, 5)(), c(1, 2, 3, 4, 5))
 
   fc <- curry(f)(1, 2)
   expect_equal_formals(fc, function(w, x, y, ...) {})
-  expect_equal(fc(3, 4, 5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(3, 4, 5)(), c(1, 2, 3, 4, 5))
 
   fc <- curry(f)(2, u = 1)
   expect_equal_formals(fc, function(w, x, y, ...) {})
-  expect_equal(fc(3, 4, 5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(3, 4, 5)(), c(1, 2, 3, 4, 5))
 
   fc <- curry(f)(1)(2)
   expect_equal_formals(fc, function(w, x, y, ...) {})
-  expect_equal(fc(3, 4, 5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(3, 4, 5)(), c(1, 2, 3, 4, 5))
 
   fc <- curry(f)(v = 2)(1)
   expect_equal_formals(fc, function(w, x, y, ...) {})
-  expect_equal(fc(3, 4, 5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(3, 4, 5)(), c(1, 2, 3, 4, 5))
 
   fc <- curry(f)(1, 2, 3)
   expect_equal_formals(fc, function(x, y, ...) {})
-  expect_equal(fc(4, 5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(4, 5)(), c(1, 2, 3, 4, 5))
 
   fc <- curry(f)(1)(2, 3)
   expect_equal_formals(fc, function(x, y, ...) {})
-  expect_equal(fc(4, 5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(4, 5)(), c(1, 2, 3, 4, 5))
 
   fc <- curry(f)(1, 2)(3)
   expect_equal_formals(fc, function(x, y, ...) {})
-  expect_equal(fc(4, 5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(4, 5)(), c(1, 2, 3, 4, 5))
 
   fc <- curry(f)(1)(2)(3)
   expect_equal_formals(fc, function(x, y, ...) {})
-  expect_equal(fc(4, 5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(4, 5)(), c(1, 2, 3, 4, 5))
 
   fc <- curry(f)(1, 2, 3, 4)
   expect_equal_formals(fc, function(y, ...) {})
-  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(5)(), c(1, 2, 3, 4, 5))
 
   fc <- curry(f)(1, 2, 3)(4)
   expect_equal_formals(fc, function(y, ...) {})
-  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(5)(), c(1, 2, 3, 4, 5))
 
   fc <- curry(f)(1, 2)(3, 4)
   expect_equal_formals(fc, function(y, ...) {})
-  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(5)(), c(1, 2, 3, 4, 5))
 
   fc <- curry(f)(1, 2)(3)(4)
   expect_equal_formals(fc, function(y, ...) {})
-  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(5)(), c(1, 2, 3, 4, 5))
 
   fc <- curry(f)(1)(2, 3, 4)
   expect_equal_formals(fc, function(y, ...) {})
-  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(5)(), c(1, 2, 3, 4, 5))
 
   fc <- curry(f)(1)(2, 3)(4)
   expect_equal_formals(fc, function(y, ...) {})
-  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(5)(), c(1, 2, 3, 4, 5))
 
   fc <- curry(f)(1)(2)(3, 4)
   expect_equal_formals(fc, function(y, ...) {})
-  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(5)(), c(1, 2, 3, 4, 5))
 
   fc <- curry(f)(1)(2)(3)(4)
   expect_equal_formals(fc, function(y, ...) {})
-  expect_equal(fc(5), c(1, 2, 3, 4, 5))
+  expect_equal(fc(5)(), c(1, 2, 3, 4, 5))
 })
 
 test_that("dot-arguments can be set", {
@@ -168,52 +229,52 @@ test_that("dot-arguments can be set", {
 
   fc <- curry(f)(a = 5)
   expect_equal_formals(fc, f)
-  expect_equal(fc(1, 2, 3), c(1, 2, 3, 4, a = 5))
+  expect_equal(fc(1, 2, 3)(), c(1, 2, 3, 4, a = 5))
 
   fc <- curry(f)(a = 5, b = 6)
   expect_equal_formals(fc, f)
-  expect_equal(fc(1, 2, 3), c(1, 2, 3, 4, a = 5, b = 6))
+  expect_equal(fc(1, 2, 3)(), c(1, 2, 3, 4, a = 5, b = 6))
 
   fc <- curry(f)(a = 5)(b = 6)
   expect_equal_formals(fc, f)
-  expect_equal(fc(1, 2, 3), c(1, 2, 3, 4, a = 5, b = 6))
+  expect_equal(fc(1, 2, 3)(), c(1, 2, 3, 4, a = 5, b = 6))
 
   fc <- curry(f)(1, a = 5)
   expect_equal_formals(fc, function(y, z, ..., w = 4) {})
-  expect_equal(fc(2, 3), c(1, 2, 3, 4, a = 5))
+  expect_equal(fc(2, 3)(), c(1, 2, 3, 4, a = 5))
 
   fc <- curry(f)(1)(a = 5)
   expect_equal_formals(fc, function(y, z, ..., w = 4) {})
-  expect_equal(fc(2, 3), c(1, 2, 3, 4, a = 5))
+  expect_equal(fc(2, 3)(), c(1, 2, 3, 4, a = 5))
 
   fc <- curry(f)(a = 5)(1)
   expect_equal_formals(fc, function(y, z, ..., w = 4) {})
-  expect_equal(fc(2, 3), c(1, 2, 3, 4, a = 5))
+  expect_equal(fc(2, 3)(), c(1, 2, 3, 4, a = 5))
 
   fc <- curry(f)(1, 2)(a = 5)
   expect_equal_formals(fc, function(z, ..., w = 4) {})
-  expect_equal(fc(3), c(1, 2, 3, 4, a = 5))
+  expect_equal(fc(3)(), c(1, 2, 3, 4, a = 5))
 
   fc <- curry(f)(1)(2)(a = 5)
   expect_equal_formals(fc, function(z, ..., w = 4) {})
-  expect_equal(fc(3), c(1, 2, 3, 4, a = 5))
+  expect_equal(fc(3)(), c(1, 2, 3, 4, a = 5))
 
   fc <- curry(f)(1)(a = 5)(2)
   expect_equal_formals(fc, function(z, ..., w = 4) {})
-  expect_equal(fc(3), c(1, 2, 3, 4, a = 5))
+  expect_equal(fc(3)(), c(1, 2, 3, 4, a = 5))
 
   fc <- curry(f)(a = 5)(1)(2)
   expect_equal_formals(fc, function(z, ..., w = 4) {})
-  expect_equal(fc(3), c(1, 2, 3, 4, a = 5))
+  expect_equal(fc(3)(), c(1, 2, 3, 4, a = 5))
 
   fc <- curry(f)(a = 5)(1, 2)
   expect_equal_formals(fc, function(z, ..., w = 4) {})
-  expect_equal(fc(3), c(1, 2, 3, 4, a = 5))
+  expect_equal(fc(3)(), c(1, 2, 3, 4, a = 5))
 
-  out <- curry(f)(1, 2, 3, a = 5, 6)
+  out <- curry(f)(1, 2, 3, a = 5, 6)()
   expect_equal(out, f(1, 2, 3, a = 5, 6))
 
-  out <- curry(f)(a = 5, 1, 2, 3, 6)
+  out <- curry(f)(a = 5, 1, 2, 3, 6)()
   expect_equal(out, f(a = 5, 1, 2, 3, 6))
 })
 
@@ -230,7 +291,7 @@ test_that("formal argument is dropped once it is curried away", {
 test_that("dots persist", {
   f <- function(u, v, w = "w", ..., x = "x", y) NULL
   fc <- curry(f)
-  expect_dots(
+  fs <- list(
     fc(1),
     fc(1, 2),
     fc(1)(2),
@@ -241,8 +302,13 @@ test_that("dots persist", {
     fc(1, 2, 3, 4),
     fc(1, 2, 3, 4, a = 5),
     fc(x = "x", 1, 2, 3, 4, a = 5),
-    fc(y = "y", u = 1, a = 5)
+    fc(y = "y", u = 1, a = 5),
+    fc(1, 2, 3, y = "y")
   )
+  for (f in fs) {
+    expect_true("..." %in% names(formals(f)))
+    expect_true(is_curried(f))
+  }
 })
 
 context("Uncurrying")
