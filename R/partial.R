@@ -166,7 +166,8 @@ privatize <- local({
     sprintf("..%s..", xs) %named% nms
   }
   n_dots <- function(x) {
-    if (is.null(x)) return(0L)
+    if (is.null(x))
+      return(0L)
     sum(!nzchar(names(x)))
   }
 
@@ -201,7 +202,8 @@ assign_getter("expr_partial", ".exprPartialApplication")
 assign_setter("expr_partial", ".exprPartialApplication")
 
 expr_fn <- function(expr, fmls) {
-  if (is.name(expr)) return(expr)
+  if (is.name(expr))
+    return(expr)
   call("(", call("function", fmls, quote(...)))
 }
 
