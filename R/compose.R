@@ -224,11 +224,11 @@ decompose <- local({
 #' @export
 print.CompositeFunction <- function(x, ...) {
   fns <- rev(decompose(x))
-  cat("Composition of functions, listed in calling order:\n")
+  cat("<Function Composition>\n")
+  cat("(Listed in calling order; recover them with `decompose()`)\n")
   for (i in seq_along(fns)) {
     cat("\n", i, ": ", sep = "")
     print(fns[[i]])
   }
-  cat("\n(Use 'decompose()' to recover the list of composite functions.)")
   invisible(x)
 }

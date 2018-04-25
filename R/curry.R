@@ -161,12 +161,13 @@ fn_curry <- function(..., ..env = parent.frame()) {
 
 #' @export
 print.CurriedFunction <- function(x, ...) {
-  cat("<Curried Function>\n\n")
+  cat("<Curried Function>\n")
+  cat("(Restore conventional calling behavior with `uncurry()`)\n\n")
   uc <- uncurry_(x)
-  if (inherits(uc, "PartialFunction"))
+  if (inherits(uc, "PartialFunction")) {
     expr_print(expr_partial_closure(uc))
-  else
+  } else {
     print(closure(uc))
-  cat("\n(Apply 'uncurry()' to restore conventional calling behavior)")
+  }
   invisible(x)
 }
