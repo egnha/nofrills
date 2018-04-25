@@ -91,7 +91,7 @@ test_that("unnamed dots-arguments can be fixed", {
 
 test_that("dots persist", {
   f <- function(x, y, ..., z = 3) c(x, y, ..., z)
-  expect_dots(
+  fs <- list(
     partial(f),
     partial(f, 1),
     partial(f, y = 2),
@@ -117,6 +117,8 @@ test_that("dots persist", {
     partial(f, 1, 2, a = 3, 4, z = 5),
     partial(f, 1, 2, a = 3, b = 4, z = 5)
   )
+  for (f in fs)
+    expect_true("..." %in% names(formals(f)))
 })
 
 test_that("fixed named dot-argument doesn't pollute function's lexical scope", {
