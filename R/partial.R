@@ -252,11 +252,13 @@ call_with_fixed_args <- function(x) {
     nms_fix <- nms_fix[names(nms_fix) %in% names(formals(departial_(x)))]
     exprs_fix <- lapply(nms_fix, function(nm) uq(as.name(nm)))
 
-    function(expr)
+    function(expr) {
       do.call("substitute", list(expr, exprs_fix))
+    }
   })
-  expr_uq <- function(x, env)
+  expr_uq <- function(x, env) {
     eval(bquote(expr(.(x))), list(expr = expr), env)
+  }
 
   function(...) {
     fmls_fixed <- formals_fixed(parent.frame())
@@ -270,8 +272,9 @@ subst_formal_args <- local({
   unquote <- list(eval_tidy = function(arg) uq(substitute(arg)))
   is_tidy_call <- check_head("eval_tidy")
 
-  function(arg)
+  function(arg) {
     if (is.call(arg) && is_tidy_call(arg)) eval(arg, unquote) else arg
+  }
 })
 
 uq <- function(x) bquote(!!.(x))

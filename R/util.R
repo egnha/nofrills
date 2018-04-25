@@ -12,28 +12,34 @@ closure <- function(f) {
   as_closure(f, parent.frame())
 }
 
-has_dots <- function(x)
+has_dots <- function(x) {
   match("...", x, nomatch = 0L) > 0L
+}
 
-eponymous <- function(nms)
+eponymous <- function(nms) {
   lapply(nms, as.name) %named% nms
+}
 
 opposite <- function(f) {
   formals(f) <- rev(formals(f))
   f
 }
 
-box <- function(x)
+box <- function(x) {
   if (is.list(x)) x else list(x)
+}
 
-`%notin%` <- function(these, those)
+`%notin%` <- function(these, those) {
   match(these, those, nomatch = 0L) == 0L
+}
 
-`%are%` <- function(these, those)
+`%are%` <- function(these, those) {
   all(match(these, those, nomatch = 0L) > 0L)
+}
 
-`%because%` <- function(assertion, reason)
+`%because%` <- function(assertion, reason) {
   if (!assertion) stop(reason, call. = FALSE)
+}
 
 `%subclass%` <- function(class, superclass) {
   wh_class <- which(superclass == class)

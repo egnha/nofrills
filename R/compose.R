@@ -110,8 +110,9 @@ compose <- local({
   get_pipeline <- function(pipeline, env) {
     force(env)
     nms <- names(pipeline)
-    function(.)
+    function(.) {
       unname(mget(nms, envir = env, mode = "function", inherits = FALSE))
+    }
   }
 
   function(...) {
@@ -203,9 +204,7 @@ fn_interp.default <- function(x) {
 #' @rdname compose
 #' @param fst,snd Functions.
 #' @export
-`%<<<%` <- function(snd, fst) {
-  compose(snd, fst)
-}
+`%<<<%` <- function(snd, fst) compose(snd, fst)
 
 #' @rdname compose
 #' @export
