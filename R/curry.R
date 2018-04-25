@@ -167,7 +167,7 @@ print.CurriedFunction <- function(x, ...) {
   if (inherits(uc, "PartialFunction")) {
     expr_print(expr_partial_closure(uc))
   } else {
-    print(closure(uc))
+    print(uc)
   }
   invisible(x)
 }
