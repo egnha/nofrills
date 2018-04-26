@@ -203,8 +203,10 @@ fn_interp.character <- function(x) {
   evalq(function(x) `names<-`(x[select], rename),
         list(select = x, rename = rename), baseenv())
 }
+
 #' @export
 fn_interp.integer <- fn_interp.character
+
 #' @export
 fn_interp.numeric <- fn_interp.character
 
