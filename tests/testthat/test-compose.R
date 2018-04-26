@@ -63,12 +63,11 @@ test_that("NULL is void in a sequence of functions", {
     compose(log, NULL, inc),
     compose(log, inc, NULL)
   )
-  vals <- {set.seed(1); runif(10)}
 
   # Function equality by equality of return values
+  vals <- {set.seed(1); runif(10)}
   for (cmp in cmps)
-    for (val in vals)
-      expect_equal(cmp(val), cmp0(val))
+      expect_equal(cmp(vals), cmp0(vals))
 })
 
 test_that("error is signalled when composing a non-interpretable object", {
@@ -160,11 +159,10 @@ test_that("environment of composition is child of initial-function environment",
 })
 
 test_that("one-sided formula of a function is lifted", {
-  add <- function(a, b) a / b
-  cmp <- compose(~add, list)
+  div <- function(a, b) a / b
+  cmp <- compose(~div, list)
   vals <- {set.seed(1); runif(10)}
-  for (val in vals)
-    expect_equal(cmp(val, val + 1), add(val, val + 1))
+  expect_equal(cmp(vals, vals + 1), div(vals, vals + 1))
 })
 
 test_that("(boolean) filter length must equal input length (#36)", {
