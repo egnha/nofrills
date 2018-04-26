@@ -55,20 +55,20 @@ getter_env <- function(nm) {
   function(x) .subset2(environment(x), nm)
 }
 
-assign_getter <- function(nm, property = obscure(nm), env = parent.frame()) {
-  force(property)
+assign_getter <- function(nm) {
+  property <- obscure(nm)
   getter <- function(x) attr(x, property, exact = TRUE)
-  assign(nm, getter, envir = env)
+  assign(nm, getter, envir = parent.frame())
   invisible(getter)
 }
 
-assign_setter <- function(nm, property = obscure(nm), env = parent.frame()) {
-  force(property)
+assign_setter <- function(nm) {
+  property <- obscure(nm)
   setter <- function(x, value) {
     attr(x, property) <- value
     invisible(x)
   }
-  assign(paste0(nm, "<-"), setter, envir = env)
+  assign(paste0(nm, "<-"), setter, envir = parent.frame())
   invisible(setter)
 }
 
