@@ -102,8 +102,8 @@ compose <- local({
     args
   }
 
-  flatten_fns <- function(...) {
-    fns <- lapply(list2(...), fn_interp)
+  flatten_fns <- function(..., ..env) {
+    fns <- lapply(list2(...), fn_interp, env = ..env)
     unlist(do.call(c, fns))  # Collapse NULL's by invoking 'c'
   }
 
@@ -116,7 +116,7 @@ compose <- local({
   }
 
   function(...) {
-    pipeline <- flatten_fns(...)
+    pipeline <- flatten_fns(..., ..env = parent.frame())
     n <- length(pipeline)
     (n > 0) %because% "Must specify functions to compose"
     if (n == 1)
@@ -133,23 +133,25 @@ compose <- local({
   }
 })
 
-fn_interp <- function(x) {
+fn_interp <- function(x, ...) {
   UseMethod("fn_interp")
 }
 
 #' @export
-fn_interp.list <- function(x) {
-  lapply(x, fn_interp)
+fn_interp.list <- function(x, ...) {
+  lapply(x, fn_interp, ...)
 }
 
 #' @export
-fn_interp.CompositeFunction <- getter_env("__pipeline__")
+fn_interp.CompositeFunction <- function(x, ...) {
+  .subset2(environment(x), "__pipeline__")
+}
 
 #' @export
-fn_interp.function <- function(x) x
+fn_interp.function <- function(x, ...) x
 
 #' @export
-fn_interp.formula <- function(x) {
+fn_interp.formula <- function(x, ...) {
   (length(x) == 2) %because% "Lifted function must be a one-sided formula"
   rhs <- eval(x[[2]], environment(x))
   lift(rhs)
@@ -169,39 +171,48 @@ lift_ <- function(f) {
 utils::globalVariables("__f__")  # Appease 'R CMD check'
 
 #' @export
-fn_interp.logical <- function(x) {
+fn_interp.logical <- function(x, env) {
   len <- length(x)
   if (len == 0)
     return(NULL)
-  bindings <- list(select = x, len_select = len, mismatch = msg_mismatch(len))
-  rename <- names(x)
-  if (is.null(rename))
-    return(
-      evalq(function(x) {
-        if (length(x) != len_select) stop(mismatch(x), call. = FALSE)
-        x[select]
-      }, bindings, baseenv())
-    )
-  evalq(function(x) {
-    if (length(x) != len_select) stop(mismatch(x), call. = FALSE)
-    `names<-`(x[select], rename)
-  }, c(bindings, list(rename = rename[x])), baseenv())
-}
-msg_mismatch <- function(len) {
   msg <- sprintf("Filter length (%d) must equal input length (%%d)", len)
-  function(x) sprintf(msg, length(x))
+  nms <- names_chr(x)[x]
+  rename <- nzchar(nms)
+  if (any(rename)) {
+    body <- expr({
+      if (length(x) != !!len) stop(sprintf(!!msg, length(x)), call. = FALSE)
+      x <- x[!!x]
+      names(x) <- names_chr(x)
+      names(x)[!!rename] <- !!(nms[rename])
+      x
+    })
+  } else {
+    body <- expr({
+      if (length(x) != !!len) stop(sprintf(!!msg, length(x)), call. = FALSE)
+      x[!!x]
+    })
+  }
+  # Setting the environment allows the implied `[` method to be found (#37)
+  new_fn(alist(x = ), body, env, names_chr = names_chr)
 }
-utils::globalVariables(c("select", "len_select", "mismatch", "rename"))
 
 #' @export
-fn_interp.character <- function(x) {
+fn_interp.character <- function(x, env) {
   if (length(x) == 0)
     return(NULL)
-  rename <- names(x)
-  if (is.null(rename))
-    return(evalq(function(x) x[select], list(select = x), baseenv()))
-  evalq(function(x) `names<-`(x[select], rename),
-        list(select = x, rename = rename), baseenv())
+  nms <- names_chr(x)
+  rename <- nzchar(nms)
+  if (any(rename)) {
+    body <- expr({
+      x <- x[!!x]
+      names(x) <- names_chr(x)
+      names(x)[!!rename] <- !!(nms[rename])
+      x
+    })
+  } else {
+    body <- expr(x[!!x])
+  }
+  new_fn(alist(x = ), body, env, names_chr = names_chr)
 }
 
 #' @export
@@ -211,10 +222,10 @@ fn_interp.integer <- fn_interp.character
 fn_interp.numeric <- fn_interp.character
 
 #' @export
-fn_interp.NULL <- function(x) NULL
+fn_interp.NULL <- function(x, ...) NULL
 
 #' @export
-fn_interp.default <- function(x) {
+fn_interp.default <- function(x, ...) {
   cls <- paste(deparse(class(x)), collapse = "")
   msg <- sprintf("Cannot interpret object of class %s as a function", cls)
   stop(msg, call. = FALSE)

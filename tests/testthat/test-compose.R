@@ -178,6 +178,25 @@ test_that("(boolean) filter length must equal input length (#36)", {
   expect_error(g(1, 2), "Filter length \\(3\\) must equal input length \\(2\\)")
 })
 
+test_that("selectors dispatch `[` from calling environment (#37)", {
+  `[.SomeClass` <- function(x, i) {
+    message("SomeClass")
+    x <- x + 1
+    NextMethod(`[`)
+  }
+
+  x <- structure(c(1, 2, b = 3, 4), class = "SomeClass")
+  fs <- list(
+    compose(c(a = T, F, T, F), identity),
+    compose(c(a = 1, 3), identity)
+  )
+
+  for (f in fs) {
+    expect_equal(f(x), c(a = 2, b = 4))
+    expect_message(f(x), "SomeClass")
+  }
+})
+
 context("Decomposing compositions")
 
 test_that("decomposing a non-composite function wraps it in a list", {

@@ -90,3 +90,5 @@ check_head <- function(nm) {
 }
 
 `%named%` <- `names<-`
+
+names_chr <- names2
