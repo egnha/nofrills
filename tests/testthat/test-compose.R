@@ -167,6 +167,17 @@ test_that("one-sided formula of a function is lifted", {
     expect_equal(cmp(val, val + 1), add(val, val + 1))
 })
 
+test_that("(boolean) filter length must equal input length (#36)", {
+  f <- compose(c(T, F, T), list)
+  g <- compose(c(a = T, b = F, c = T), list)
+
+  expect_equal(f(1, 2, 3), list(1, 3))
+  expect_equal(g(1, 2, 3), list(a = 1, c = 3))
+
+  expect_error(f(1, 2), "Filter length \\(3\\) must equal input length \\(2\\)")
+  expect_error(g(1, 2), "Filter length \\(3\\) must equal input length \\(2\\)")
+})
+
 context("Decomposing compositions")
 
 test_that("decomposing a non-composite function wraps it in a list", {

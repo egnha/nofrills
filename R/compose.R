@@ -168,28 +168,45 @@ lift_ <- function(f) {
 }
 utils::globalVariables("__f__")  # Appease 'R CMD check'
 
-selector <- function(x) {
+#' @export
+fn_interp.logical <- function(x) {
+  len <- length(x)
+  if (len == 0)
+    return(NULL)
+  bindings <- list(select = x, len_select = len, mismatch = msg_mismatch(len))
+  rename <- names(x)
+  if (is.null(rename))
+    return(
+      evalq(function(x) {
+        if (length(x) != len_select) stop(mismatch(x), call. = FALSE)
+        x[select]
+      }, bindings, baseenv())
+    )
+  evalq(function(x) {
+    if (length(x) != len_select) stop(mismatch(x), call. = FALSE)
+    `names<-`(x[select], rename)
+  }, c(bindings, list(rename = rename[x])), baseenv())
+}
+msg_mismatch <- function(len) {
+  msg <- sprintf("Filter length (%d) must equal input length (%%d)", len)
+  function(x) sprintf(msg, length(x))
+}
+utils::globalVariables(c("select", "len_select", "mismatch", "rename"))
+
+#' @export
+fn_interp.character <- function(x) {
   if (length(x) == 0)
     return(NULL)
   rename <- names(x)
   if (is.null(rename))
     return(evalq(function(x) x[select], list(select = x), baseenv()))
-  evalq(
-    function(x) `names<-`(x[select], rename),
-    list(select = x, rename = rename),
-    baseenv()
-  )
+  evalq(function(x) `names<-`(x[select], rename),
+        list(select = x, rename = rename), baseenv())
 }
-utils::globalVariables(c("select", "rename"))
-
 #' @export
-fn_interp.logical   <- selector
+fn_interp.integer <- fn_interp.character
 #' @export
-fn_interp.character <- selector
-#' @export
-fn_interp.integer   <- selector
-#' @export
-fn_interp.numeric   <- selector
+fn_interp.numeric <- fn_interp.character
 
 #' @export
 fn_interp.NULL <- function(x) NULL
