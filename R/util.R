@@ -20,10 +20,12 @@ eponymous <- function(nms) {
   lapply(nms, as.name) %named% nms
 }
 
+# nocov start
 opposite <- function(f) {
   formals(f) <- rev(formals(f))
   f
 }
+# nocov end
 
 box <- function(x) {
   if (is.list(x)) x else list(x)
@@ -58,6 +60,7 @@ has_dots <- function(x) {
   c(class, superclass[-wh_class])
 }
 
+# nocov start
 getter_env <- function(nm) {
   force(nm)
   function(x) .subset2(environment(x), nm)
@@ -83,6 +86,7 @@ assign_setter <- function(nm) {
 obscure <- function(nm) {
   paste0(".__NOFRILLS_", toupper(nm), "__.")
 }
+# nocov end
 
 check_head <- function(nm) {
   sym <- as.name(nm)
