@@ -88,9 +88,9 @@ obscure <- function(nm) {
 }
 # nocov end
 
-check_head <- function(nm) {
+check_caller <- function(nm) {
   sym <- as.name(nm)
-  function(x) identical(x[[1]], sym)
+  function(x) is.call(x) && identical(x[[1]], sym)
 }
 
 `%binds%` <- function(env, bindings) {
