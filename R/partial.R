@@ -9,14 +9,14 @@
 #' `departial()` \dQuote{inverts} the application of `partial()` by returning
 #' the original function.
 #'
-#' @param __f Function.
-#' @param ... Argument values of `` `__f` `` to fix, specified by name. Captured
-#'   as [quosures][rlang::quotation]. [Unquoting][rlang::quasiquotation] and
+#' @param ..f Function.
+#' @param ... Argument values of `..f` to fix, specified by name. Captured as
+#'   [quosures][rlang::quotation]. [Unquoting][rlang::quasiquotation] and
 #'   [splicing][rlang::quasiquotation] are supported (see _Examples_).
 #'
 #' @return `partial()` returns a function whose [formals][base::formals()] are a
-#'   literal truncation of the formals of `` `__f`()`` (as a closure) by the
-#'   fixed arguments. ``partial(`__f`)`` is identical to `` `__f` ``.
+#'   literal truncation of the formals of `..f()` (as a closure) by the fixed
+#'   arguments. `partial(..f)` is identical to `..f`.
 #'
 #' @section Technical Note:
 #'   Even while `partial()` truncates formals, it remains compatible with
@@ -92,19 +92,19 @@
 #' @export
 partial <- local({
   quos_dots_match <- function(f, mc, env) {
-    call_dots <- mc[names(mc) != "__f"]
+    call_dots <- mc[names(mc) != "..f"]
     call_args <- match.call(f, call_dots)
     eval(`[[<-`(call_args, 1, quos), env)
   }
 
-  function(`__f`, ...) {
+  function(..f, ...) {
     if (missing(...))
-      return(`__f`)
-    f <- closure(`__f`)
+      return(..f)
+    f <- closure(..f)
     fix <- quos_dots_match(f, match.call(), parent.frame())
     p <- partial_(f, fix)
-    expr_partial(p) <- expr_partial(f) %||% expr_fn(substitute(`__f`), formals(f))
-    class(p) <- "PartialFunction" %subclass% class(`__f`)
+    expr_partial(p) <- expr_partial(f) %||% expr_fn(substitute(..f), formals(f))
+    class(p) <- "PartialFunction" %subclass% class(..f)
     p
   }
 })
@@ -209,9 +209,9 @@ expr_fn <- function(expr, fmls) {
 
 #' @rdname partial
 #' @export
-departial <- function(`__f`) {
-  is.function(`__f`) %because% "Only functions can be de-partialized"
-  departial_(`__f`)
+departial <- function(..f) {
+  is.function(..f) %because% "Only functions can be de-partialized"
+  departial_(..f)
 }
 
 departial_ <- local({

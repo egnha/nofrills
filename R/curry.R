@@ -94,7 +94,7 @@ curry_partial <- function(f_closure, f, expr, fmls) {
   expr_curry <- expr_partial(f) %||% expr_fn(expr, fmls)
 
   function(mc, env) {
-    call <- `[[<-`(mc, "__f", f_closure)
+    call <- `[[<-`(mc, "..f", f_closure)
     p <- eval(`[[<-`(call, 1L, partial), env)
     expr_partial(p) <- expr_curry
     curry(p)

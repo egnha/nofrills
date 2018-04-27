@@ -5,21 +5,21 @@
 \alias{departial}
 \title{Fix a number of arguments to a function}
 \usage{
-partial(`__f`, ...)
+partial(..f, ...)
 
-departial(`__f`)
+departial(..f)
 }
 \arguments{
-\item{__f}{Function.}
+\item{..f}{Function.}
 
-\item{...}{Argument values of \code{`__f`} to fix, specified by name. Captured
-as \link[rlang:quotation]{quosures}. \link[rlang:quasiquotation]{Unquoting} and
+\item{...}{Argument values of \code{..f} to fix, specified by name. Captured as
+\link[rlang:quotation]{quosures}. \link[rlang:quasiquotation]{Unquoting} and
 \link[rlang:quasiquotation]{splicing} are supported (see \emph{Examples}).}
 }
 \value{
 \code{partial()} returns a function whose \link[base:formals]{formals} are a
-literal truncation of the formals of \code{`__f`()} (as a closure) by the
-fixed arguments. \code{partial(`__f`)} is identical to \code{`__f`}.
+literal truncation of the formals of \code{..f()} (as a closure) by the fixed
+arguments. \code{partial(..f)} is identical to \code{..f}.
 }
 \description{
 \code{partial()} enables
