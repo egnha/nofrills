@@ -264,6 +264,7 @@ print.CompositeFunction <- function(x, ...) {
   invisible(x)
 }
 
+#' @importFrom utils capture.output
 trim_capture <- function(f) {
   out <- capture.output(print(f))
   if (inherits(f, c("CurriedFunction", "PartialFunction", "TidyFunction")))
