@@ -207,7 +207,7 @@ get_args <- function(xs) {
 behead <- function(x) {
   nm <- names(x)
   fml <- x[[1]]
-  if (length(fml) == 2) {
+  if (is_onesided(fml)) {
     (nm == "") %because% "Default value of final argument expected"
     head <- NULL
   } else {

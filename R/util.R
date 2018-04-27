@@ -16,10 +16,6 @@ closure <- function(f) {
   as_closure(f, parent.frame())
 }
 
-has_dots <- function(x) {
-  match("...", x, nomatch = 0L) > 0L
-}
-
 eponymous <- function(nms) {
   lapply(nms, as.name) %named% nms
 }
@@ -31,6 +27,14 @@ opposite <- function(f) {
 
 box <- function(x) {
   if (is.list(x)) x else list(x)
+}
+
+is_onesided <- function(fml) {
+  length(fml) == 2L
+}
+
+has_dots <- function(x) {
+  match("...", x, nomatch = 0L) > 0L
 }
 
 `%notin%` <- function(these, those) {
