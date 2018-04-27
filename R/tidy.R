@@ -101,8 +101,8 @@ untidy_ <- getter_env("__pretidy__")
 
 #' @export
 print.TidyFunction <- function(x, ...) {
-  cat("<Tidy Function>\n")
-  cat("(Recover the function shown with `untidy()`)\n\n")
+  cat("<Tidy Function>\n\n")
   print(untidy_(x))
+  cat("\nRecover the function shown with 'untidy()'.")
   invisible(x)
 }
