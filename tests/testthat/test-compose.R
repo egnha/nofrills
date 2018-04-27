@@ -222,7 +222,7 @@ test_that("(boolean) filter length must equal input length (#36)", {
   expect_error(g(1, 2), "Filter length \\(3\\) must equal input length \\(2\\)")
 })
 
-test_that("selectors dispatch `[` from calling environment (#37)", {
+test_that("filters dispatch `[` from calling environment (#37)", {
   `[.SomeClass` <- function(x, i) {
     message("SomeClass")
     x <- x + 1
