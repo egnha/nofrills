@@ -152,23 +152,23 @@ fn_interp.function <- function(x, ...) x
 
 #' @export
 fn_interp.formula <- function(x, ...) {
-  (length(x) == 2) %because% "Lifted function must be a one-sided formula"
-  rhs <- eval(x[[2]], environment(x))
-  lift(rhs)
+  is_onesided(x) %because% "Lifted function must be a one-sided formula"
+  lift(f_rhs(x), environment(x))
 }
-lift <- function(f) {
+lift <- function(expr, env) {
+  f <- eval(expr, env)
   is.function(f) %because% "Only functions can be lifted"
   pipeline <- fn_interp(f)
   if (!inherits(f, "CompositeFunction"))
-    return(lift_(pipeline))
+    return(lift_(pipeline, expr_name(expr)))
   n <- length(pipeline)
   pipeline[[n]] <- lift_(pipeline[[n]])
   pipeline
 }
-lift_ <- function(f) {
-  evalq(function(args) do.call(`__f__`, args), list(`__f__` = f), baseenv())
+lift_ <- function(f, nm = expr_name(f)) {
+  body <- bquote(do.call(.(nm), args))
+  new_fn(alist(args = ), body, baseenv(), !!nm := f)
 }
-utils::globalVariables("__f__")  # Appease 'R CMD check'
 
 #' @export
 fn_interp.logical <- function(x, env) {
