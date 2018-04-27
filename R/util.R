@@ -1,9 +1,13 @@
+# Aliases
+list_tidy <- list2
+names_chr <- names2
+
 new_fn <- function(..args, ..body, ..env = NULL, ...) {
   if (!is.pairlist(..args))
     ..args <- as.pairlist(..args)
   if (missing(...))
     return(eval(call("function", ..args, ..body), ..env))
-  eval(call("function", ..args, ..body), as.list(c(...)), ..env)
+  eval(call("function", ..args, ..body), list_tidy(...), ..env)
 }
 
 closure <- function(f) {
@@ -90,5 +94,3 @@ check_head <- function(nm) {
 }
 
 `%named%` <- `names<-`
-
-names_chr <- names2

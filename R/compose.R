@@ -103,7 +103,7 @@ compose <- local({
   }
 
   flatten_fns <- function(..., ..env) {
-    fns <- lapply(list2(...), fn_interp, env = ..env)
+    fns <- lapply(list_tidy(...), fn_interp, env = ..env)
     unlist(do.call(c, fns))  # Collapse NULL's by invoking 'c'
   }
 
