@@ -170,6 +170,47 @@ test_that("one-sided formula of a function is lifted", {
   expect_equal(cmp(vals, vals + 1), div(vals, vals + 1))
 })
 
+test_that("atomic vectors are interpreted as filters", {
+  filters <- list(
+    logical   = c(TRUE, FALSE, TRUE, FALSE),
+    character = c("a", "c"),
+    integer   = c(1L, 3L),
+    numeric   = c(1, 3)
+  )
+  xs <- list(
+    list       = list(a = 1, b = 2, c = 3, d = 4),
+    vector     = c(a = 1, b = 2, c = 3, d = 4),
+    data_frame = data.frame(a = 1:3, b = 4:6, c = 7:9, d = 10:12)
+  )
+
+  for (filter in filters) {
+    f <- compose(filter, identity)
+    for (x in xs)
+      expect_equal(f(x), x[filter])
+  }
+})
+
+test_that("only named elements of filters rename", {
+  filters <- list(
+    logical   = c(TRUE, FALSE, C = TRUE, TRUE),
+    character = c("a", C = "c", "d"),
+    integer   = c(1L, C = 3L, 4L),
+    numeric   = c(1, C = 3, 4)
+  )
+  xs <- list(
+    list   = list(a = 1, b = 2, c = 3, 4),
+    vector = c(a = 1, b = 2, c = 3, 4)
+  )
+
+  for (filter in filters) {
+    f <- compose(filter, identity)
+    for (x in xs) {
+      expect_equal(unname(f(x)), unname(x[filter]))
+      expect_equal(names(f(x)), c("a", "C", ""))
+    }
+  }
+})
+
 test_that("(boolean) filter length must equal input length (#36)", {
   f <- compose(c(T, F, T), list)
   g <- compose(c(a = T, b = F, c = T), list)
