@@ -50,7 +50,7 @@ tidy <- local({
   function(f) {
     is.function(f) %because% "Only functions can be tidied"
     fmls <- formals(closure(f))
-    if (is_tidy_(f, fmls))
+    if (is_tidy(f, fmls))
       return(f)
     env <- environment(f) %||% baseenv() %encloses% c(funs, `__pretidy__` = f)
     f_tidy <- new_fn(fmls, body_tidy, env)
@@ -59,24 +59,7 @@ tidy <- local({
   }
 })
 
-#' @rdname tidy
-#' @param x Object to test: Is it a tidy function?
-#' @return `is_tidy()` returns `TRUE` for void functions and functions made by
-#'   `tidy()`, and `FALSE` otherwise.
-#' @examples
-#' stopifnot(
-#'   is_tidy(tidy(f)),
-#'   !is_tidy(f),
-#'   !is_tidy(untidy(tidy(f)))
-#' )
-#' @export
-is_tidy <- function(x) {
-  if (is.function(x))
-    return(is_tidy_(x))
-  FALSE
-}
-
-is_tidy_ <- function(f, fmls = formals(closure(f))) {
+is_tidy <- function(f, fmls = formals(closure(f))) {
   if (is_empty(fmls))
     return(TRUE)
   inherits(f, "TidyFunction")

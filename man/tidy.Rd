@@ -2,26 +2,18 @@
 % Please edit documentation in R/tidy.R
 \name{tidy}
 \alias{tidy}
-\alias{is_tidy}
 \alias{untidy}
 \title{Make a function tidy}
 \usage{
 tidy(f)
 
-is_tidy(x)
-
 untidy(f)
 }
 \arguments{
 \item{f}{Function.}
-
-\item{x}{Object to test: Is it a tidy function?}
 }
 \value{
 \code{tidy()} returns a tidy function.
-
-\code{is_tidy()} returns \code{TRUE} for void functions and functions made by
-\code{tidy()}, and \code{FALSE} otherwise.
 
 \code{untidy()} recovers the “untidy” function underlying a function made
 by \code{tidy()}.
@@ -62,11 +54,6 @@ stopifnot(
     f_tidy(!!x, "y"),
     f("local value", "y")
   )
-)
-stopifnot(
-  is_tidy(tidy(f)),
-  !is_tidy(f),
-  !is_tidy(untidy(tidy(f)))
 )
 stopifnot(
   # untidy() recovers the “untidy” function underlying a tidy function

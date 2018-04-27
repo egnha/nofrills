@@ -2,26 +2,18 @@
 % Please edit documentation in R/curry.R
 \name{curry}
 \alias{curry}
-\alias{is_curried}
 \alias{uncurry}
 \title{Curry a function}
 \usage{
 curry(f)
 
-is_curried(x)
-
 uncurry(f)
 }
 \arguments{
 \item{f}{Function.}
-
-\item{x}{Object to test.}
 }
 \value{
 \code{curry()} returns a curried function.
-
-\code{is_curried(x)} is \code{TRUE} when \code{x} is a curried function, and
-\code{FALSE}, otherwise.
 }
 \description{
 \code{curry()} \href{https://en.wikipedia.org/wiki/Currying}{curries} functions in a
@@ -44,18 +36,6 @@ stopifnot(
   identical(fc(y = 2)(1), c(1, 2, 3)),
   identical(fc(1, 2),     c(1, 2, 3)),
   identical(fc(2, x = 1), c(1, 2, 3))
-)
-
-stopifnot(
-  !is_curried(f),
-  !is_curried(uncurry(fc)),
-  is_curried(fc),
-  is_curried(fc(1)),
-  is_curried(function() NULL),
-  is_curried(function(x) NULL),
-  !is_curried(function(...) NULL),
-  !is_curried(function(x, y = 2) NULL),
-  is_curried(function(x = 1, y = 2) NULL)
 )
 
 double <- curry(`*`)(2)

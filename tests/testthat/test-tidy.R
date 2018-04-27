@@ -47,16 +47,6 @@ test_that("tidying is idempotent", {
   expect_identical(f_tt(1, z = 0), f_t(1, z = 0))
 })
 
-test_that("only functions can be tidy", {
-  fs <- list(c, identity, function() NULL)
-  for (f in fs)
-    expect_true(is_tidy(tidy(f)))
-
-  non_fs <- list(NULL, "c", ~c(), quote(c), quote(identity))
-  for (x in non_fs)
-    expect_false(is_tidy(x))
-})
-
 test_that("functions with void formals are vacuously tidy", {
   void_fs <- list(function() NULL, closure = Sys.time, primitive = globalenv)
   for (f in void_fs)

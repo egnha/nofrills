@@ -29,18 +29,6 @@
 #'   identical(fc(2, x = 1), c(1, 2, 3))
 #' )
 #'
-#' stopifnot(
-#'   !is_curried(f),
-#'   !is_curried(uncurry(fc)),
-#'   is_curried(fc),
-#'   is_curried(fc(1)),
-#'   is_curried(function() NULL),
-#'   is_curried(function(x) NULL),
-#'   !is_curried(function(...) NULL),
-#'   !is_curried(function(x, y = 2) NULL),
-#'   is_curried(function(x = 1, y = 2) NULL)
-#' )
-#'
 #' double <- curry(`*`)(2)
 #' stopifnot(double(3) == 6)
 #'
@@ -48,7 +36,7 @@
 curry <- function(f) {
   f_closure <- closure(f)
   fmls <- formals(f_closure)
-  if (is_curried_(f_closure, fmls))
+  if (is_curried(f_closure, fmls))
     return(f)
   env <- environment(f_closure) %encloses% list(
     `__precurry__`      = f_closure,
@@ -101,20 +89,7 @@ curry_partial <- function(f_closure, f, expr, fmls) {
   }
 }
 
-#' @param x Object to test.
-#'
-#' @return `is_curried(x)` is `TRUE` when `x` is a curried function, and
-#'   `FALSE`, otherwise.
-#'
-#' @rdname curry
-#' @export
-is_curried <- function(x) {
-  if (is.function(x))
-    return(is_curried_(closure(x)))
-  FALSE
-}
-
-is_curried_ <- function(f, fmls = formals(f)) {
+is_curried <- function(f, fmls = formals(f)) {
   inherits(f, "CurriedFunction") || (!has_dots(names(fmls)) && all_set(fmls))
 }
 all_set <- function(fmls) {
