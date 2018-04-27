@@ -86,12 +86,12 @@ assign_setter <- function(nm) {
 obscure <- function(nm) {
   paste0(".__NOFRILLS_", toupper(nm), "__.")
 }
-# nocov end
 
 check_caller <- function(nm) {
   sym <- as.name(nm)
   function(x) is.call(x) && identical(x[[1]], sym)
 }
+# nocov end
 
 `%binds%` <- function(env, bindings) {
   invisible(list2env(bindings, envir = env))
