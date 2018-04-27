@@ -93,7 +93,7 @@ is_curried <- function(f, fmls = formals(f)) {
   inherits(f, "CurriedFunction") || (!has_dots(names(fmls)) && all_set(fmls))
 }
 all_set <- function(fmls) {
-  length(fmls) <= 1 || all(fmls[] != quote(expr = ))
+  length(fmls) <= 1L || all(fmls[] != quote(expr = ))
 }
 
 #' @rdname curry

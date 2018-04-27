@@ -89,7 +89,7 @@ obscure <- function(nm) {
 
 check_caller <- function(nm) {
   sym <- as.name(nm)
-  function(x) is.call(x) && identical(x[[1]], sym)
+  function(x) is.call(x) && identical(x[[1L]], sym)
 }
 # nocov end
 

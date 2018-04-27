@@ -90,9 +90,9 @@
 #' @export
 compose <- local({
   iterated_call <- function(n, fmls) {
-    fnames <- sprintf("__%s__", n:1)
-    expr <- as.call(c(as.name(fnames[[1]]), args(fmls)))
-    for (fname in fnames[-1])
+    fnames <- sprintf("__%s__", n:1L)
+    expr <- as.call(c(as.name(fnames[[1L]]), args(fmls)))
+    for (fname in fnames[-1L])
       expr <- call(fname, expr)
     list(expr = expr, fnames = rev(fnames))
   }
@@ -118,9 +118,9 @@ compose <- local({
   function(...) {
     pipeline <- flatten_fns(..., ..env = parent.frame())
     n <- length(pipeline)
-    (n > 0) %because% "Must specify functions to compose"
-    if (n == 1)
-      return(pipeline[[1]])
+    (n > 0L) %because% "Must specify functions to compose"
+    if (n == 1L)
+      return(pipeline[[1L]])
     fn_init <- closure(pipeline[[n]])
     fmls <- formals(fn_init)
     call <- iterated_call(n, fmls)
@@ -173,7 +173,7 @@ lift_ <- function(f, nm = expr_name(f)) {
 #' @export
 fn_interp.logical <- function(x, env) {
   len <- length(x)
-  if (len == 0)
+  if (len == 0L)
     return(NULL)
   msg <- sprintf("Filter length (%d) must equal input length (%%d)", len)
   nms <- names_chr(x)[x]
@@ -198,7 +198,7 @@ fn_interp.logical <- function(x, env) {
 
 #' @export
 fn_interp.character <- function(x, env) {
-  if (length(x) == 0)
+  if (length(x) == 0L)
     return(NULL)
   nms <- names_chr(x)
   rename <- nzchar(nms)

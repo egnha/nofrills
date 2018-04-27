@@ -185,7 +185,7 @@ get_exprs <- function(...) {
   list(front = xs[-n], back = xs[n])
 }
 validate <- function(xs, n = length(xs)) {
-  (n > 0) %because%
+  (n > 0L) %because%
     "Function must be declared"
   is_fml <- vapply(xs, is_formula, TRUE)
   all(!is_fml[-n]) %because%
@@ -206,7 +206,7 @@ get_args <- function(xs) {
 
 behead <- function(x) {
   nm <- names(x)
-  fml <- x[[1]]
+  fml <- x[[1L]]
   if (is_onesided(fml)) {
     (nm == "") %because% "Default value of final argument expected"
     head <- NULL

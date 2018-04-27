@@ -94,7 +94,7 @@ partial <- local({
   quos_dots_match <- function(f, mc, env) {
     call_dots <- mc[names(mc) != "..f"]
     call_args <- match.call(f, call_dots)
-    eval(`[[<-`(call_args, 1, quos), env)
+    eval(`[[<-`(call_args, 1L, quos), env)
   }
 
   function(..f, ...) {
@@ -116,7 +116,7 @@ partial_ <- local({
 
   body_partial <- quote({
     environment(`__partial__`) <- `__with_fixed_args__`()
-    eval(`[[<-`(sys.call(), 1, `__partial__`), parent.frame())
+    eval(`[[<-`(sys.call(), 1L, `__partial__`), parent.frame())
   })
 
   args <- function(f, nms) {
@@ -246,7 +246,7 @@ call_with_fixed_args <- function(x) {
   }
   body_fixed <- function(call) {
     call <- subst_called_args(call)
-    args <- lapply(call[-1], subst_formal_args)
+    args <- lapply(call[-1L], subst_formal_args)
     as.call(c(expr_partial(x), args))
   }
   subst_called_args <- local({

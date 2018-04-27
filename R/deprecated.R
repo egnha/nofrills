@@ -64,21 +64,17 @@ as_fn <- function(.f) {
   .Deprecated("fn")
   x <- enexpr(.f)
   x <- eval(substitute(substitute(x)), parent.frame())
-  interpret_fn(x, match.fun(.f), parent.frame(2))
+  interpret_fn(x, match.fun(.f), parent.frame(2L))
 }
 
 interpret_fn <- function(x, f = x, env) {
   if (is_anon_fn_expr(x)) {
-    x[[1]] <- fn
+    x[[1L]] <- fn
     eval(x, env)
   } else
     f
 }
-is_anon_fn_expr <- local({
-  sym_dot <- as.name(".")
-  function(x)
-    is.call(x) && identical(x[[1]], sym_dot)
-})
+is_anon_fn_expr <- check_caller(".")
 
 #' @details `make_fn_aware()` is a functional operator that enhances a function
 #'   by enabling it to interpret abbreviated functional arguments.
@@ -118,7 +114,7 @@ make_fn_aware <- function(f, ...) {
       env_encl <- parent.env(environment())
       env_call <- parent.frame()
       call <- interpret_anon_fns(match.call(), env_call)
-      call[[1]] <- env_encl$f
+      call[[1L]] <- env_encl$f
       eval(call, env_call)
     },
     value = fmls
