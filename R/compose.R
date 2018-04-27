@@ -256,10 +256,17 @@ print.CompositeFunction <- function(x, ...) {
   cat("<Function Composition (in calling order)>\n")
   fns <- rev(decompose(x))
   for (i in seq_along(fns)) {
-    out <- capture.output(print(fns[[i]]))
-    pad <- c(sprintf("%2d:\ ", i), rep("\ \ \ \ ", length(out) - 1))
+    out <- trim_capture(fns[[i]])
+    pad <- c(sprintf("%2d:\ ", i), rep("\ \ \ \ ", length(out) - 1L))
     cat("\n", paste0(pad, out, "\n"), sep = "")
   }
   cat("\nRecover the list of functions with 'decompose()'.")
   invisible(x)
+}
+
+trim_capture <- function(f) {
+  out <- capture.output(print(f))
+  if (inherits(f, c("CurriedFunction", "PartialFunction", "TidyFunction")))
+    out <- out[-c(2L, length(out) - 1L, length(out))]
+  out
 }
