@@ -67,14 +67,14 @@ getter_env <- function(nm) {
 }
 
 assign_getter <- function(nm) {
-  property <- obscure(nm)
+  property <- mangle(nm)
   getter <- function(x) attr(x, property, exact = TRUE)
   assign(nm, getter, envir = parent.frame())
   invisible(getter)
 }
 
 assign_setter <- function(nm) {
-  property <- obscure(nm)
+  property <- mangle(nm)
   setter <- function(x, value) {
     attr(x, property) <- value
     invisible(x)
@@ -83,7 +83,7 @@ assign_setter <- function(nm) {
   invisible(setter)
 }
 
-obscure <- function(nm) {
+mangle <- function(nm) {
   paste0(".__NOFRILLS_", toupper(nm), "__.")
 }
 
