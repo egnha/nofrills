@@ -140,18 +140,23 @@ test_that("list of functions can be spliced using `!!!`", {
 
 test_that("composition has formals of innermost function (as a closure)", {
   outer <- function(.) NULL
-  inner <- function(x, y, ..., z = "default") NULL
-  expect_identical(formals(compose(outer, inner)), formals(inner))
-  expect_identical(formals(compose(outer, log)), formals(rlang::as_closure(log)))
-  expect_identical(formals(compose(outer, c)), formals(rlang::as_closure(c)))
+  fs <- list(
+    closure = function(x, y, ..., z = "default") NULL,
+    special = log,
+    builtin = c
+  )
+  for (inner in fs) {
+    fmls_inner <- formals(rlang::as_closure(inner))
+    expect_identical(formals(compose(outer, inner)), fmls_inner)
+  }
 })
 
 test_that("environment of composition is child of initial-function environment", {
-  fns <- c(
+  fs <- c(
     fn_kinds[names(fn_kinds) != "composition"],
     local(function() NULL)
   )
-  for (f in fns) {
+  for (f in fs) {
     cmp <- compose(identity, f)
     env <- if (is.null(environment(f))) baseenv() else environment(f)
     expect_identical(parent.env(environment(cmp)), env)
