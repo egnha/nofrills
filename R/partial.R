@@ -94,18 +94,10 @@ partial <- function(..f, ...) {
   if (missing(...))
     return(..f)
   f <- closure(..f)
-  fix <- quos_match(f, ...)
-  p <- partial_(f, fix)
+  p <- partial_(f, ...)
   expr_partial(p) <- expr_partial(f) %||% expr_fn(substitute(..f), formals(f))
   class(p) <- "PartialFunction" %subclass% class(..f)
   p
-}
-
-quos_match <- function(..f, ...) {
-  qs <- quos(...)
-  ordered <- as.call(c(quote(c), seq_along(qs) %named% names(qs)))
-  matched <- eval(match.call(..f, ordered), baseenv())
-  qs %named% names_chr(matched)[order(matched)]
 }
 
 partial_ <- local({
@@ -129,7 +121,8 @@ partial_ <- local({
     all(names(fix)[nzchar(names(fix))] %notin% names(names_fixed(f)))
   }
 
-  function(f, fix) {
+  function(f, ...) {
+    fix <- quos_match(f, ...)
     f_bare <- departial_(f)
     nms_bare <- names(formals(f_bare))
     if (has_dots(nms_bare)) {
@@ -159,6 +152,13 @@ partial_ <- local({
 })
 
 assign_getter("names_fixed")
+
+quos_match <- function(..f, ...) {
+  qs <- quos(...)
+  ordered <- as.call(c(quote(c), seq_along(qs) %named% names(qs)))
+  matched <- eval(match.call(..f, ordered), baseenv())
+  qs %named% names_chr(matched)[order(matched)]
+}
 
 privatize <- local({
   privatize_ <- function(xs, nms = xs) {
