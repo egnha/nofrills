@@ -324,20 +324,29 @@ test_that("argument values are captured lazily (by default)", {
 })
 
 test_that("argument values are captured eagerly with unquoting", {
-  set_value <- function() {
+  rnd_value <- function() {
     is_value_set <<- TRUE
     runif(1)
   }
   is_value_set <- FALSE
 
-  partial(identity, x = set_value())
+  # `rnd_value()` captured lazily, so `is_value_set` remains FALSE
+  f_lazy <- partial(identity, x = rnd_value())
   expect_identical(is_value_set, FALSE)
 
-  f <- partial(identity, x = !! set_value())
+  # Random value generated anew each time
+  out1 <- {set.seed(1); f_lazy()}
+  out2 <- {set.seed(42); f_lazy()}
+  expect_false(isTRUE(all.equal(out1, out2)))
+
+  # Force `rnd_value()`
+  f_eager <- partial(identity, x = !!rnd_value())
   expect_identical(is_value_set, TRUE)
 
-  out <- f()
-  expect_identical(f(), out)
+  # Random value generated once, when `f_eager` was bound
+  out1 <- {set.seed(1); f_eager()}
+  out2 <- {set.seed(42); f_eager()}
+  expect_true(isTRUE(all.equal(out1, out2)))
 })
 
 test_that("argument values are tidily evaluated", {
