@@ -101,10 +101,10 @@ partial <- function(..f, ...) {
   p
 }
 
-quos_match <- function(f, ...) {
+quos_match <- function(..f, ...) {
   qs <- quos(...)
   ordered <- as.call(c(quote(c), seq_along(qs) %named% names(qs)))
-  matched <- eval(match.call(f, ordered), baseenv())
+  matched <- eval(match.call(..f, ordered), baseenv())
   qs %named% names_chr(matched)[order(matched)]
 }
 
