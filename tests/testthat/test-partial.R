@@ -357,17 +357,38 @@ test_that("argument values are tidily evaluated", {
   expect_identical(fpp(), c("x", "y"))
 })
 
-test_that("argument values can be spliced", {
+test_that("argument values can be spliced and matched (#38)", {
   f <- function(x, y) c(x, y)
   out <- c(0, 1)
 
-  fp <- partial(f, !!! list(x = 0))
+  fp <- partial(f, !!!list(x = 0))
   expect_identical(fp(1), out)
 
-  fp <- partial(f, !!! list(y = 1))
+  fp <- partial(f, !!!list(0))
+  expect_identical(fp(1), out)
+
+  fp <- partial(f, !!!list(y = 1))
   expect_identical(fp(0), out)
 
-  fp <- partial(f, !!! list(x = 0, y = 1))
+  fp <- partial(f, !!!list(x = 0, y = 1))
+  expect_identical(fp(), out)
+
+  fp <- partial(f, !!!list(y = 1, x = 0))
+  expect_identical(fp(), out)
+
+  fp <- partial(f, !!!list(0, y = 1))
+  expect_identical(fp(), out)
+
+  fp <- partial(f, !!!list(y = 1, 0))
+  expect_identical(fp(), out)
+
+  fp <- partial(f, !!!list(x = 0, 1))
+  expect_identical(fp(), out)
+
+  fp <- partial(f, !!!list(1, x = 0))
+  expect_identical(fp(), out)
+
+  fp <- partial(f, !!!list(0, 1))
   expect_identical(fp(), out)
 })
 

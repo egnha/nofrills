@@ -90,24 +90,23 @@
 #' )
 #'
 #' @export
-partial <- local({
-  quos_dots_match <- function(f, mc, env) {
-    call_dots <- mc[names(mc) != "..f"]
-    call_args <- match.call(f, call_dots)
-    eval(`[[<-`(call_args, 1L, quos), env)
-  }
+partial <- function(..f, ...) {
+  if (missing(...))
+    return(..f)
+  f <- closure(..f)
+  fix <- quos_match(f, ...)
+  p <- partial_(f, fix)
+  expr_partial(p) <- expr_partial(f) %||% expr_fn(substitute(..f), formals(f))
+  class(p) <- "PartialFunction" %subclass% class(..f)
+  p
+}
 
-  function(..f, ...) {
-    if (missing(...))
-      return(..f)
-    f <- closure(..f)
-    fix <- quos_dots_match(f, match.call(), parent.frame())
-    p <- partial_(f, fix)
-    expr_partial(p) <- expr_partial(f) %||% expr_fn(substitute(..f), formals(f))
-    class(p) <- "PartialFunction" %subclass% class(..f)
-    p
-  }
-})
+quos_match <- function(f, ...) {
+  qs <- quos(...)
+  ordered <- as.call(c(quote(c), seq_along(qs) %named% names(qs)))
+  matched <- eval(match.call(f, ordered), baseenv())
+  qs %named% names_chr(matched)[order(matched, method = "radix")]
+}
 
 partial_ <- local({
   assign_getter("bare_args")
