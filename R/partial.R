@@ -105,7 +105,7 @@ quos_match <- function(f, ...) {
   qs <- quos(...)
   ordered <- as.call(c(quote(c), seq_along(qs) %named% names(qs)))
   matched <- eval(match.call(f, ordered), baseenv())
-  qs %named% names_chr(matched)[order(matched, method = "radix")]
+  qs %named% names_chr(matched)[order(matched)]
 }
 
 partial_ <- local({
