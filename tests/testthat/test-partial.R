@@ -513,12 +513,18 @@ test_that("function is not mutated, i.e., partial() has no side effects", {
 
 context("Inverting partial function application")
 
-test_that("departial() for a partial function recovers the original function", {
+test_that("departial() of a partial function is the closure of the original function", {
   f <- function(x, y) c(x, y)
   fp <- partial(f, x = 0)
   fpp <- partial(fp, y = 1)
   expect_identical(departial(fp), f)
   expect_identical(departial(fpp), f)
+
+  cc <- rlang::as_closure(c)
+  cp <- partial(c, 0)
+  cpp <- partial(cp, 1)
+  expect_identical(departial(cp), cc)
+  expect_identical(departial(cpp), cc)
 })
 
 test_that("departial() is the identity for non-partial functions", {
