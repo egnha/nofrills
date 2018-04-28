@@ -153,10 +153,11 @@ fn_interp.function <- function(x, ...) x
 #' @export
 fn_interp.formula <- function(x, ...) {
   is_onesided(x) %because% "Lifted function must be a one-sided formula"
-  lift(f_rhs(x), environment(x))
+  lift(x)
 }
-lift <- function(expr, env) {
-  f <- eval(expr, env)
+lift <- function(fml) {
+  expr <- f_rhs(fml)
+  f <- eval(expr, environment(fml))
   is.function(f) %because% "Only functions can be lifted"
   pipeline <- fn_interp(f)
   if (!inherits(f, "CompositeFunction"))
