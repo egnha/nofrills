@@ -49,6 +49,7 @@ has_dots <- function(x) {
 
 `%because%` <- function(assertion, reason) {
   if (!assertion) stop(reason, call. = FALSE)
+  invisible(TRUE)
 }
 
 `%subclass%` <- function(class, superclass) {
