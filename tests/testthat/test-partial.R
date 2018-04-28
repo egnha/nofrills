@@ -175,9 +175,8 @@ test_that("partial() is operationally idempotent", {
 test_that("arguments values are matched according to R's calling convention", {
   f <- function(x, yyy, ..., zzz = 0) c(x, yyy, ..., zzz)
 
-  out <- c(1, 2, 0)
-  expect_equal(partial(f, x = 1)(2), out)
-  expect_equal(out, partial(f, 1)(2))
+  expect_equal(partial(f, x = 1)(2), c(1, 2, 0))
+  expect_equal(partial(f, 1)(2),     c(1, 2, 0))
 
   # 'yyy' may be partially matched
   expect_all_equal(
@@ -194,7 +193,7 @@ test_that("arguments values are matched according to R's calling convention", {
   )
 
   expect_all_equal(
-    out <- c(1, 2, 3, 0),
+    c(1, 2, 3, 0),
     partial(f, x = 1, yyy = 2, 3)(),
     partial(f, x = 1, y = 2, 3)(),
     partial(f, 1, 2, 3)(),
@@ -252,9 +251,8 @@ test_that("arguments values are matched across function calls", {
     function(...) top(...)
   })
 
-  out <- c(1, 2, 0)
-  expect_equal(partial_f(x = 1)(2), out)
-  expect_equal(out, partial_f(1)(2))
+  expect_equal(partial_f(x = 1)(2), c(1, 2, 0))
+  expect_equal(partial_f(1)(2),     c(1, 2, 0))
 
   # 'yyy' may be partially matched
   expect_all_equal(
@@ -271,7 +269,7 @@ test_that("arguments values are matched across function calls", {
   )
 
   expect_all_equal(
-    out <- c(1, 2, 3, 0),
+    c(1, 2, 3, 0),
     partial_f(x = 1, yyy = 2, 3)(),
     partial_f(x = 1, y = 2, 3)(),
     partial_f(1, 2, 3)(),
@@ -355,13 +353,13 @@ test_that("argument values are tidily evaluated", {
     environment()
   })
   value <- local({
-    value_ <- "y"
-    quo(value_)
+    value <- "y"
+    quo(value)
   })
 
   f <- function(x, y) c(x, y)
   fp <- evalq(partial(f, x = value), env)
-  fpp <- partial(fp, y = !! value)
+  fpp <- partial(fp, y = !!value)
 
   expect_identical(fpp(), c("x", "y"))
 })
@@ -469,6 +467,14 @@ test_that("formals are literally truncated", {
     formals(partial(f, x = 1, y = 2, z = 3)),
     formals(function(...) {})
   )
+  expect_equal(
+    formals(partial(f, x = 1, y = 2, z = 3, 4)),
+    formals(function(...) {})
+  )
+  expect_equal(
+    formals(partial(partial(f, x = 1, y = 2, z = 3), 4)),
+    formals(function(...) {})
+  )
 })
 
 test_that("fixed arguments are not missing", {
@@ -546,7 +552,7 @@ test_that("error is signaled when applying departial() to a non-function", {
   expect_errors_with_message(
     "Only functions can be de-partialized",
     departial(NULL),
-    departial(~ function(x) NULL),
+    departial(~function(x) NULL),
     departial(quo(function(x) NULL)),
     departial(quote(function(x) NULL))
   )
