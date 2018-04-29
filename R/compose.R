@@ -102,8 +102,8 @@ compose <- local({
     args
   }
 
-  flatten_fns <- function(..., ..env) {
-    fns <- lapply(list_tidy(...), fn_interp, env = ..env)
+  flatten_fns <- function(...) {
+    fns <- lapply(quos(...), fn_interp)
     unlist(do.call(c, fns))  # Collapse NULL's by invoking 'c'
   }
 
@@ -116,7 +116,7 @@ compose <- local({
   }
 
   function(...) {
-    pipeline <- flatten_fns(..., ..env = parent.frame())
+    pipeline <- flatten_fns(...)
     n <- length(pipeline)
     (n > 0L) %because% "Must specify functions to compose"
     if (n == 1L)
@@ -135,6 +135,11 @@ compose <- local({
 
 fn_interp <- function(x, ...) {
   UseMethod("fn_interp")
+}
+
+#' @export
+fn_interp.quosure <- function(x, ...) {
+  fn_interp(eval_tidy(x), env = quo_get_env(x), ...)
 }
 
 #' @export
@@ -172,7 +177,7 @@ lift_ <- function(f, nm = expr_name(f)) {
 }
 
 #' @export
-fn_interp.logical <- function(x, env) {
+fn_interp.logical <- function(x, env, ...) {
   len <- length(x)
   if (len == 0L)
     return(NULL)
@@ -198,7 +203,7 @@ fn_interp.logical <- function(x, env) {
 }
 
 #' @export
-fn_interp.character <- function(x, env) {
+fn_interp.character <- function(x, env, ...) {
   if (length(x) == 0L)
     return(NULL)
   nms <- names_chr(x)
