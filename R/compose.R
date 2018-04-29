@@ -143,6 +143,11 @@ fn_interp.quosure <- function(x, ...) {
 }
 
 #' @export
+fn_interp.quosures <- function(x, ...) {
+  lapply(x, fn_interp.quosure, ...)
+}
+
+#' @export
 fn_interp.list <- function(x, ...) {
   lapply(x, fn_interp, ...)
 }
