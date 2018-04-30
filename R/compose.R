@@ -158,10 +158,6 @@ fn_interp.quosure <- function(x, ...) {
 is_composition <- function(expr) {
   is_forward_compose(expr) || is_backward_compose(expr)
 }
-check_head <- function(nm) {
-  sym <- as.name(nm)
-  function(x) identical(x[[1]], sym)
-}
 is_forward_compose  <- check_head("%>>>%")
 is_backward_compose <- check_head("%<<<%")
 

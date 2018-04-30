@@ -68,13 +68,13 @@ as_fn <- function(.f) {
 }
 
 interpret_fn <- function(x, f = x, env) {
-  if (is_anon_fn_expr(x)) {
+  if (is.call(x) && is_anon_fn_expr(x)) {
     x[[1L]] <- fn
     eval(x, env)
   } else
     f
 }
-is_anon_fn_expr <- check_caller(".")
+is_anon_fn_expr <- check_head(".")
 
 #' @details `make_fn_aware()` is a functional operator that enhances a function
 #'   by enabling it to interpret abbreviated functional arguments.

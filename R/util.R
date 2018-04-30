@@ -81,9 +81,9 @@ mangle <- function(nm) {
   paste0(".__NOFRILLS_", toupper(nm), "__.")
 }
 
-check_caller <- function(nm) {
+check_head <- function(nm) {
   sym <- as.name(nm)
-  function(x) is.call(x) && identical(x[[1L]], sym)
+  function(x) identical(x[[1]], sym)
 }
 # nocov end
 
