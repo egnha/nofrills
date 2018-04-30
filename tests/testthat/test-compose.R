@@ -159,6 +159,61 @@ test_that("environment of composition is child of initial-function environment",
   }
 })
 
+test_that("composition operator obeys magrittr semantics (#39)", {
+  # Insertion of initial '.', in case it doesn't appear among the arguments
+  f0 <- function(x) {
+    upper <- sprintf("%s", toupper(x[[1]]))
+    paste(upper, collapse = "")
+  }
+  f1 <- .[[1]] %>>>% toupper %>>>% sprintf("%s", .) %>>>% paste(collapse = "")
+  f2 <- .[[1]] %>>>% toupper() %>>>% sprintf("%s", .) %>>>% paste(collapse = "")
+  f3 <- paste(collapse = "") %<<<% sprintf("%s", .) %<<<% toupper %<<<% .[[1]]
+  f4 <- paste(collapse = "") %<<<% sprintf("%s", .) %<<<% toupper() %<<<% .[[1]]
+  x <- list(letters)
+  expect_identical(f0(x), paste(LETTERS, collapse = ""))
+  expect_identical(f1(x), f0(x))
+  expect_identical(f2(x), f0(x))
+  expect_identical(f3(x), f0(x))
+  expect_identical(f4(x), f0(x))
+
+  # Anonymous function of '.' using {...}
+  f0 <- function(x) log(abs(x) + 1)
+  f1 <- abs %>>>% {. + 1} %>>>% log
+  f2 <- log %<<<% {. + 1} %<<<% abs
+  vals <- {set.seed(1); runif(10, -1, 1)}
+  for (val in vals) {
+    expect_equal(f1(val), f0(val))
+    expect_equal(f2(val), f0(val))
+  }
+
+  f0 <- function(x) {
+    out <- list(result = x)
+    paste(out$result, collapse = "")
+  }
+  f1 <- {list(result = .)} %>>>% {paste(.$result, collapse = "")}
+  f2 <- {paste(.$result, collapse = "")} %<<<% {list(result = .)}
+  expect_identical(f0(letters), paste(letters, collapse = ""))
+  expect_identical(f1(letters), f0(letters))
+  expect_identical(f2(letters), f0(letters))
+})
+
+test_that("composition operator operands can be unquoted", {
+  f <- list(log)
+  inc <- 1
+  f0 <- function(x) log(abs(x) + 1)
+  f1 <- abs %>>>% {. + !!inc} %>>>% (!!f[[1]])
+  f2 <- (!!f[[1]]) %<<<% {. + !!inc} %<<<% abs
+  f3 <- (!!(abs %>>>% {. + !!inc})) %>>>% (!!f[[1]])
+  f4 <- (!!f[[1]]) %<<<% (!!({. + !!inc} %<<<% abs))
+  vals <- {set.seed(1); runif(10, -1, 1)}
+  for (val in vals) {
+    expect_equal(f1(val), f0(val))
+    expect_equal(f2(val), f0(val))
+    expect_equal(f3(val), f0(val))
+    expect_equal(f4(val), f0(val))
+  }
+})
+
 context("Decomposing compositions")
 
 test_that("decomposing a non-composite function wraps it in a list", {
