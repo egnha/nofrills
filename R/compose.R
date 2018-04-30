@@ -87,8 +87,17 @@
 #' fs <- list(inv, log, abs)
 #' stopifnot(isTRUE(all.equal(decompose(compose(fs)), fs)))
 #'
-#' @export
-compose <- local({
+#' @name compose
+NULL
+
+compositor <- function(capture_fns) {
+  force(capture_fns)
+
+  flatten_fns <- function(...) {
+    fns <- lapply(capture_fns(...), fn_interp)
+    unlist(do.call(c, fns))  # Collapse NULL's by invoking 'c'
+  }
+
   iterated_call <- function(n, fmls) {
     fnames <- sprintf("__%s__", n:1L)
     expr <- as.call(c(as.name(fnames[[1L]]), args(fmls)))
@@ -100,11 +109,6 @@ compose <- local({
     args <- eponymous(names(fmls))
     names(args)[names(args) == "..."] <- ""
     args
-  }
-
-  flatten_fns <- function(...) {
-    fns <- lapply(quos(...), fn_interp)
-    unlist(do.call(c, fns))  # Collapse NULL's by invoking 'c'
   }
 
   get_pipeline <- function(pipeline, env) {
@@ -131,7 +135,11 @@ compose <- local({
     class(fn_cmps) <- c("CompositeFunction", "function")
     fn_cmps
   }
-})
+}
+
+#' @rdname compose
+#' @export
+compose <- compositor(list_tidy)
 
 fn_interp <- function(x, ...) {
   UseMethod("fn_interp")
@@ -139,13 +147,38 @@ fn_interp <- function(x, ...) {
 
 #' @export
 fn_interp.quosure <- function(x, ...) {
-  fn_interp(eval_tidy(x), env = quo_get_env(x), ...)
+  expr <- quo_get_expr(x)
+  if (!is.call(expr) || is_composition(expr))
+    return(fn_interp(eval_tidy(x)))
+  if (is_lambda(expr))
+    return(lambda(expr, quo_get_env(x)))
+  lambda_partial(expr, quo_get_env(x))
 }
 
-#' @export
-fn_interp.quosures <- function(x, ...) {
-  lapply(x, fn_interp.quosure, ...)
+is_composition <- function(expr) {
+  is_forward_compose(expr) || is_backward_compose(expr)
 }
+check_head <- function(nm) {
+  sym <- as.name(nm)
+  function(x) identical(x[[1]], sym)
+}
+is_forward_compose  <- check_head("%>>>%")
+is_backward_compose <- check_head("%<<<%")
+
+is_lambda <- check_head("{")
+lambda <- function(body, env) {
+  new_fn(alist(. = ), body, env)
+}
+
+lambda_partial <- local({
+  dot <- as.name(".")
+  function(expr, env) {
+    args <- as.list(expr[-1L])
+    if (all(args != dot))
+      expr <- as.call(c(expr[[1L]], quote(.), args))
+    lambda(expr, env)
+  }
+})
 
 #' @export
 fn_interp.list <- function(x, ...) {
@@ -161,78 +194,6 @@ fn_interp.CompositeFunction <- function(x, ...) {
 fn_interp.function <- function(x, ...) x
 
 #' @export
-fn_interp.formula <- function(x, ...) {
-  is_onesided(x) %because% "Lifted function must be a one-sided formula"
-  lift(x)
-}
-lift <- function(fml) {
-  expr <- f_rhs(fml)
-  f <- eval(expr, environment(fml))
-  is.function(f) %because% "Only functions can be lifted"
-  pipeline <- fn_interp(f)
-  if (!inherits(f, "CompositeFunction"))
-    return(lift_(pipeline, expr_name(expr)))
-  n <- length(pipeline)
-  pipeline[[n]] <- lift_(pipeline[[n]])
-  pipeline
-}
-lift_ <- function(f, nm = expr_name(f)) {
-  body <- bquote(do.call(.(nm), args))
-  new_fn(alist(args = ), body, baseenv(), !!nm := f)
-}
-
-#' @export
-fn_interp.logical <- function(x, env, ...) {
-  len <- length(x)
-  if (len == 0L)
-    return(NULL)
-  msg <- sprintf("Filter length (%d) must equal input length (%%d)", len)
-  nms <- names_chr(x)[x]
-  rename <- nzchar(nms)
-  if (any(rename)) {
-    body <- expr({
-      if (length(x) != !!len) stop(sprintf(!!msg, length(x)), call. = FALSE)
-      x <- x[!!x]
-      names(x) <- names_chr(x)
-      names(x)[!!rename] <- !!(nms[rename])
-      x
-    })
-  } else {
-    body <- expr({
-      if (length(x) != !!len) stop(sprintf(!!msg, length(x)), call. = FALSE)
-      x[!!x]
-    })
-  }
-  # Setting the environment allows the implied `[` method to be found (#37)
-  new_fn(alist(x = ), body, env, names_chr = names_chr)
-}
-
-#' @export
-fn_interp.character <- function(x, env, ...) {
-  if (length(x) == 0L)
-    return(NULL)
-  nms <- names_chr(x)
-  rename <- nzchar(nms)
-  if (any(rename)) {
-    body <- expr({
-      x <- x[!!x]
-      names(x) <- names_chr(x)
-      names(x)[!!rename] <- !!(nms[rename])
-      x
-    })
-  } else {
-    body <- expr(x[!!x])
-  }
-  new_fn(alist(x = ), body, env, names_chr = names_chr)
-}
-
-#' @export
-fn_interp.integer <- fn_interp.character
-
-#' @export
-fn_interp.numeric <- fn_interp.character
-
-#' @export
 fn_interp.NULL <- function(x, ...) NULL
 
 #' @export
@@ -242,14 +203,21 @@ fn_interp.default <- function(x, ...) {
   stop(msg, call. = FALSE)
 }
 
+#' @rdname compose
+#' @export
+`%<<<%` <- function(snd, fst) {
+  eval(`[[<-`(sys.call(), 1L, compose_quos), parent.frame())
+}
+
 #' @param fst,snd Functions.
 #' @rdname compose
 #' @export
-`%>>>%` <- function(fst, snd) compose(snd, fst)
+`%>>>%` <- function(fst, snd) {
+  call_rev <- match.call(`%<<<%`, match.call())
+  eval(`[[<-`(call_rev, 1L, compose_quos), parent.frame())
+}
 
-#' @rdname compose
-#' @export
-`%<<<%` <- opposite(`%>>>%`)
+compose_quos <- compositor(quos)
 
 #' @param f Function.
 #' @rdname compose

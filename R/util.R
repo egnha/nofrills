@@ -20,13 +20,6 @@ eponymous <- function(nms) {
   lapply(nms, as.name) %named% nms
 }
 
-# nocov start
-opposite <- function(f) {
-  formals(f) <- rev(formals(f))
-  f
-}
-# nocov end
-
 box <- function(x) {
   if (is.list(x)) x else list(x)
 }

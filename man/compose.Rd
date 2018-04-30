@@ -2,16 +2,17 @@
 % Please edit documentation in R/compose.R
 \name{compose}
 \alias{compose}
-\alias{\%>>>\%}
+\alias{compose}
 \alias{\%<<<\%}
+\alias{\%>>>\%}
 \alias{decompose}
 \title{Compose functions}
 \usage{
 compose(...)
 
-fst \%>>>\% snd
-
 snd \%<<<\% fst
+
+fst \%>>>\% snd
 
 decompose(f)
 }
