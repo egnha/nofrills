@@ -214,6 +214,21 @@ test_that("composition operator operands can be unquoted", {
   }
 })
 
+test_that("composition operator yields flattened compositions", {
+  sq <- function(x) x^2
+  id <- function(x) x
+
+  p <- sq %>>>% sq
+  q <- p %>>>% id %>>>% sq
+  r <- q %>>>% id
+  expect_identical(decompose(r), list(id, sq, id, sq, sq))
+
+  p <- sq %<<<% sq
+  q <- sq %<<<% id %<<<% p
+  r <- id %<<<% q
+  expect_identical(decompose(r), list(id, sq, id, sq, sq))
+})
+
 context("Decomposing compositions")
 
 test_that("decomposing a non-composite function wraps it in a list", {
