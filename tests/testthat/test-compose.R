@@ -24,13 +24,9 @@ cmps <- list(
   compose(compose(fs[[1]], fs[[2]], fs[[3]])),
   compose(fs[[1]], fs[[2]], fs[[3]]),
   # Backward composition
-   fs[[1]] %<<<%  fs[[2]]  %<<<% fs[[3]],
-  (fs[[1]] %<<<%  fs[[2]]) %<<<% fs[[3]],
-   fs[[1]] %<<<% (fs[[2]]  %<<<% fs[[3]]),
+  (!!fs[[1]]) %<<<% (!!fs[[2]]) %<<<% (!!fs[[3]]),
   # Forward composition
-   fs[[3]] %>>>%  fs[[2]]  %>>>% fs[[1]],
-  (fs[[3]] %>>>%  fs[[2]]) %>>>% fs[[1]],
-   fs[[3]] %>>>% (fs[[2]]  %>>>% fs[[1]])
+  (!!fs[[3]]) %>>>% (!!fs[[2]]) %>>>% (!!fs[[1]])
 )
 
 context("Composing functions")
@@ -46,7 +42,7 @@ test_that("error is signalled when composing an empty sequence of functions", {
     compose(),
     compose(NULL),
     compose(list()),
-    compose(!!! list())
+    compose(!!!list())
   )
 })
 
@@ -105,19 +101,19 @@ test_that("nested compositions are flattened", {
   cmps <- list(
     compose(gs[[1]], gs[[2]], gs[[3]], gs[[4]]),
     compose(compose(gs[[1]], gs[[2]], gs[[3]], gs[[4]])),
-    compose(gs[[1]] %<<<% gs[[2]] %<<<% gs[[3]] %<<<% gs[[4]]),
-    compose(gs[[4]] %>>>% gs[[3]] %>>>% gs[[2]] %>>>% gs[[1]]),
+    compose((!!gs[[1]]) %<<<% (!!gs[[2]]) %<<<% (!!gs[[3]]) %<<<% (!!gs[[4]])),
+    compose((!!gs[[4]]) %>>>% (!!gs[[3]]) %>>>% (!!gs[[2]]) %>>>% (!!gs[[1]])),
     compose(gs[[1]], compose(gs[[2]], gs[[3]], gs[[4]])),
-    compose(gs[[1]] %<<<% compose(gs[[2]], gs[[3]], gs[[4]])),
-    compose(compose(gs[[2]], gs[[3]], gs[[4]]) %>>>% gs[[1]]),
-    compose(gs[[1]], compose(gs[[2]], gs[[3]] %<<<% gs[[4]])),
-    compose(gs[[1]], compose(gs[[2]], gs[[4]] %>>>% gs[[3]])),
+    compose((!!gs[[1]]) %<<<% (!!compose(gs[[2]], gs[[3]], gs[[4]]))),
+    compose((!!compose(gs[[2]], gs[[3]], gs[[4]])) %>>>% (!!gs[[1]])),
+    compose(gs[[1]], compose(gs[[2]], (!!gs[[3]]) %<<<% (!!gs[[4]]))),
+    compose(gs[[1]], compose(gs[[2]], (!!gs[[4]]) %>>>% (!!gs[[3]]))),
     compose(gs[[1]], compose(gs[[2]], compose(gs[[3]], gs[[4]]))),
-    compose(gs[[1]], gs[[2]] %<<<% compose(gs[[3]], gs[[4]])),
-    compose(gs[[1]], compose(gs[[3]], gs[[4]]) %>>>% gs[[2]]),
+    compose(gs[[1]], (!!gs[[2]]) %<<<% (!!compose(gs[[3]], gs[[4]]))),
+    compose(gs[[1]], (!!compose(gs[[3]], gs[[4]])) %>>>% (!!gs[[2]])),
     compose(gs[[1]], compose(gs[[2]], compose(gs[[3]], compose(gs[[4]])))),
-    compose(gs[[1]] %<<<% (gs[[2]] %<<<% (gs[[3]] %<<<% gs[[4]]))),
-    compose(((gs[[4]] %>>>% gs[[3]]) %>>>% gs[[2]]) %>>>% gs[[1]])
+    compose((!!gs[[1]]) %<<<% !!((!!gs[[2]]) %<<<% !!((!!gs[[3]]) %<<<% (!!gs[[4]])))),
+    compose((!!((!!((!!gs[[4]]) %>>>% (!!gs[[3]]))) %>>>% (!!gs[[2]]))) %>>>% (!!gs[[1]]))
   )
   for (cmp in cmps)
     expect_equivalent(decompose(cmp), gs)
@@ -160,84 +156,6 @@ test_that("environment of composition is child of initial-function environment",
     cmp <- compose(identity, f)
     env <- if (is.null(environment(f))) baseenv() else environment(f)
     expect_identical(parent.env(environment(cmp)), env)
-  }
-})
-
-test_that("one-sided formula of a function is lifted", {
-  div <- function(a, b) a / b
-  cmp <- compose(~div, list)
-  vals <- {set.seed(1); runif(10)}
-  expect_equal(cmp(vals, vals + 1), div(vals, vals + 1))
-})
-
-test_that("atomic vectors are interpreted as filters", {
-  filters <- list(
-    logical   = c(TRUE, FALSE, TRUE, FALSE),
-    character = c("a", "c"),
-    integer   = c(1L, 3L),
-    numeric   = c(1, 3)
-  )
-  xs <- list(
-    list       = list(a = 1, b = 2, c = 3, d = 4),
-    vector     = c(a = 1, b = 2, c = 3, d = 4),
-    data_frame = data.frame(a = 1:3, b = 4:6, c = 7:9, d = 10:12)
-  )
-
-  for (filter in filters) {
-    f <- compose(filter, identity)
-    for (x in xs)
-      expect_equal(f(x), x[filter])
-  }
-})
-
-test_that("only named elements of filters rename", {
-  filters <- list(
-    logical   = c(TRUE, FALSE, C = TRUE, TRUE),
-    character = c("a", C = "c", "d"),
-    integer   = c(1L, C = 3L, 4L),
-    numeric   = c(1, C = 3, 4)
-  )
-  xs <- list(
-    list   = list(a = 1, b = 2, c = 3, 4),
-    vector = c(a = 1, b = 2, c = 3, 4)
-  )
-
-  for (filter in filters) {
-    f <- compose(filter, identity)
-    for (x in xs) {
-      expect_equal(unname(f(x)), unname(x[filter]))
-      expect_equal(names(f(x)), c("a", "C", ""))
-    }
-  }
-})
-
-test_that("(boolean) filter length must equal input length (#36)", {
-  f <- compose(c(T, F, T), list)
-  g <- compose(c(a = T, b = F, c = T), list)
-
-  expect_equal(f(1, 2, 3), list(1, 3))
-  expect_equal(g(1, 2, 3), list(a = 1, c = 3))
-
-  expect_error(f(1, 2), "Filter length \\(3\\) must equal input length \\(2\\)")
-  expect_error(g(1, 2), "Filter length \\(3\\) must equal input length \\(2\\)")
-})
-
-test_that("filters dispatch `[` from calling environment (#37)", {
-  `[.SomeClass` <- function(x, i) {
-    message("SomeClass")
-    x <- x + 1
-    NextMethod(`[`)
-  }
-
-  x <- structure(c(1, 2, b = 3, 4), class = "SomeClass")
-  fs <- list(
-    compose(c(a = T, F, T, F), identity),
-    compose(c(a = 1, 3), identity)
-  )
-
-  for (f in fs) {
-    expect_equal(f(x), c(a = 2, b = 4))
-    expect_message(f(x), "SomeClass")
   }
 })
 
