@@ -151,14 +151,14 @@ fn_interp <- function(x, ...) {
 #' @export
 fn_interp.quosure <- function(x, ...) {
   expr <- quo_get_expr(x)
-  if (!is.call(expr) || is_composition(expr))
+  if (!is.call(expr) || is_compose_op(expr))
     return(fn_interp(eval_tidy(x)))
   if (is_lambda(expr))
     return(lambda(expr, quo_get_env(x)))
   lambda_partial(expr, quo_get_env(x))
 }
 
-is_composition <- function(expr) {
+is_compose_op <- function(expr) {
   is_forward_compose(expr) || is_backward_compose(expr)
 }
 is_forward_compose  <- check_head("%>>>%")
