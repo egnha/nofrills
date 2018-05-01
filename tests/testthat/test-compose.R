@@ -123,19 +123,19 @@ test_that("nested compositions are flattened", {
   cmps <- list(
     compose(gs[[1]], gs[[2]], gs[[3]], gs[[4]]),
     compose(compose(gs[[1]], gs[[2]], gs[[3]], gs[[4]])),
-    compose((!!gs[[1]]) %<<<% (!!gs[[2]]) %<<<% (!!gs[[3]]) %<<<% (!!gs[[4]])),
-    compose((!!gs[[4]]) %>>>% (!!gs[[3]]) %>>>% (!!gs[[2]]) %>>>% (!!gs[[1]])),
+    compose((!!gs[[1]]) %<<<% !!gs[[2]] %<<<% !!gs[[3]] %<<<% !!gs[[4]]),
+    compose((!!gs[[4]]) %>>>% !!gs[[3]] %>>>% !!gs[[2]] %>>>% !!gs[[1]]),
     compose(gs[[1]], compose(gs[[2]], gs[[3]], gs[[4]])),
-    compose((!!gs[[1]]) %<<<% (!!compose(gs[[2]], gs[[3]], gs[[4]]))),
-    compose((!!compose(gs[[2]], gs[[3]], gs[[4]])) %>>>% (!!gs[[1]])),
-    compose(gs[[1]], compose(gs[[2]], (!!gs[[3]]) %<<<% (!!gs[[4]]))),
-    compose(gs[[1]], compose(gs[[2]], (!!gs[[4]]) %>>>% (!!gs[[3]]))),
+    compose((!!gs[[1]]) %<<<% !!compose(gs[[2]], gs[[3]], gs[[4]])),
+    compose((!!compose(gs[[2]], gs[[3]], gs[[4]])) %>>>% !!gs[[1]]),
+    compose(gs[[1]], compose(gs[[2]], (!!gs[[3]]) %<<<% !!gs[[4]])),
+    compose(gs[[1]], compose(gs[[2]], (!!gs[[4]]) %>>>% !!gs[[3]])),
     compose(gs[[1]], compose(gs[[2]], compose(gs[[3]], gs[[4]]))),
-    compose(gs[[1]], (!!gs[[2]]) %<<<% (!!compose(gs[[3]], gs[[4]]))),
-    compose(gs[[1]], (!!compose(gs[[3]], gs[[4]])) %>>>% (!!gs[[2]])),
+    compose(gs[[1]], (!!gs[[2]]) %<<<% !!compose(gs[[3]], gs[[4]])),
+    compose(gs[[1]], (!!compose(gs[[3]], gs[[4]])) %>>>% !!gs[[2]]),
     compose(gs[[1]], compose(gs[[2]], compose(gs[[3]], compose(gs[[4]])))),
-    compose((!!gs[[1]]) %<<<% !!((!!gs[[2]]) %<<<% !!((!!gs[[3]]) %<<<% (!!gs[[4]])))),
-    compose((!!((!!((!!gs[[4]]) %>>>% (!!gs[[3]]))) %>>>% (!!gs[[2]]))) %>>>% (!!gs[[1]]))
+    compose((!!gs[[1]]) %<<<% !!((!!gs[[2]]) %<<<% !!((!!gs[[3]]) %<<<% !!gs[[4]]))),
+    compose((!!((!!((!!gs[[4]]) %>>>% !!gs[[3]])) %>>>% (!!gs[[2]]))) %>>>% !!gs[[1]])
   )
   for (cmp in cmps)
     expect_equivalent(decompose(cmp), gs)
