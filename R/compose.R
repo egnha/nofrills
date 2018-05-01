@@ -91,6 +91,7 @@
 NULL
 
 compositor <- function(capture_fns) {
+  # nocov start (build-time only)
   force(capture_fns)
 
   flatten_fns <- function(...) {
@@ -118,6 +119,7 @@ compositor <- function(capture_fns) {
       unname(mget(nms, envir = env, mode = "function", inherits = FALSE))
     }
   }
+  # nocov end
 
   function(...) {
     pipeline <- flatten_fns(...)
