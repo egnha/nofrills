@@ -3,16 +3,16 @@
 \name{compose}
 \alias{compose}
 \alias{compose}
-\alias{\%<<<\%}
 \alias{\%>>>\%}
+\alias{\%<<<\%}
 \alias{decompose}
 \title{Compose functions}
 \usage{
 compose(...)
 
-snd \%<<<\% fst
-
 fst \%>>>\% snd
+
+snd \%<<<\% fst
 
 decompose(f)
 }

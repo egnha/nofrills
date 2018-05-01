@@ -199,21 +199,21 @@ fn_interp.default <- function(x, ...) {
   stop(msg, call. = FALSE)
 }
 
-#' @rdname compose
-#' @export
-`%<<<%` <- function(snd, fst) {
-  eval(`[[<-`(sys.call(), 1L, compose_quos), parent.frame())
-}
-
 #' @param fst,snd Functions.
 #' @rdname compose
 #' @export
 `%>>>%` <- function(fst, snd) {
   call_rev <- match.call(`%<<<%`, match.call())
-  eval(`[[<-`(call_rev, 1L, compose_quos), parent.frame())
+  eval(`[[<-`(call_rev, 1L, op_compose), parent.frame())
 }
 
-compose_quos <- compositor(quos)
+#' @rdname compose
+#' @export
+`%<<<%` <- function(snd, fst) {
+  eval(`[[<-`(sys.call(), 1L, op_compose), parent.frame())
+}
+
+op_compose <- compositor(quos)
 
 #' @param f Function.
 #' @rdname compose
