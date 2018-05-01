@@ -5,7 +5,7 @@ make_funs <- function(n) {
 fs <- make_funs(3)
 
 fn_kinds <- list(
-  closure     = identity,
+  closure     = function(x) NULL,
   special     = log,
   builtin     = c,
   composition = compose(fs)
@@ -31,39 +31,61 @@ cmps <- list(
 
 context("Composing functions")
 
-test_that("for a single function, composition is identity", {
+test_that("composition returns a single function unchanged", {
   for (f in fn_kinds)
     expect_equal(compose(f), f)
 })
 
-test_that("error is signalled when composing an empty sequence of functions", {
-  expect_errors_with_message(
-    "Must specify functions to compose",
-    compose(),
-    compose(NULL),
-    compose(list()),
-    compose(!!!list())
-  )
+test_that("empty or length 0 composition yields the identity function (#41)", {
+  expect_identical(identity, compose())
+  expect_identical(identity, compose(NULL))
+  expect_identical(identity, compose(list()))
+  expect_identical(identity, compose(!!!list()))
 })
 
-test_that("NULL is void in a sequence of functions", {
-  expect_error(compose(NULL), "Must specify functions to compose")
-
-  expect_identical(compose(NULL, identity), identity)
-  expect_identical(compose(identity, NULL), identity)
+test_that("NULL and identity are dropped when composing", {
+  expect_identical(log, compose(NULL, log))
+  expect_identical(log, compose(log, NULL))
+  expect_identical(log, compose(identity, log))
+  expect_identical(log, compose(log, identity))
+  expect_identical(log, NULL %>>>% log)
+  expect_identical(log, log %>>>% NULL)
+  expect_identical(log, identity %>>>% log)
+  expect_identical(log, log %>>>% identity)
+  expect_identical(log, NULL %<<<% log)
+  expect_identical(log, log %<<<% NULL)
+  expect_identical(log, identity %<<<% log)
+  expect_identical(log, log %<<<% identity)
 
   inc <- function(x) x + 1
   cmp0 <- compose(log, inc)
   cmps <- list(
     compose(NULL, log, inc),
     compose(log, NULL, inc),
-    compose(log, inc, NULL)
+    compose(log, inc, NULL),
+    compose(identity, log, inc),
+    compose(log, identity, inc),
+    compose(log, inc, identity),
+    inc %>>>% log %>>>% NULL,
+    inc %>>>% NULL %>>>% log,
+    NULL %>>>% inc %>>>% log,
+    inc %>>>% log %>>>% identity,
+    inc %>>>% identity %>>>% log,
+    identity %>>>% inc %>>>% log,
+    NULL %<<<% log %<<<% inc,
+    log %<<<% NULL %<<<% inc,
+    log %<<<% inc %<<<% NULL,
+    identity %<<<% log %<<<% inc,
+    log %<<<% identity %<<<% inc,
+    log %<<<% inc %<<<% identity
   )
 
-  # Function equality by equality of return values
+  # Function equality by equality of return values and composite functions
   vals <- {set.seed(1); runif(10)}
-  for (cmp in cmps)
-      expect_equal(cmp(vals), cmp0(vals))
+  for (cmp in cmps) {
+    expect_equal(cmp(vals), cmp0(vals))
+    expect_identical(decompose(cmp), list(log, inc))
+  }
 })
 
 test_that("error is signalled when composing a non-interpretable object", {
@@ -153,7 +175,7 @@ test_that("environment of composition is child of initial-function environment",
     local(function() NULL)
   )
   for (f in fs) {
-    cmp <- compose(identity, f)
+    cmp <- compose(function(...) NULL, f)
     env <- if (is.null(environment(f))) baseenv() else environment(f)
     expect_identical(parent.env(environment(cmp)), env)
   }

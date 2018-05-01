@@ -124,7 +124,8 @@ compositor <- function(capture_fns) {
   function(...) {
     pipeline <- flatten_fns(...)
     n <- length(pipeline)
-    (n > 0L) %because% "Must specify functions to compose"
+    if (n == 0L)
+      return(identity)
     if (n == 1L)
       return(pipeline[[1L]])
     fn_init <- closure(pipeline[[n]])
@@ -189,7 +190,11 @@ fn_interp.CompositeFunction <- function(x, ...) {
 }
 
 #' @export
-fn_interp.function <- function(x, ...) x
+fn_interp.function <- function(x, ...) {
+  if (identical(x, identity))
+    return(NULL)
+  x
+}
 
 #' @export
 fn_interp.NULL <- function(x, ...) NULL
