@@ -164,11 +164,6 @@ is_composition <- function(expr) {
 is_forward_compose  <- check_head("%>>>%")
 is_backward_compose <- check_head("%<<<%")
 
-is_lambda <- check_head("{")
-lambda <- function(body, env) {
-  new_fn(alist(. = ), body, env)
-}
-
 lambda_partial <- local({
   dot <- as.name(".")
   function(expr, env) {
@@ -178,6 +173,12 @@ lambda_partial <- local({
     lambda(expr, env)
   }
 })
+
+lambda <- function(body, env) {
+  new_fn(alist(. = ), body, env)
+}
+
+is_lambda <- check_head("{")
 
 #' @export
 fn_interp.list <- function(x, ...) {
