@@ -144,12 +144,12 @@ compositor <- function(capture_fns) {
 #' @export
 compose <- compositor(list_tidy)
 
-fn_interp <- function(x, ...) {
+fn_interp <- function(x) {
   UseMethod("fn_interp")
 }
 
 #' @export
-fn_interp.quosure <- function(x, ...) {
+fn_interp.quosure <- function(x) {
   expr <- quo_get_expr(x)
   if (!is.call(expr) || is_compose_op(expr))
     return(fn_interp(eval_tidy(x)))
@@ -181,27 +181,27 @@ lambda <- function(body, env) {
 is_lambda <- check_head("{")
 
 #' @export
-fn_interp.list <- function(x, ...) {
-  lapply(x, fn_interp, ...)
+fn_interp.list <- function(x) {
+  lapply(x, fn_interp)
 }
 
 #' @export
-fn_interp.CompositeFunction <- function(x, ...) {
+fn_interp.CompositeFunction <- function(x) {
   .subset2(environment(x), "__pipeline__")
 }
 
 #' @export
-fn_interp.function <- function(x, ...) {
+fn_interp.function <- function(x) {
   if (identical(x, identity))
     return(NULL)
   x
 }
 
 #' @export
-fn_interp.NULL <- function(x, ...) NULL
+fn_interp.NULL <- function(x) NULL
 
 #' @export
-fn_interp.default <- function(x, ...) {
+fn_interp.default <- function(x) {
   cls <- paste(deparse(class(x)), collapse = "")
   msg <- sprintf("Cannot interpret object of class %s as a function", cls)
   stop(msg, call. = FALSE)
