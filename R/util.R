@@ -54,7 +54,7 @@ has_dots <- function(x) {
   c(class, superclass[-wh_class])
 }
 
-# nocov start
+# nocov start (build-time only)
 getter_env <- function(nm) {
   force(nm)
   function(x) .subset2(environment(x), nm)
