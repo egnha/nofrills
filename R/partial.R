@@ -88,15 +88,22 @@
 #' )
 #'
 #' @export
-partial <- function(..f, ...) {
-  if (missing(...))
-    return(..f)
-  f <- closure(..f)
-  p <- partial_(f, ...)
-  expr_partial(p) <- expr_partial(f) %||% expr_fn(substitute(..f), formals(f))
-  class(p) <- "PartialFunction" %subclass% class(..f)
-  p
-}
+partial <- local({
+  assign_setter("expr_partial")
+
+  function(..f, ...) {
+    if (missing(...))
+      return(..f)
+    f <- closure(..f)
+    p <- partial_(f, ...)
+    expr_partial(p) <- expr_partial(f) %||% expr_fn(substitute(..f), formals(f))
+    class(p) <- "PartialFunction" %subclass% class(..f)
+    p
+  }
+})
+
+assign_getter("expr_partial")
+assign_getter("names_fixed")
 
 partial_ <- local({
   assign_getter("bare_args")
@@ -149,8 +156,6 @@ partial_ <- local({
   }
 })
 
-assign_getter("names_fixed")
-
 quos_match <- function(..f, ...) {
   qs <- quos(...)
   ordered <- as.call(c(quote(c), seq_along(qs) %named% names(qs)))
@@ -194,9 +199,6 @@ map_eneval_tidy <- local({
   eneval_tidy <- function(nm) call("eval_tidy", as.name(nm))
   function(xs) lapply(xs, eneval_tidy)
 })
-
-assign_getter("expr_partial")
-assign_setter("expr_partial")
 
 expr_fn <- function(expr, fmls) {
   if (is.name(expr))
