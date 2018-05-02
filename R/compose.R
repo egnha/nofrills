@@ -165,12 +165,16 @@ is_forward_compose  <- check_head("%>>>%")
 is_backward_compose <- check_head("%<<<%")
 
 lambda_partial <- local({
-  dot <- as.name(".")
-  function(expr, env) {
-    args <- as.list(expr[-1L])
-    if (all(args != dot))
-      expr <- as.call(c(expr[[1L]], quote(.), args))
-    lambda(expr, env)
+  is_void <- function(call) length(call) == 1L
+  placeholder <- as.name(".")
+
+  function(call, env) {
+    if (is_void(call))
+      return(eval(call[[1L]], env))
+    args <- as.list(call)[-1L]
+    if (all(args != placeholder))
+      call <- as.call(c(call[[1L]], quote(.), args))
+    lambda(call, env)
   }
 })
 
