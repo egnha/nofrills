@@ -255,6 +255,18 @@ test_that("composition operator yields flattened compositions", {
   expect_identical(decompose(r), list(id, sq, id, sq, sq))
 })
 
+test_that("in pipeline, void call is interpreted as its caller", {
+  id <- function(f) f
+  cmps <- list(
+    log() %<<<% abs,
+    id(log)() %<<<% abs,
+    abs %>>>% log(),
+    abs %>>>% id(log)()
+  )
+  for (cmp in cmps)
+    expect_identical(log, decompose(cmp)[[1]])
+})
+
 context("Decomposing compositions")
 
 test_that("decomposing a non-composite function wraps it in a list", {
