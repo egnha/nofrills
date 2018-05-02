@@ -17,11 +17,12 @@
     compositions.
 
   * Partial application is available via the operator `partial()`, along with
-    its inverse operator `departial()`. Like genuine partial application,
-    `partial()` contracts formals, rather than producing a function with
-    indefinite formals `...`, i.e., `partial()` returns a function of the
-    proper “type.” Quasiquotation and splicing of arguments are supported, in
-    addition to argument-wise lazy or eager (tidy) evaluation.
+    the operator `departial()` that retrieves the original function. Like
+    genuine partial application, `partial()` contracts formals, rather than
+    producing a function with indefinite formals `...`, i.e., `partial()`
+    returns a function of the proper “type.” Quasiquotation and splicing of
+    arguments are supported, in addition to argument-wise lazy or eager (tidy)
+    evaluation.
 
   * `fn_()` is a variant of `fn()` that does _not_ comprehend quasiquotation
     (#4). This provides a way, complementary to the use of `QUQ()` and `QUQS()`,
