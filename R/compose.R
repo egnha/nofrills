@@ -252,7 +252,7 @@ print.CompositeFunction <- function(x, ...) {
 #' @importFrom utils capture.output
 trim_capture <- function(f) {
   out <- capture.output(print(f))
-  if (inherits(f, c("CurriedFunction", "PartialFunction", "TidyFunction")))
+  if (inherits(f, c("PartialFunction", "TidyFunction")))
     out <- out[-c(2L, length(out) - 1L, length(out))]
   out
 }
