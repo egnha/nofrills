@@ -18,7 +18,6 @@ BugReports: https://github.com/egnha/nofrills/issues
 Collate:
     'nofrills.R'
     'util.R'
-    'exprs.R'
     'fn.R'
     'tidy.R'
     'compose.R'

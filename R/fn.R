@@ -164,25 +164,25 @@
 #'   my_summarise
 #' }
 #'
-#' @export
-fn <- function(..., ..env = parent.frame()) {
-  is.environment(..env) %because% "'..env' must be an environment"
-  fun <- fn_parts(...)
-  make_function(fun$args, fun$body, ..env)
+#' @name fn
+NULL
+
+fn_constructor <- function(get_exprs) {
+  force(get_exprs)
+
+  function(..., ..env = parent.frame()) {
+    is.environment(..env) %because% "'..env' must be an environment"
+    fun <- fn_parts(get_exprs(...))
+    make_function(fun$args, fun$body, ..env)
+  }
 }
 
-fn_parts <- function(...) {
-  xs <- get_exprs(...)
-  args <- get_args(xs$front)
-  remains <- behead(xs$back)
-  list(args = c(args, remains$head), body = remains$body)
-}
-
-get_exprs <- function(...) {
-  xs <- exprs_(...)
+fn_parts <- function(xs) {
   n <- length(xs)
   validate(xs, n)
-  list(front = xs[-n], back = xs[n])
+  args <- get_args(xs[-n])
+  remains <- behead(xs[n])
+  list(args = c(args, remains$head), body = remains$body)
 }
 validate <- function(xs, n = length(xs)) {
   (n > 0L) %because%
@@ -232,3 +232,40 @@ make_function <- function(args, body, env) {
 }
 
 blank <- list(quote(expr = ))
+
+#' Raw quotation of expressions
+#'
+#' `literal_tidy()` is an extension of [rlang::exprs()] that comprehends literal
+#' unquoting operators: `QUQ()`, `QUQS()` are substituted as `` `!!`() ``,
+#' `` `!!!`() ``, resp.
+#'
+#' @param ... Unevaluated expressions to capture.
+#' @return List of expressions.
+#'
+#' @noRd
+literal_tidy <- local({
+  quo_get_expr_ <- function(x) {
+    do.call("substitute", list(quo_get_expr(x), quq))
+  }
+  quq <- list(
+    QUQ  = as.name("!!"),
+    QUQS = as.name("!!!")
+  )
+
+  function(...) {
+    lapply(quos(...), quo_get_expr_)
+  }
+})
+
+#' @rdname fn
+#' @export
+fn <- fn_constructor(literal_tidy)
+
+literal <- function(...) {
+  exprs <- eval(substitute(alist(...)))
+  exprs %named% names_chr(exprs)
+}
+
+#' @rdname fn
+#' @export
+fn_ <- fn_constructor(literal)

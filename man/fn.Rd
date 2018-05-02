@@ -2,10 +2,14 @@
 % Please edit documentation in R/fn.R, R/curry.R
 \name{fn}
 \alias{fn}
+\alias{fn}
+\alias{fn_}
 \alias{fn_curry}
 \title{Low-cost anonymous functions}
 \usage{
 fn(..., ..env = parent.frame())
+
+fn_(..., ..env = parent.frame())
 
 fn_curry(..., ..env = parent.frame())
 }
