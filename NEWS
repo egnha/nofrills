@@ -23,6 +23,11 @@
     proper “type.” Quasiquotation and splicing of arguments are supported, in
     addition to argument-wise lazy or eager (tidy) evaluation.
 
+  * `fn_()` is a variant of `fn()` that does _not_ comprehend quasiquotation
+    (#4). This provides a way, complementary to the use of `QUQ()` and `QUQS()`,
+    to combine `fn()` syntax with literal unquoting and splicing, e.g.,
+    `fn_(x ~ fn(f ~ f(!!x)))`.
+
   * `curry()` and `curry_fn()` are softly deprecated (#42). Currying can be
     achieved by repeatedly applying `partial()`.
 
