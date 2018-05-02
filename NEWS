@@ -7,20 +7,6 @@
     quasiquotation. This is handy when you want a function written by someone
     else to comprehend quasiquotation. Apply `untidy()` to undo `tidy()`.
 
-  * Rather than performing strict currying, `curry()` now curries functions in a
-    manner congenial to R’s calling convention. This means you can now call a
-    curried function on any number of arguments: if the supplied arguments are
-    complete, you get the function’s return value on those arguments; otherwise,
-    you get a function of the remaining arguments with the supplied arguments
-    fixed, which itself is a curried function. This yields a more flexible, yet
-    less verbose, syntax for constructing functions via currying than is
-    possible with a strict currying operator. Currying can be undone with
-    `uncurry()`. As before, `curry()` remains an idempotent operator, i.e.,
-    currying an already curried function is the identity operator.
-
-  * `curry_fn()` has been renamed to `fn_curry()`. It is now an alias for the
-    composition of `fn()` followed by `curry()`.
-
   * Compositions are available with the `compose()` function and its operator
     forms `%<<<%` and `%>>>%` (forward composition). Crucially, `compose()`
     is associative, both semantically and operationally, which prevents nested
@@ -36,6 +22,9 @@
     indefinite formals `...`, i.e., `partial()` returns a function of the
     proper “type.” Quasiquotation and splicing of arguments are supported, in
     addition to argument-wise lazy or eager (tidy) evaluation.
+
+  * `curry()` and `curry_fn()` are softly deprecated (#42). Currying can be
+    achieved by repeatedly applying `partial()`.
 
   * `as_fn()` and `make_fn_aware()` are softly deprecated.
 

@@ -125,8 +125,6 @@
 #'       foo(1)  #> [1] 2
 #'   ```
 #'
-#' @seealso [curry()]
-#'
 #' @examples
 #' fn(x ~ x + 1)
 #' fn(x, y ~ x + y)

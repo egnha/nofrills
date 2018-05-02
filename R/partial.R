@@ -33,8 +33,6 @@
 #'   produce its value and `partial(ls, all.names = TRUE)()` calls
 #'   `ls(all.names = TRUE)` from an (ephemeral) execution environment.
 #'
-#' @seealso [curry()], [fn_curry()]
-#'
 #' @examples
 #' draw3 <- partial(sample, size = 3)
 #' draw3(letters)

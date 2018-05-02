@@ -14,19 +14,6 @@ test_that("partially applied function shows function with arguments fixed", {
   expect_identical(capture.output(print(f)), out)
 })
 
-test_that("curried function shows underlying (partialized) function", {
-  f <- curry(sample)
-  out_sample <- capture.output(print(sample))
-  out <- c(
-    "<Curried Function>",
-    "",
-    out_sample,
-    "",
-    "Restore conventional calling behavior with 'uncurry()'."
-  )
-  expect_identical(capture.output(print(f)), out)
-})
-
 test_that("tidy function shows underlying function", {
   f <- tidy(identity)
   out_identity <- capture.output(print(identity))

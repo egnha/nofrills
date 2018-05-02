@@ -5,6 +5,15 @@
 #' `fn()`-syntax for higher-order functions—a negligible convenience. Instead,
 #' simply invoke `fn()` directly.
 #'
+#' @param f `make_fn_aware()`: Function, or symbol or name of a function;
+#'   `curry()`: Function.
+#' @param ... `make_fn_aware()`: Name(s) of functional argument(s) of `f`
+#'   (strings) or `NULL`. Unsplicing of lists of strings is supported via `!!!`;
+#'   `curry_fn()`: Function declaration, which supports
+#'   [quasiquotation][rlang::quasiquotation].
+#'
+#' @seealso [fn()], [partial()]
+#'
 #' @keywords internal
 #' @aliases as_fn make_fn_aware
 #' @name deprecated
@@ -79,10 +88,6 @@ is_anon_fn_expr <- check_head(".")
 #' @details `make_fn_aware()` is a functional operator that enhances a function
 #'   by enabling it to interpret abbreviated functional arguments.
 #'
-#' @param f Function, or symbol or name of a function.
-#' @param ... Name(s) of functional argument(s) of `f` (strings) or `NULL`.
-#'   Unsplicing of lists of strings is supported via `!!!`.
-#'
 #' @return `make_fn_aware()`: A function with the same call signature as `f`,
 #'   but whose function arguments, as designated by `...`, may be specified
 #'   using an abbreviated function expression of the form `.(...)`, cf.
@@ -132,3 +137,107 @@ anon_fn_interpreter <- function(nms, ...) {
     call
   }
 }
+
+#' @details `curry()` [curries](https://en.wikipedia.org/wiki/Currying)
+#'   functions—it reconstitutes a function as a succession of single-argument
+#'   functions. For example, `curry()` produces the the function
+#'   ```
+#'   function(x) {
+#'     function(y) {
+#'       function(z) {
+#'         x * y * z
+#'       }
+#'     }
+#'   }
+#'   ```
+#'   from the function `function(x, y, z) x * y * z`. Dots (`...`) are treated
+#'   as a unit when currying. For example, `curry()` transforms `function(x,
+#'   ...) list(x, ...)` to `function(x) { function(...) list(x, ...) }`.
+#'
+#' @param env Environment of the curried function or `NULL`. If `NULL`, the
+#'   environment of the curried function is the calling environment.
+#'
+#' @return `curry()`, `curry_fn()`: A function of nested single-argument
+#'   functions.
+#'
+#' @examples
+#' \dontrun{
+#' curry(function(x, y, z = 0) x + y + z)
+#' double <- curry(`*`)(2)
+#' double(3)  # 6
+#' }
+#'
+#' @rdname deprecated
+#' @export
+curry <- function(f, env = environment(f)) {
+  .Deprecated(
+    "partial",
+    msg = "'curry' is deprecated. Instead, apply 'partial' repeatedly."
+  )
+  stopifnot(is.function(f), is.environment(env) || is.null(env))
+  f <- as_closure(f)
+  fmls <- formals(f)
+  if (length(fmls) < 2)
+    return(f)
+  curry_(fmls, body(f), env %||% parent.frame())
+}
+
+curry_ <- local({
+  each <- function(xs)
+    lapply(seq_along(xs), function(i) xs[i])
+  lambda <- function(x, body)
+    call("function", as.pairlist(x), body)
+
+  function(args, body, env) {
+    curry_expr <- Reduce(lambda, each(args), body, right = TRUE)
+    eval(curry_expr, env)
+  }
+})
+
+#' @details `curry_fn()` produces a curried function from an [fn()]-style
+#'   function declaration, which supports
+#'   [quasiquotation][rlang::quasiquotation] of a function’s body and (default)
+#'   argument values.
+#'
+#' @param ..env Environment in which to create the function (i.e., the
+#'   function’s [enclosing environment][base::environment]).
+#'
+#' @examples
+#' \dontrun{
+#' curry_fn(x, y, z = 0 ~ x + y + z)
+#' curry_fn(target, ... ~ identical(target, ...))
+#'
+#' ## Delay unquoting to embed argument values into the innermost function
+#' compare_to <- curry_fn(target, x ~ identical(x, QUQ(target)))
+#' is_this <- compare_to("this")
+#' is_this("that")  # FALSE
+#' is_this("this")  # TRUE
+#' classify_as <- curry_fn(class, x ~ `class<-`(x, QUQ(class)))
+#' as_this <- classify_as("this")
+#' as_this("Some object")  # String of class "this"
+#' }
+#'
+#' @rdname deprecated
+#' @export
+curry_fn <- function(..., ..env = parent.frame()) {
+  .Deprecated(
+    "partial",
+    msg = "'curry_fn' is deprecated. Instead, apply 'partial' repeatedly."
+  )
+  is.environment(..env) %because% "'..env' must be an environment"
+  fun <- fn_parts(literal_tidy(...))
+  make_curried_function(fun$args, fun$body, ..env)
+}
+
+make_curried_function <- local({
+  fn_call <- function(arg, body)
+    as.call(c(quote(nofrills::fn), as.pairlist(arg), bquote(~.(body))))
+
+  function(args, body, env) {
+    n <- length(args)
+    if (n < 2)
+      return(make_function(args, body, env))
+    terminal_body <- fn_call(args[n], body)
+    curry_(args[-n], terminal_body, env)
+  }
+})

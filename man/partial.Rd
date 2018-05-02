@@ -102,6 +102,3 @@ stopifnot(
 )
 
 }
-\seealso{
-\code{\link[=curry]{curry()}}, \code{\link[=fn_curry]{fn_curry()}}
-}

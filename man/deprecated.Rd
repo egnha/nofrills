@@ -6,11 +6,17 @@
 \alias{make_fn_aware}
 \alias{as_fn}
 \alias{make_fn_aware}
+\alias{curry}
+\alias{curry_fn}
 \title{Deprecated functions}
 \usage{
 as_fn(.f)
 
 make_fn_aware(f, ...)
+
+curry(f, env = environment(f))
+
+curry_fn(..., ..env = parent.frame())
 }
 \arguments{
 \item{.f}{A function or an abbreviated anonymous-function expression of the
@@ -18,10 +24,19 @@ form \code{.(...)}, where \code{...} is a \link[=fn]{function declaration} (i.e.
 (dot) in this context is an alias of \code{\link[=fn]{fn()}}).
 \link[rlang:quasiquotation]{Quasiquotation} is supported.}
 
-\item{f}{Function, or symbol or name of a function.}
+\item{f}{\code{make_fn_aware()}: Function, or symbol or name of a function;
+\code{curry()}: Function.}
 
-\item{...}{Name(s) of functional argument(s) of \code{f} (strings) or \code{NULL}.
-Unsplicing of lists of strings is supported via \code{!!!}.}
+\item{...}{\code{make_fn_aware()}: Name(s) of functional argument(s) of \code{f}
+(strings) or \code{NULL}. Unsplicing of lists of strings is supported via \code{!!!};
+\code{curry_fn()}: Function declaration, which supports
+\link[rlang:quasiquotation]{quasiquotation}.}
+
+\item{env}{Environment of the curried function or \code{NULL}. If \code{NULL}, the
+environment of the curried function is the calling environment.}
+
+\item{..env}{Environment in which to create the function (i.e., the
+function’s \link[base:environment]{enclosing environment}).}
 }
 \value{
 \code{as_fn()}: If \code{.f} is a function, it is simply returned, otherwise
@@ -31,6 +46,9 @@ the function determined by the \link[=fn]{function declaration} is returned.
 but whose function arguments, as designated by \code{...}, may be specified
 using an abbreviated function expression of the form \code{.(...)}, cf.
 \code{\link[=as_fn]{as_fn()}}. If \code{...} is empty or \code{NULL}, then \code{f} is simply returned.
+
+\code{curry()}, \code{curry_fn()}: A function of nested single-argument
+functions.
 }
 \description{
 These functions are softly deprecated and may be removed from a future
@@ -49,6 +67,25 @@ declaration is to be interpreted (see \emph{Examples}).
 
 \code{make_fn_aware()} is a functional operator that enhances a function
 by enabling it to interpret abbreviated functional arguments.
+
+\code{curry()} \href{https://en.wikipedia.org/wiki/Currying}{curries}
+functions—it reconstitutes a function as a succession of single-argument
+functions. For example, \code{curry()} produces the the function\preformatted{function(x) {
+  function(y) {
+    function(z) {
+      x * y * z
+    }
+  }
+}
+}
+
+from the function \code{function(x, y, z) x * y * z}. Dots (\code{...}) are treated
+as a unit when currying. For example, \code{curry()} transforms \code{function(x, ...) list(x, ...)} to \code{function(x) { function(...) list(x, ...) }}.
+
+\code{curry_fn()} produces a curried function from an \code{\link[=fn]{fn()}}-style
+function declaration, which supports
+\link[rlang:quasiquotation]{quasiquotation} of a function’s body and (default)
+argument values.
 }
 \examples{
 \dontrun{
@@ -93,5 +130,28 @@ reduce(function(u, v) u + 1 / v, c(3, 7, 15, 1, 292), right = TRUE)
 reduce(.(u, v ~ u + 1 / v), c(3, 7, 15, 1, 292), right = TRUE)
 }
 
+\dontrun{
+curry(function(x, y, z = 0) x + y + z)
+double <- curry(`*`)(2)
+double(3)  # 6
+}
+
+\dontrun{
+curry_fn(x, y, z = 0 ~ x + y + z)
+curry_fn(target, ... ~ identical(target, ...))
+
+## Delay unquoting to embed argument values into the innermost function
+compare_to <- curry_fn(target, x ~ identical(x, QUQ(target)))
+is_this <- compare_to("this")
+is_this("that")  # FALSE
+is_this("this")  # TRUE
+classify_as <- curry_fn(class, x ~ `class<-`(x, QUQ(class)))
+as_this <- classify_as("this")
+as_this("Some object")  # String of class "this"
+}
+
+}
+\seealso{
+\code{\link[=fn]{fn()}}, \code{\link[=partial]{partial()}}
 }
 \keyword{internal}

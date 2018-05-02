@@ -67,7 +67,7 @@ functions.
 
 \examples{
 # Functions are composed from right to left (following convention)
-inv <- curry(`/`)(1)  # reciprocal
+inv <- partial(`/`, 1)  # reciprocal
 f <- compose(inv, log, abs)
 stopifnot(isTRUE(all.equal(f(-2), 1 / log(abs(-2)))))
 
@@ -79,14 +79,12 @@ stopifnot(isTRUE(all.equal(f1(-2), f(-2))))
 f2 <- abs \%>>>\% log \%>>>\% inv
 stopifnot(isTRUE(all.equal(f2(-2), f(-2))))
 
-# Curry composition to create input/output transformers
-transform_in  <- curry(`\%>>>\%`)
-transform_out <- curry(`\%<<<\%`)
-
 # Presume to_json()/from_json() convert to/from JSON
-json_out <- transform_out(to_json)   # transforms function to produce JSON
-json_in  <- transform_in(from_json)  # transforms function to consume JSON
-jsonify  <- json_in \%>>>\% json_out   # transforms function to JSON function
+\dontrun{
+json_out <- partial(`\%<<<\%`, to_json)    # transforms function to produce JSON
+json_in  <- partial(`\%>>>\%`, from_json)  # transforms function to consume JSON
+jsonify  <- json_in \%>>>\% json_out       # transforms function to JSON function
+}
 
 # Formals of initial function are preserved
 first <- function(a, b = 0) a + b
