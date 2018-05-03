@@ -92,7 +92,7 @@ test_that("unnamed dots-arguments can be fixed", {
 test_that("arguments can be matched by position", {
   f <- function(x, y, ...) c(x, y, ...)
   expect_all_equal(
-    c(1, 2, 3),
+    f(1, 2, 3),
     partial(f)(1, 2, 3),
     partial(f, 1)(2, 3),
     partial(f, , 2)(1, 3),
