@@ -227,10 +227,10 @@ test_that("composition operator operands can be unquoted", {
   f <- list(log)
   inc <- 1
   f0 <- function(x) log(abs(x) + 1)
-  f1 <- abs %>>>% {. + !!inc} %>>>% (!!f[[1]])
+  f1 <- abs %>>>% {. + !!inc} %>>>% !!f[[1]]
   f2 <- (!!f[[1]]) %<<<% {. + !!inc} %<<<% abs
-  f3 <- (!!(abs %>>>% {. + !!inc})) %>>>% (!!f[[1]])
-  f4 <- (!!f[[1]]) %<<<% (!!({. + !!inc} %<<<% abs))
+  f3 <- (!!(abs %>>>% {. + !!inc})) %>>>% !!f[[1]]
+  f4 <- (!!f[[1]]) %<<<% !!({. + !!inc} %<<<% abs)
   vals <- {set.seed(1); runif(10, -1, 1)}
   for (val in vals) {
     expect_equal(f1(val), f0(val))
