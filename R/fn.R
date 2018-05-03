@@ -182,6 +182,7 @@ fn_parts <- function(xs) {
   remains <- behead(xs[n])
   list(args = c(args, remains$head), body = remains$body)
 }
+
 validate <- function(xs, n = length(xs)) {
   (n > 0L) %because%
     "Function must be declared"

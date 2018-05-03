@@ -86,51 +86,28 @@
 #' stopifnot(isTRUE(all.equal(decompose(compose(fs)), fs)))
 #'
 #' @export
-compose <- local({
-  iterated_call <- function(n, fmls) {
-    fnames <- sprintf("__%s__", n:1L)
-    expr <- as.call(c(as.name(fnames[[1L]]), args(fmls)))
-    for (fname in fnames[-1L])
-      expr <- call(fname, expr)
-    list(expr = expr, fnames = rev(fnames))
-  }
-  args <- function(fmls) {
-    args <- eponymous(names(fmls))
-    names(args)[names(args) == "..."] <- ""
-    args
-  }
+compose <- function(...) {
+  pipeline <- flatten_fns(...)
+  n <- length(pipeline)
+  if (n == 0L)
+    return(identity)
+  if (n == 1L)
+    return(pipeline[[1L]])
+  fn_init <- closure(pipeline[[n]])
+  fmls <- formals(fn_init)
+  call <- iterated_call(n, fmls)
+  names(pipeline) <- call$fnames
+  env <- environment(fn_init) %encloses% pipeline
+  makeActiveBinding("__pipeline__", get_pipeline(pipeline, env), env)
+  fn_cmps <- new_fn(fmls, call$expr, env)
+  class(fn_cmps) <- c("CompositeFunction", "function")
+  fn_cmps
+}
 
-  get_pipeline <- function(pipeline, env) {
-    force(env)
-    nms <- names(pipeline)
-    function(.) {
-      unname(mget(nms, envir = env, mode = "function", inherits = FALSE))
-    }
-  }
-
-  flatten_fns <- function(...) {
-    fns <- lapply(list_tidy(...), fn_interp)
-    unlist(do.call(c, fns))  # Collapse NULL's by invoking 'c'
-  }
-
-  function(...) {
-    pipeline <- flatten_fns(...)
-    n <- length(pipeline)
-    if (n == 0L)
-      return(identity)
-    if (n == 1L)
-      return(pipeline[[1L]])
-    fn_init <- closure(pipeline[[n]])
-    fmls <- formals(fn_init)
-    call <- iterated_call(n, fmls)
-    names(pipeline) <- call$fnames
-    env <- environment(fn_init) %encloses% pipeline
-    makeActiveBinding("__pipeline__", get_pipeline(pipeline, env), env)
-    fn_cmps <- new_fn(fmls, call$expr, env)
-    class(fn_cmps) <- c("CompositeFunction", "function")
-    fn_cmps
-  }
-})
+flatten_fns <- function(...) {
+  fns <- lapply(list_tidy(...), fn_interp)
+  unlist(do.call(c, fns))  # Collapse NULL's by invoking 'c'
+}
 
 fn_interp <- function(x) {
   UseMethod("fn_interp")
@@ -197,6 +174,30 @@ fn_interp.default <- function(x) {
   cls <- paste(deparse(class(x)), collapse = "")
   msg <- sprintf("Cannot interpret object of class %s as a function", cls)
   stop(msg, call. = FALSE)
+}
+
+iterated_call <- local({
+  args <- function(fmls) {
+    args <- eponymous(names(fmls))
+    names(args)[names(args) == "..."] <- ""
+    args
+  }
+
+  function(n, fmls) {
+    fnames <- sprintf("__%s__", n:1L)
+    expr <- as.call(c(as.name(fnames[[1L]]), args(fmls)))
+    for (fname in fnames[-1L])
+      expr <- call(fname, expr)
+    list(expr = expr, fnames = rev(fnames))
+  }
+})
+
+get_pipeline <- function(pipeline, env) {
+  force(env)
+  nms <- names(pipeline)
+  function(.) {
+    unname(mget(nms, envir = env, mode = "function", inherits = FALSE))
+  }
 }
 
 #' @param fst,snd Functions.

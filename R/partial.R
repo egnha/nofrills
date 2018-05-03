@@ -264,9 +264,6 @@ call_with_fixed_args <- function(x) {
       do.call("substitute", list(expr, exprs_fix))
     }
   })
-  expr_uq <- function(x, env) {
-    eval(as.call(c(quote(rlang::expr), list(x))), env)
-  }
 
   function(...) {
     fmls_fixed <- formals_fixed(parent.frame())
@@ -284,5 +281,9 @@ subst_formal_args <- local({
     if (is.call(arg) && is_tidy_call(arg)) eval(arg, unquote) else arg
   }
 })
+
+expr_uq <- function(x, env) {
+  eval(as.call(c(quote(rlang::expr), list(x))), env)
+}
 
 uq <- function(x) bquote(!!.(x))

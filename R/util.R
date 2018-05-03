@@ -1,6 +1,7 @@
 # Aliases
 list_tidy <- list2
 names_chr <- names2
+`%named%` <- `names<-`
 
 new_fn <- function(..args, ..body, ..env = NULL, ...) {
   if (!is.pairlist(..args))
@@ -27,14 +28,6 @@ eponymous <- function(nms) {
   lapply(nms, as.name) %named% nms
 }
 
-box <- function(x) {
-  if (is.list(x)) x else list(x)
-}
-
-is_onesided <- function(fml) {
-  length(fml) == 2L
-}
-
 has_dots <- function(x) {
   match("...", x, nomatch = 0L) > 0L
 }
@@ -45,6 +38,14 @@ has_dots <- function(x) {
 
 `%are%` <- function(these, those) {
   all(match(these, those, nomatch = 0L) > 0L)
+}
+
+is_onesided <- function(fml) {
+  length(fml) == 2L
+}
+
+box <- function(x) {
+  if (is.list(x)) x else list(x)
 }
 
 `%because%` <- function(assertion, reason) {
@@ -69,7 +70,9 @@ getter <- function(nm) {
 
 assign_getter <- function(nm) {
   property <- mangle(nm)
-  getter <- function(x) attr(x, property, exact = TRUE)
+  getter <- function(x) {
+    attr(x, property, exact = TRUE)
+  }
   assign(nm, getter, envir = parent.frame())
   invisible(getter)
 }
@@ -90,7 +93,7 @@ mangle <- function(nm) {
 
 check_head <- function(nm) {
   sym <- as.name(nm)
-  function(x) identical(x[[1]], sym)
+  function(x) identical(x[[1L]], sym)
 }
 # nocov end
 
@@ -101,5 +104,3 @@ check_head <- function(nm) {
 `%encloses%` <- function(parent, bindings) {
   list2env(bindings, parent = parent)
 }
-
-`%named%` <- `names<-`
