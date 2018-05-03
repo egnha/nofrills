@@ -221,7 +221,7 @@ departial <- function(..f) {
 }
 
 departial_ <- local({
-  get_bare <- getter_env("__bare__")
+  get_bare <- getter("__bare__")
   function(f) get_bare(f) %||% f
 })
 
@@ -234,7 +234,7 @@ print.PartialFunction <- function(x, ...) {
 }
 
 expr_partial_closure <- local({
-  get_partial_closure <- getter_env("__partial__")
+  get_partial_closure <- getter("__partial__")
 
   function(x) {
     make_expr <- get_partial_closure(x)

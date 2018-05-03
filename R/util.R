@@ -62,7 +62,7 @@ has_dots <- function(x) {
 }
 
 # nocov start (build-time only)
-getter_env <- function(nm) {
+getter <- function(nm) {
   force(nm)
   function(x) .subset2(environment(x), nm)
 }

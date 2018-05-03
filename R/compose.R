@@ -214,7 +214,7 @@ fn_interp.default <- function(x) {
 #' @rdname compose
 #' @export
 decompose <- local({
-  pipeline <- getter_env("__pipeline__")
+  pipeline <- getter("__pipeline__")
   function(f) {
     is.function(f) %because% "Only functions can be decomposed"
     box(pipeline(f) %||% f)
