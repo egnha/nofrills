@@ -265,7 +265,7 @@ call_with_fixed_args <- function(x) {
     }
   })
   expr_uq <- function(x, env) {
-    eval(bquote(expr(.(x))), list(expr = expr), env)
+    eval(as.call(c(quote(rlang::expr), list(x))), env)
   }
 
   function(...) {
