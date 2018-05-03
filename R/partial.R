@@ -156,12 +156,19 @@ partial_ <- local({
   }
 })
 
-quos_match <- function(..f, ...) {
-  qs <- quos(...)
-  ordered <- as.call(c(quote(c), seq_along(qs) %named% names(qs)))
-  matched <- eval(match.call(..f, ordered), baseenv())
-  qs %named% names_chr(matched)[order(matched)]
-}
+quos_match <- local({
+  non_void_expr <- function(q) {
+    quo_get_expr(q) != quote(expr = )
+  }
+
+  function(..f, ...) {
+    qs <- quos(...)
+    ordered <- as.call(c(quote(c), seq_along(qs) %named% names(qs)))
+    matched <- eval(match.call(..f, ordered), baseenv())
+    qs <- qs %named% names_chr(matched)[order(matched)]
+    qs[vapply(qs, non_void_expr, TRUE)]
+  }
+})
 
 privatize <- local({
   privatize_ <- function(xs, nms = xs) {
