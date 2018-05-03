@@ -70,7 +70,7 @@ NULL
 #' @rdname deprecated
 #' @export
 as_fn <- function(.f) {
-  .Deprecated("fn")
+  .Deprecated("fn", msg = "`as_fn()` is deprecated.")
   x <- enexpr(.f)
   x <- eval(substitute(substitute(x)), parent.frame())
   interpret_fn(x, match.fun(.f), parent.frame(2L))
@@ -108,7 +108,7 @@ is_anon_fn_expr <- check_head(".")
 #' @rdname deprecated
 #' @export
 make_fn_aware <- function(f, ...) {
-  .Deprecated("fn")
+  .Deprecated("fn", msg = "`make_fn_aware()` is deprecated.")
   f <- match.fun(f)
   fmls <- fn_fmls(f)
   interpret_anon_fns <- anon_fn_interpreter(names(fmls), ...)
@@ -172,7 +172,7 @@ anon_fn_interpreter <- function(nms, ...) {
 curry <- function(f, env = environment(f)) {
   .Deprecated(
     "partial",
-    msg = "'curry' is deprecated. Instead, apply 'partial' repeatedly."
+    msg = "`curry()` is deprecated. Instead, apply `partial()` (iteratively)."
   )
   stopifnot(is.function(f), is.environment(env) || is.null(env))
   f <- as_closure(f)
@@ -222,7 +222,7 @@ curry_ <- local({
 curry_fn <- function(..., ..env = parent.frame()) {
   .Deprecated(
     "partial",
-    msg = "'curry_fn' is deprecated. Instead, apply 'partial' repeatedly."
+    msg = "`curry_fn()` is deprecated. Instead, apply `partial()` (iteratively)."
   )
   is.environment(..env) %because% "'..env' must be an environment"
   fun <- fn_parts(literal_tidy(...))
