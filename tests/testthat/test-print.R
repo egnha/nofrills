@@ -1,12 +1,13 @@
 context("Printing")
 
 test_that("partially applied function shows function with arguments fixed", {
-  f <- partial(sample, size = 3, replace = TRUE)
+  replace <- TRUE
+  f <- partial(sample, size = expr, replace = !!replace)
   out <- c(
     "<Partially Applied Function>",
     "",
     "function(x, prob = NULL) {",
-    "  sample(x = x, size = ^3, replace = ^TRUE, prob = prob)",
+    "  sample(x = x, size = ^expr, replace = ^TRUE, prob = prob)",
     "}",
     "",
     "Recover the inner function with 'departial()'."
