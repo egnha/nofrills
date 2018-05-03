@@ -90,29 +90,18 @@ test_that("unnamed dots-arguments can be fixed", {
 })
 
 test_that("arguments can be matched by position", {
-  f <- partial(function(x, y, ...) c(x, y, ...))
-  expect_equal(f(1, 2, 3), c(1, 2, 3))
-
-  f <- partial(function(x, y, ...) c(x, y, ...), 1)
-  expect_equal(f(2, 3), c(1, 2, 3))
-
-  f <- partial(function(x, y, ...) c(x, y, ...), , 2)
-  expect_equal(f(1, 3), c(1, 2, 3))
-
-  f <- partial(function(x, y, ...) c(x, y, ...), , , 3)
-  expect_equal(f(1, 2), c(1, 2, 3))
-
-  f <- partial(function(x, y, ...) c(x, y, ...), 1, 2)
-  expect_equal(f(3), c(1, 2, 3))
-
-  f <- partial(function(x, y, ...) c(x, y, ...), 1, , 3)
-  expect_equal(f(2), c(1, 2, 3))
-
-  f <- partial(function(x, y, ...) c(x, y, ...), , 2, 3)
-  expect_equal(f(1), c(1, 2, 3))
-
-  f <- partial(function(x, y, ...) c(x, y, ...), 1, 2, 3)
-  expect_equal(f(), c(1, 2, 3))
+  f <- function(x, y, ...) c(x, y, ...)
+  expect_all_equal(
+    c(1, 2, 3),
+    partial(f)(1, 2, 3),
+    partial(f, 1)(2, 3),
+    partial(f, , 2)(1, 3),
+    partial(f, , , 3)(1, 2),
+    partial(f, 1, 2)(3),
+    partial(f, 1, , 3)(2),
+    partial(f, , 2, 3)(1),
+    partial(f, 1, 2, 3)()
+  )
 })
 
 test_that("dots persist", {
