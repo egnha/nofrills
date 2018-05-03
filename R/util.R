@@ -16,6 +16,13 @@ closure <- function(f) {
   as_closure(f, parent.frame())
 }
 
+# nocov start (build-time only)
+opposite <- function(f) {
+  formals(f) <- rev(formals(f))
+  f
+}
+# nocov end
+
 eponymous <- function(nms) {
   lapply(nms, as.name) %named% nms
 }

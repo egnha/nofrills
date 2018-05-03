@@ -85,18 +85,8 @@
 #' fs <- list(inv, log, abs)
 #' stopifnot(isTRUE(all.equal(decompose(compose(fs)), fs)))
 #'
-#' @name compose
-NULL
-
-compositor <- function(capture_fns) {
-  # nocov start (build-time only)
-  force(capture_fns)
-
-  flatten_fns <- function(...) {
-    fns <- lapply(capture_fns(...), fn_interp)
-    unlist(do.call(c, fns))  # Collapse NULL's by invoking 'c'
-  }
-
+#' @export
+compose <- local({
   iterated_call <- function(n, fmls) {
     fnames <- sprintf("__%s__", n:1L)
     expr <- as.call(c(as.name(fnames[[1L]]), args(fmls)))
@@ -117,7 +107,11 @@ compositor <- function(capture_fns) {
       unname(mget(nms, envir = env, mode = "function", inherits = FALSE))
     }
   }
-  # nocov end
+
+  flatten_fns <- function(...) {
+    fns <- lapply(list_tidy(...), fn_interp)
+    unlist(do.call(c, fns))  # Collapse NULL's by invoking 'c'
+  }
 
   function(...) {
     pipeline <- flatten_fns(...)
@@ -136,11 +130,7 @@ compositor <- function(capture_fns) {
     class(fn_cmps) <- c("CompositeFunction", "function")
     fn_cmps
   }
-}
-
-#' @rdname compose
-#' @export
-compose <- compositor(list_tidy)
+})
 
 fn_interp <- function(x) {
   UseMethod("fn_interp")
@@ -213,17 +203,12 @@ fn_interp.default <- function(x) {
 #' @rdname compose
 #' @export
 `%>>>%` <- function(fst, snd) {
-  call_rev <- match.call(`%<<<%`, match.call())
-  eval(`[[<-`(call_rev, 1L, op_compose), parent.frame())
+  compose(enquo(snd), enquo(fst))
 }
 
 #' @rdname compose
 #' @export
-`%<<<%` <- function(snd, fst) {
-  eval(`[[<-`(sys.call(), 1L, op_compose), parent.frame())
-}
-
-op_compose <- compositor(quos)
+`%<<<%` <- opposite(`%>>>%`)
 
 #' @param f Function.
 #' @rdname compose

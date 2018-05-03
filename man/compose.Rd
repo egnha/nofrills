@@ -2,7 +2,6 @@
 % Please edit documentation in R/compose.R
 \name{compose}
 \alias{compose}
-\alias{compose}
 \alias{\%>>>\%}
 \alias{\%<<<\%}
 \alias{decompose}
