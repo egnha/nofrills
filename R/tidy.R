@@ -41,12 +41,13 @@
 #' @export
 tidy <- local({
   body_tidy <- quote({
-    call <- `[[<-`(sys.call(), 1L, `__pretidy__`)
-    `__eval_tidy__`(eval(call("__quo__", call), `__quo__`, parent.frame()))
+    enquo <- call("__quo__", `[[<-`(sys.call(), 1L, `__pretidy__`))
+    `__eval_tidy__`(eval(enquo, `__quo__`, parent.frame()))
   })
+
   funs <- list(
     `__eval_tidy__` = eval_tidy,
-    `__quo__` = list(`__quo__` = quo)
+    `__quo__`       = list(`__quo__` = quo)
   )
 
   function(f) {
