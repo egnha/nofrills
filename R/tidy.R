@@ -42,10 +42,12 @@
 tidy <- local({
   body_tidy <- quote({
     call <- `[[<-`(sys.call(), 1L, `__pretidy__`)
-    call <- eval(as.call(c(`__quo__`, call)), parent.frame())
-    `__eval_tidy__`(call)
+    `__eval_tidy__`(eval(call("__quo__", call), `__quo__`, parent.frame()))
   })
-  funs <- list(`__eval_tidy__` = eval_tidy, `__quo__` = quo)
+  funs <- list(
+    `__eval_tidy__` = eval_tidy,
+    `__quo__` = list(`__quo__` = quo)
+  )
 
   function(f) {
     is.function(f) %because% "Only functions can be tidied"
