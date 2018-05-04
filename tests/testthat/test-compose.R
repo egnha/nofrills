@@ -267,6 +267,26 @@ test_that("in pipeline, void call is interpreted as its caller", {
     expect_identical(log, decompose(cmp)[[1]])
 })
 
+test_that("functions in composition can be named", {
+  f0 <- function(x) log(abs(x) + 1)
+  fs <- list(
+    compose(!!"logarithm" := log, inc = function(x) x + 1, abs),
+    abs %>>>% inc: {. + 1} %>>>% !!"logarithm": log,
+    (!!"logarithm"): log %<<<% inc: {. + 1} %<<<% abs
+  )
+  vals <- {set.seed(1); runif(10)}
+
+  for (f in fs) {
+    expect_equal(f(vals), f0(vals))
+
+    pipeline <- decompose(f)
+    expect_identical(names(pipeline), c("logarithm", "inc", ""))
+    expect_equal(pipeline[[3]](vals), abs(vals))
+    expect_equal(pipeline$logarithm(vals), log(vals))
+    expect_equal(pipeline$inc(vals), vals + 1)
+  }
+})
+
 context("Decomposing compositions")
 
 test_that("decomposing a non-composite function wraps it in a list", {
