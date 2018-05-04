@@ -125,11 +125,6 @@ fn_interp.quosure <- function(x) {
   lambda_partial(expr, quo_get_env(x))
 }
 
-#' @export
-fn_interp.quosures <- function(x) {
-  lapply(x, fn_interp.quosure)
-}
-
 is_compose_op <- function(expr) {
   is_forward_compose(expr) || is_backward_compose(expr)
 }
@@ -140,8 +135,12 @@ lambda_named <- function(expr, env) {
   expr <- expr(`__quos__`(!!expr[[2]] := !!expr[[3]]))
   fn_interp(eval(expr, list(`__quos__` = quos), env))
 }
-
 is_named <- check_head(":")
+
+lambda <- function(body, env) {
+  new_fn(alist(. = ), body, env)
+}
+is_lambda <- check_head("{")
 
 lambda_partial <- local({
   is_void <- function(call) length(call) == 1L
@@ -157,11 +156,10 @@ lambda_partial <- local({
   }
 })
 
-lambda <- function(body, env) {
-  new_fn(alist(. = ), body, env)
+#' @export
+fn_interp.quosures <- function(x) {
+  lapply(x, fn_interp.quosure)
 }
-
-is_lambda <- check_head("{")
 
 #' @export
 fn_interp.list <- function(x) {
