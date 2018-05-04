@@ -261,7 +261,7 @@ literal_tidy <- local({
 fn <- fn_constructor(literal_tidy)
 
 literal <- function(...) {
-  exprs <- eval(substitute(alist(...)))
+  exprs <- as.list(substitute(...()))
   exprs %named% names_chr(exprs)
 }
 

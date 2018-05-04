@@ -1,7 +1,9 @@
 # Aliases
 list_tidy <- list2
 names_chr <- names2
-`%named%` <- set_names
+`%named%` <- function(x, nms) {
+  `names<-`(x, nms)
+}
 
 new_fn <- function(..args, ..body, ..env = NULL, ...) {
   if (!is.pairlist(..args))
