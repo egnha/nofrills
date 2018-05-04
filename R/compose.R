@@ -96,9 +96,9 @@ compose <- function(...) {
   fn_init <- closure(pipeline[[n]])
   fmls <- formals(fn_init)
   call <- iterated_call(n, fmls)
-  names(pipeline) <- call$fnames
-  env <- environment(fn_init) %encloses% pipeline
-  makeActiveBinding("__pipeline__", get_pipeline(pipeline, env), env)
+  fnames <- call$fnames
+  env <- environment(fn_init) %encloses% (pipeline %named% fnames)
+  makeActiveBinding("__pipeline__", get_pipeline(pipeline, fnames, env), env)
   fn_cmps <- new_fn(fmls, call$expr, env)
   class(fn_cmps) <- c("CompositeFunction", "function")
   fn_cmps
@@ -118,9 +118,16 @@ fn_interp.quosure <- function(x) {
   expr <- quo_get_expr(x)
   if (!is.call(expr) || is_compose_op(expr))
     return(fn_interp(eval_tidy(x)))
+  if (is_named(expr))
+    return(lambda_named(expr, quo_get_env(x)))
   if (is_lambda(expr))
     return(lambda(expr, quo_get_env(x)))
   lambda_partial(expr, quo_get_env(x))
+}
+
+#' @export
+fn_interp.quosures <- function(x) {
+  lapply(x, fn_interp.quosure)
 }
 
 is_compose_op <- function(expr) {
@@ -128,6 +135,13 @@ is_compose_op <- function(expr) {
 }
 is_forward_compose  <- check_head("%>>>%")
 is_backward_compose <- check_head("%<<<%")
+
+lambda_named <- function(expr, env) {
+  expr <- expr(`__quos__`(!!expr[[2]] := !!expr[[3]]))
+  fn_interp(eval(expr, list(`__quos__` = quos), env))
+}
+
+is_named <- check_head(":")
 
 lambda_partial <- local({
   is_void <- function(call) length(call) == 1L
@@ -192,11 +206,13 @@ iterated_call <- local({
   }
 })
 
-get_pipeline <- function(pipeline, env) {
+get_pipeline <- function(pipeline, fnames, env) {
+  force(fnames)
   force(env)
   nms <- names(pipeline)
-  function(.) {
-    unname(mget(nms, envir = env, mode = "function", inherits = FALSE))
+
+  function() {
+    mget(fnames, envir = env, mode = "function", inherits = FALSE) %named% nms
   }
 }
 
