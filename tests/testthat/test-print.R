@@ -29,18 +29,19 @@ test_that("tidy function shows underlying function", {
 })
 
 test_that("composition of functions shows composite functions", {
-  f <- compose(log, partial(`+`, 1), abs)
+  f <- compose(log, inc = partial(`+`, 1), abs)
   out <- c(
     "<Function Composition (in calling order)>",
     "",
-    " 1: function (x)  .Primitive(\"abs\")",
+    " 1. function (x)  .Primitive(\"abs\")",
     "",
-    " 2: <Partially Applied Function>",
+    " 2. $inc",
+    "    <Partially Applied Function>",
     "    function(.y) {",
     "      (^1) + .y",
     "    }",
     "",
-    " 3: function (x, base = exp(1))  .Primitive(\"log\")",
+    " 3. function (x, base = exp(1))  .Primitive(\"log\")",
     "",
     "Recover the list of functions with 'decompose()'."
   )
