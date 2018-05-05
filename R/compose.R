@@ -152,7 +152,7 @@ lambda_partial <- local({
         f <- get(as.character(call[[1L]]), envir = env, mode = "function")
         match.call(args(f), call)
       },
-      error = function(.) .$message
+      error = function(e) e$message
     )
     is.call(match_call) %because%
       fmt("%s must be a valid call: %s", expr_label(call), match_call)
