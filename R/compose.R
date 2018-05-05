@@ -146,6 +146,18 @@ is_lambda <- check_head("{")
 lambda_partial <- local({
   is_void <- function(call) length(call) == 1L
   placeholder <- as.name(".")
+  validate <- function(call, env) {
+    match_call <- tryCatch(
+      {
+        f <- get(as.character(call[[1L]]), envir = env, mode = "function")
+        match.call(args(f), call)
+      },
+      error = function(.) .$message
+    )
+    if (is.character(match_call))
+      halt("%s is an invalid call: %s", expr_label(call), match_call)
+    invisible(call)
+  }
 
   function(call, env) {
     if (is_void(call)) {
@@ -157,6 +169,7 @@ lambda_partial <- local({
     args <- as.list(call)[-1L]
     if (all(args != placeholder))
       call <- as.call(c(call[[1L]], quote(.), args))
+    validate(call, env)
     lambda(call, env)
   }
 })

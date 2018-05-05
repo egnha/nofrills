@@ -303,6 +303,24 @@ test_that("functions in composition can be named", {
   }
 })
 
+test_that("error is signaled when implicit partialization is invalid (#43)", {
+  f <- function(x, y) NULL
+  foo <- quote(foo)
+
+  expect_error(
+    identity %>>>% f(a, b),
+    "`f\\(\\., a, b\\)` is an invalid call"
+  )
+  expect_error(
+    identity %>>>% f(z = .),
+    "`f\\(z = \\.\\)` is an invalid call"
+  )
+  expect_error(
+    identity %>>>% foo(.),
+    "object 'foo' of mode 'function' was not found"
+  )
+})
+
 context("Decomposing compositions")
 
 test_that("decomposing a non-composite function wraps it in a list", {
