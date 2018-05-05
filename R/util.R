@@ -54,6 +54,10 @@ box <- function(x) {
   invisible(TRUE)
 }
 
+`%unless%` <- function(expr, failure) {
+  tryCatch(expr, error = function(e) halt(failure, e$message))
+}
+
 halt <- function(msg, ...) {
   stop(fmt(msg, ...), call. = FALSE)
 }

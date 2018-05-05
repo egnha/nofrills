@@ -309,11 +309,11 @@ test_that("error is signaled when implicit partialization is invalid (#43)", {
 
   expect_error(
     identity %>>>% f(a, b),
-    "`f\\(\\., a, b\\)` must be a valid call"
+    "`f\\(\\., a, b\\)` is an invalid call"
   )
   expect_error(
     identity %>>>% f(z = .),
-    "`f\\(z = \\.\\)` must be a valid call"
+    "`f\\(z = \\.\\)` is an invalid call"
   )
   expect_error(
     identity %>>>% foo(.),
