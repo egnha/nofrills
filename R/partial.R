@@ -91,12 +91,19 @@
 partial <- local({
   assign_setter("expr_partial")
 
+  expr_fn <- function(..f, f) {
+    expr <- substitute(..f, parent.frame())
+    if (is.name(expr))
+      return(expr)
+    call("(", call("function", formals(f), quote(...)))
+  }
+
   function(..f, ...) {
     if (missing(...))
       return(..f)
     f <- closure(..f)
     p <- partial_(f, ...)
-    expr_partial(p) <- expr_partial(f) %||% expr_fn(substitute(..f), formals(f))
+    expr_partial(p) <- expr_partial(f) %||% expr_fn(..f, f)
     class(p) <- "PartialFunction" %subclass% class(..f)
     p
   }
@@ -206,12 +213,6 @@ map_eneval_tidy <- local({
   eneval_tidy <- function(nm) call("eval_tidy", as.name(nm))
   function(xs) lapply(xs, eneval_tidy)
 })
-
-expr_fn <- function(expr, fmls) {
-  if (is.name(expr))
-    return(expr)
-  call("(", call("function", fmls, quote(...)))
-}
 
 #' @rdname partial
 #' @export
