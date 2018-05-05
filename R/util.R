@@ -53,6 +53,10 @@ box <- function(x) {
   invisible(TRUE)
 }
 
+halt <- function(msg, ...) {
+  stop(sprintf(msg, ...), call. = FALSE)
+}
+
 `%subclass%` <- function(class, superclass) {
   wh_class <- which(superclass == class)
   if (is_empty(wh_class))

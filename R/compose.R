@@ -185,8 +185,7 @@ fn_interp.NULL <- function(x) NULL
 #' @export
 fn_interp.default <- function(x) {
   cls <- paste(deparse(class(x)), collapse = "")
-  msg <- sprintf("Cannot interpret object of class %s as a function", cls)
-  stop(msg, call. = FALSE)
+  halt("Cannot interpret object of class %s as a function", cls)
 }
 
 iterated_call <- local({
