@@ -132,8 +132,9 @@ is_forward_compose  <- check_head("%>>>%")
 is_backward_compose <- check_head("%<<<%")
 
 lambda_named <- function(expr, env) {
-  expr <- expr(`__quos__`(!!expr[[2]] := !!expr[[3]]))
-  fn_interp(eval(expr, list(`__quos__` = quos), env))
+  expr[[1L]] <- quote(`:=`)
+  enquos <- as.call(c(quos, expr))
+  fn_interp(eval(enquos, env))
 }
 is_named <- check_head(":")
 
