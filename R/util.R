@@ -2,7 +2,7 @@
 list_tidy <- list2
 names_chr <- names2
 `%named%` <- function(x, nm) `names<-`(x, nm)
-fmt       <- sprintf
+fmt       <- function(text, ...) sprintf(text, ...)
 
 new_fn <- function(..args, ..body, ..env = NULL, ...) {
   if (!is.pairlist(..args))
