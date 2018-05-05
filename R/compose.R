@@ -148,8 +148,12 @@ lambda_partial <- local({
   placeholder <- as.name(".")
 
   function(call, env) {
-    if (is_void(call))
-      return(eval(call[[1L]], env))
+    if (is_void(call)) {
+      f <- eval(call[[1L]], env)
+      if (!is.function(f))
+        halt("Expected %s to be a function", expr_label(call[[1L]]))
+      return(f)
+    }
     args <- as.list(call)[-1L]
     if (all(args != placeholder))
       call <- as.call(c(call[[1L]], quote(.), args))

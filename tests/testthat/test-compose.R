@@ -267,6 +267,22 @@ test_that("in pipeline, void call is interpreted as its caller", {
     expect_identical(log, decompose(cmp)[[1]])
 })
 
+test_that("error is signaled if void call in pipeline doesn't yield function", {
+  id <- function(f) f
+  foo <- quote(foo)
+
+  expect_errors_with_message(
+    "Expected `foo` to be a function",
+    foo() %<<<% abs,
+    abs %>>>% foo()
+  )
+  expect_errors_with_message(
+    "Expected `id\\(foo\\)` to be a function",
+    id(foo)() %<<<% abs,
+    abs %>>>% id(foo)()
+  )
+})
+
 test_that("functions in composition can be named", {
   f0 <- function(x) log(abs(x) + 1)
   fs <- list(
