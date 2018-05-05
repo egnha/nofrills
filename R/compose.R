@@ -154,16 +154,16 @@ lambda_partial <- local({
       },
       error = function(.) .$message
     )
-    if (is.character(match_call))
-      halt("%s is an invalid call: %s", expr_label(call), match_call)
+    is.call(match_call) %because%
+      fmt("%s must be a valid call: %s", expr_label(call), match_call)
     invisible(call)
   }
 
   function(call, env) {
     if (is_void(call)) {
       f <- eval(call[[1L]], env)
-      if (!is.function(f))
-        halt("Expected %s to be a function", expr_label(call[[1L]]))
+      is.function(f) %because%
+        fmt("%s must be a function (to be composable)", expr_label(call[[1L]]))
       return(f)
     }
     args <- as.list(call)[-1L]

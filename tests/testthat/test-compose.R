@@ -272,12 +272,12 @@ test_that("error is signaled if void call in pipeline doesn't yield function", {
   foo <- quote(foo)
 
   expect_errors_with_message(
-    "Expected `foo` to be a function",
+    "`foo` must be a function \\(to be composable\\)",
     foo() %<<<% abs,
     abs %>>>% foo()
   )
   expect_errors_with_message(
-    "Expected `id\\(foo\\)` to be a function",
+    "`id\\(foo\\)` must be a function \\(to be composable\\)",
     id(foo)() %<<<% abs,
     abs %>>>% id(foo)()
   )
@@ -309,11 +309,11 @@ test_that("error is signaled when implicit partialization is invalid (#43)", {
 
   expect_error(
     identity %>>>% f(a, b),
-    "`f\\(\\., a, b\\)` is an invalid call"
+    "`f\\(\\., a, b\\)` must be a valid call"
   )
   expect_error(
     identity %>>>% f(z = .),
-    "`f\\(z = \\.\\)` is an invalid call"
+    "`f\\(z = \\.\\)` must be a valid call"
   )
   expect_error(
     identity %>>>% foo(.),
