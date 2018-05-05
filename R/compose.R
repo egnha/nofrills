@@ -96,9 +96,9 @@ compose <- function(...) {
   fn_init <- closure(pipeline[[n]])
   fmls <- formals(fn_init)
   call <- iterated_call(n, fmls)
-  fnames <- call$fnames
-  env <- environment(fn_init) %encloses% (pipeline %named% fnames)
-  makeActiveBinding("__pipeline__", get_pipeline(pipeline, fnames, env), env)
+  fnms <- call$fnms
+  env <- environment(fn_init) %encloses% (pipeline %named% fnms)
+  makeActiveBinding("__pipeline__", get_fns(fnms, names(pipeline), env), env)
   fn_cmps <- new_fn(fmls, call$expr, env)
   class(fn_cmps) <- c("CompositeFunction", "function")
   fn_cmps
@@ -196,21 +196,22 @@ iterated_call <- local({
   }
 
   function(n, fmls) {
-    fnames <- sprintf("__%s__", n:1L)
-    expr <- as.call(c(as.name(fnames[[1L]]), args(fmls)))
-    for (fname in fnames[-1L])
-      expr <- call(fname, expr)
-    list(expr = expr, fnames = rev(fnames))
+    fnms <- sprintf("__%s__", n:1L)
+    expr <- as.call(c(as.name(fnms[[1L]]), args(fmls)))
+    for (nm in fnms[-1L])
+      expr <- call(nm, expr)
+    list(expr = expr, fnms = rev(fnms))
   }
 })
 
-get_pipeline <- function(pipeline, fnames, env) {
-  force(fnames)
+get_fns <- function(fnms, nms, env) {
+  force(fnms)
+  force(nms)
   force(env)
-  nms <- names(pipeline)
 
   function() {
-    mget(fnames, envir = env, mode = "function", inherits = FALSE) %named% nms
+    fns <- mget(fnms, envir = env, mode = "function", inherits = FALSE)
+    fns %named% nms
   }
 }
 
