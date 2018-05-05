@@ -1,9 +1,7 @@
 # Aliases
 list_tidy <- list2
 names_chr <- names2
-`%named%` <- function(x, nms) {
-  `names<-`(x, nms)
-}
+`%named%` <- function(x, nm) `names<-`(x, nm)
 
 new_fn <- function(..args, ..body, ..env = NULL, ...) {
   if (!is.pairlist(..args))
@@ -100,7 +98,8 @@ check_head <- function(nm) {
 # nocov end
 
 `%binds%` <- function(env, bindings) {
-  invisible(list2env(bindings, envir = env))
+  list2env(bindings, envir = env)
+  invisible(env)
 }
 
 `%encloses%` <- function(parent, bindings) {
