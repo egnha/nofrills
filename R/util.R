@@ -2,6 +2,7 @@
 list_tidy <- list2
 names_chr <- names2
 `%named%` <- function(x, nm) `names<-`(x, nm)
+fmt       <- sprintf
 
 new_fn <- function(..args, ..body, ..env = NULL, ...) {
   if (!is.pairlist(..args))
@@ -54,7 +55,7 @@ box <- function(x) {
 }
 
 halt <- function(msg, ...) {
-  stop(sprintf(msg, ...), call. = FALSE)
+  stop(fmt(msg, ...), call. = FALSE)
 }
 
 `%subclass%` <- function(class, superclass) {

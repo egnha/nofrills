@@ -179,7 +179,7 @@ quos_match <- local({
 
 privatize <- local({
   privatize_ <- function(xs, nms = xs) {
-    sprintf("..%s..", xs) %named% nms
+    fmt("..%s..", xs) %named% nms
   }
   n_dots <- function(x) {
     if (is.null(x))

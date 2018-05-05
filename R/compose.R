@@ -213,7 +213,7 @@ iterated_call <- local({
   }
 
   function(n, fmls) {
-    fnms <- sprintf("__%s__", n:1L)
+    fnms <- fmt("__%s__", n:1L)
     expr <- as.call(c(as.name(fnms[[1L]]), args(fmls)))
     for (nm in fnms[-1L])
       expr <- call(nm, expr)
@@ -261,8 +261,8 @@ print.CompositeFunction <- function(x, ...) {
   nms <- names_chr(fns)
   nms[!nzchar(nms)] <- list(NULL)
   for (i in seq_along(fns)) {
-    out <- c(sprintf("$%s", nms[[i]]), trim_capture(fns[[i]]))
-    pad <- c(sprintf("%2d.\ ", i), rep("\ \ \ \ ", length(out) - 1L))
+    out <- c(fmt("$%s", nms[[i]]), trim_capture(fns[[i]]))
+    pad <- c(fmt("%2d.\ ", i), rep("\ \ \ \ ", length(out) - 1L))
     cat("\n", paste0(pad, out, "\n"), sep = "")
   }
   cat("\nRecover the list of functions with 'decompose()'.")
