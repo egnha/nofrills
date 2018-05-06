@@ -306,7 +306,7 @@ test_that("functions in composition can be named", {
 
 test_that("error is signaled when implicit partialization is invalid (#43)", {
   f <- function(x, y) NULL
-  foo <- quote(foo)
+  notfun <- quote(notfun)
 
   expect_error(
     identity %>>>% f(a, b),
@@ -317,8 +317,8 @@ test_that("error is signaled when implicit partialization is invalid (#43)", {
     "`f\\(z = \\.\\)` is an invalid call"
   )
   expect_error(
-    identity %>>>% foo(.),
-    "object 'foo' of mode 'function' was not found"
+    identity %>>>% notfun(.),
+    "object 'notfun' of mode 'function' was not found"
   )
 })
 
