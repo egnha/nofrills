@@ -88,7 +88,7 @@ test_that("NULL and identity are dropped when composing", {
   vals <- {set.seed(1); runif(10)}
   for (cmp in cmps) {
     expect_equal(cmp(vals), cmp0(vals))
-    expect_identical(decompose(cmp), list(log, inc))
+    expect_equivalent(decompose(cmp), list(log, inc))
   }
 })
 
@@ -247,12 +247,12 @@ test_that("composition operator yields flattened compositions", {
   p <- sq %>>>% sq
   q <- p %>>>% id %>>>% sq
   r <- q %>>>% id
-  expect_identical(decompose(r), list(id, sq, id, sq, sq))
+  expect_equivalent(decompose(r), list(id, sq, id, sq, sq))
 
   p <- sq %<<<% sq
   q <- sq %<<<% id %<<<% p
   r <- id %<<<% q
-  expect_identical(decompose(r), list(id, sq, id, sq, sq))
+  expect_equivalent(decompose(r), list(id, sq, id, sq, sq))
 })
 
 test_that("in pipeline, void call is interpreted as its caller", {

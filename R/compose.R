@@ -98,7 +98,7 @@ compose <- function(...) {
   call <- iterated_call(n, fmls)
   fnms <- call$fnms
   env <- environment(fn_init) %encloses% (pipeline %named% fnms)
-  makeActiveBinding("__pipeline__", get_fns(fnms, names(pipeline), env), env)
+  makeActiveBinding("__pipeline__", get_fns(fnms, names_chr(pipeline), env), env)
   fn_cmps <- new_fn(fmls, call$expr, env)
   class(fn_cmps) <- c("CompositeFunction", "function")
   fn_cmps
