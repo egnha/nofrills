@@ -239,6 +239,70 @@ get_fns <- function(fnms, nms, env) {
 `%<<<%` <- opposite(`%>>>%`)
 
 #' @export
+`$.CompositeFunction` <- function(x, i) {
+  fns <- as.list.CompositeFunction(x)
+  .subset2(fns, i)
+}
+#' @export
+`$<-.CompositeFunction` <- function(x, name, value) {
+  fns <- as.list.CompositeFunction(x)
+  fns[[name]] <- value
+  compose(fns)
+}
+
+#' @export
+`[[.CompositeFunction` <- function(x, i, ...) {
+  fns <- as.list.CompositeFunction(x)
+  if (is.numeric(i))
+    i <- length(fns) + 1L - i
+  .subset2(fns, i)
+}
+#' @export
+`[[<-.CompositeFunction` <- function(x, i, value) {
+  fns <- as.list.CompositeFunction(x)
+  if (is.numeric(i))
+    i <- length(fns) + 1L - i
+  fns[[i]] <- value
+  compose(fns)
+}
+
+#' @export
+`[.CompositeFunction` <- function(x, i) {
+  if (missing(i))
+    return(x)
+  fns <- as.list.CompositeFunction(x)
+  if (is.numeric(i)) {
+    len <- length(fns)
+    i <- i[abs(i) <= len]
+    i <- sign(i) * (len + 1L - abs(i))
+  }
+  (!is.logical(i) || length(i) == length(fns)) %because%
+    fmt("Length of predicate (%d) must equal length of composition (%d)",
+        length(i), length(fns))
+  compose(.subset(fns, rev(i)))
+}
+
+#' @export
+names.CompositeFunction <- function(x) {
+  rev(names(as.list.CompositeFunction(x)))
+}
+#' @export
+`names<-.CompositeFunction` <- function(x, value) {
+  fns <- as.list.CompositeFunction(x)
+  if (is.null(value))
+    value <- rep("", length(fns))
+  else
+    value <- rev(value %|% "")
+  names(fns) <- value
+  compose(fns)
+}
+
+#' @export
+length.CompositeFunction <- function(x) {
+  length(as.list.CompositeFunction(x))
+}
+
+#' @export
 as.list.CompositeFunction <- local({
   decompose <- getter("__pipeline__")
   function(x, ...) decompose(x)
