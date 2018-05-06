@@ -43,7 +43,7 @@ test_that("composition of functions shows composite functions", {
     "",
     " 3. function (x, base = exp(1))  .Primitive(\"log\")",
     "",
-    "Recover the list of functions with 'decompose()'."
+    "Recover the list of functions with 'as.list()'."
   )
   expect_identical(capture.output(print(f)), out)
 })

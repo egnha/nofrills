@@ -88,7 +88,7 @@ test_that("NULL and identity are dropped when composing", {
   vals <- {set.seed(1); runif(10)}
   for (cmp in cmps) {
     expect_equal(cmp(vals), cmp0(vals))
-    expect_equivalent(decompose(cmp), list(log, inc))
+    expect_equivalent(as.list(cmp), list(log, inc))
   }
 })
 
@@ -142,12 +142,13 @@ test_that("nested compositions are flattened", {
     compose((!!((!!((!!gs[[4]]) %>>>% !!gs[[3]])) %>>>% (!!gs[[2]]))) %>>>% !!gs[[1]])
   )
   for (cmp in cmps)
-    expect_equivalent(decompose(cmp), gs)
+    expect_equivalent(as.list(cmp), gs)
 
   # Test by value
   cmps <- Reduce(compose, gs, accumulate = TRUE)
-  for (i in seq_along(gs))
-    expect_equivalent(decompose(cmps[[i]]), gs[seq_len(i)])
+  expect_equivalent(cmps[[1]], gs[[1]])
+  for (i in seq_along(gs)[-1])
+    expect_equivalent(as.list(cmps[[i]]), gs[seq_len(i)])
 })
 
 test_that("list of functions can be spliced", {
@@ -247,12 +248,12 @@ test_that("composition operator yields flattened compositions", {
   p <- sq %>>>% sq
   q <- p %>>>% id %>>>% sq
   r <- q %>>>% id
-  expect_equivalent(decompose(r), list(id, sq, id, sq, sq))
+  expect_equivalent(as.list(r), list(id, sq, id, sq, sq))
 
   p <- sq %<<<% sq
   q <- sq %<<<% id %<<<% p
   r <- id %<<<% q
-  expect_equivalent(decompose(r), list(id, sq, id, sq, sq))
+  expect_equivalent(as.list(r), list(id, sq, id, sq, sq))
 })
 
 test_that("in pipeline, void call is interpreted as its caller", {
@@ -264,7 +265,7 @@ test_that("in pipeline, void call is interpreted as its caller", {
     abs %>>>% id(log)()
   )
   for (cmp in cmps)
-    expect_identical(log, decompose(cmp)[[1]])
+    expect_identical(log, as.list(cmp)[[1]])
 })
 
 test_that("error is signaled if void call in pipeline doesn't yield function", {
@@ -295,7 +296,7 @@ test_that("functions in composition can be named", {
   for (f in fs) {
     expect_equal(f(vals), f0(vals))
 
-    pipeline <- decompose(f)
+    pipeline <- as.list(f)
     expect_identical(names(pipeline), c("logarithm", "inc", ""))
     expect_equal(pipeline[[3]](vals), abs(vals))
     expect_equal(pipeline$logarithm(vals), log(vals))
@@ -323,38 +324,26 @@ test_that("error is signaled when implicit partialization is invalid (#43)", {
 
 context("Decomposing compositions")
 
-test_that("decomposing a non-composite function wraps it in a list", {
-  for (f in fn_kinds[c("closure", "special", "builtin")])
-    expect_identical(decompose(f), list(f))
-})
-
-test_that("error is signalled when decomposing a non-function", {
-  expect_errors_with_message(
-    "Only functions can be decomposed",
-    decompose(NULL),
-    decompose(~function() NULL),
-    decompose(quote(function() NULL)),
-    decompose(list(function() NULL))
-  )
-})
-
 test_that("list of composite functions is flat", {
   for (assoc in cmps)
-    expect_equivalent(decompose(assoc), fs)
+    expect_equivalent(as.list(assoc), fs)
 })
 
-test_that("decompose() inverts compose()", {
-  expect_equivalent(decompose(compose(fs)), fs)
-  expect_equivalent(decompose(compose(fs[[1]], fs[[2]], fs[[3]])), fs)
-  expect_equivalent(decompose(compose(fs[[1]], fs[[2]])), fs[1:2])
-  expect_equivalent(decompose(compose(fs[[1]])), fs[1])
+test_that("as.list() inverts compose()", {
+  expect_equivalent(as.list(compose(fs)), fs)
+  expect_equivalent(as.list(compose(fs[[1]], fs[[2]], fs[[3]])), fs)
+  expect_equivalent(as.list(compose(fs[[1]], fs[[2]])), fs[1:2])
 })
 
-test_that("compose() inverts decompose()", {
+test_that("compose() inverts as.list()", {
+  cmp1 <- compose(fs)
+  cmp2 <- compose(as.list(compose(fs)))
+
   # Test by call
-  expect_equal(compose(decompose(compose(fs))), compose(fs))
+  expect_equal(cmp1, cmp2)
 
   # Test by value
-  for (f in fn_kinds)
-    expect_equal(compose(decompose(f)), f)
+  vals <- {set.seed(1); runif(10)}
+  for (val in vals)
+    expect_equal(cmp1(val), cmp2(val))
 })

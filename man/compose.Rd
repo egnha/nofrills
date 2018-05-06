@@ -4,7 +4,6 @@
 \alias{compose}
 \alias{\%>>>\%}
 \alias{\%<<<\%}
-\alias{decompose}
 \title{Compose functions}
 \usage{
 compose(...)
@@ -12,8 +11,6 @@ compose(...)
 fst \%>>>\% snd
 
 snd \%<<<\% fst
-
-decompose(f)
 }
 \arguments{
 \item{...}{Functions or lists thereof to compose. Lists of functions are
@@ -22,17 +19,11 @@ automatically spliced in. (Explicit \link[rlang:quasiquotation]{splicing} via
 right to left.}
 
 \item{fst, snd}{Functions.}
-
-\item{f}{Function.}
 }
 \value{
 \code{compose()}, \code{\%<<<\%} and \code{\%>>>\%} return a function
 composition, whose \link[base:formals]{formals} match those of the initial
 function called (as a closure).
-
-\code{decompose()} returns the list of composite functions of a function
-composition (in reverse calling order), and wraps a non-composite function
-in a list.
 }
 \description{
 Compose functions in three ways:
@@ -45,7 +36,7 @@ is another way to express \code{compose(f, g)}.
 is another way to express \code{compose(g, f)}.
 }
 
-Use \code{decompose()} to recover the list of composite functions of a function
+Use \code{as.list()} to recover the list of composite functions of a function
 composition.
 }
 \section{Properties}{
@@ -58,9 +49,9 @@ are implemented as the \emph{same function}. In other words, lists of functions
 are automatically \dQuote{flattened out} when they are composed, so nested
 compositions do not pile up.
 
-\code{decompose()} and \code{compose()} are \emph{mutually invertible}.
-\code{compose(decompose(f))} is the same as \code{f}, when \code{f} is a function.
-\code{decompose(compose(fs))} is the same as \code{fs}, when \code{fs} is a list of
+\code{as.list()} and \code{compose()} are \emph{mutually invertible}.
+\code{compose(as.list(f))} is the same as \code{f}, when \code{f} is a function.
+\code{as.list(compose(fs))} is the same as \code{fs}, when \code{fs} is a list of
 functions.
 }
 
@@ -68,15 +59,15 @@ functions.
 # Functions are composed from right to left (following convention)
 inv <- partial(`/`, 1)  # reciprocal
 f <- compose(inv, log, abs)
-stopifnot(isTRUE(all.equal(f(-2), 1 / log(abs(-2)))))
+stopifnot(all.equal(f(-2), 1 / log(abs(-2))))
 
 # "Backward" composition operator composes from right to left, like compose()
 f1 <- inv \%<<<\% log \%<<<\% abs
-stopifnot(isTRUE(all.equal(f1(-2), f(-2))))
+stopifnot(all.equal(f1(-2), f(-2)))
 
 # Forward composition operator composes from left to right
 f2 <- abs \%>>>\% log \%>>>\% inv
-stopifnot(isTRUE(all.equal(f2(-2), f(-2))))
+stopifnot(all.equal(f2(-2), f(-2)))
 
 # Presume to_json()/from_json() convert to/from JSON
 \dontrun{
@@ -95,16 +86,20 @@ f4 <- compose(!!! list(inv, log, abs))
 f5 <- compose(inv, list(log, abs))
 f6 <- compose(inv, !!! list(log, abs))
 stopifnot(
-  isTRUE(all.equal(f3, f)), isTRUE(all.equal(f3(-2), f(-2))),
-  isTRUE(all.equal(f4, f)), isTRUE(all.equal(f4(-2), f(-2))),
-  isTRUE(all.equal(f5, f)), isTRUE(all.equal(f5(-2), f(-2))),
-  isTRUE(all.equal(f6, f)), isTRUE(all.equal(f6(-2), f(-2)))
+  all.equal(f3, f), all.equal(f3(-2), f(-2)),
+  all.equal(f4, f), all.equal(f4(-2), f(-2)),
+  all.equal(f5, f), all.equal(f5(-2), f(-2)),
+  all.equal(f6, f), all.equal(f6(-2), f(-2))
 )
 
-# compose() and decompose() are mutally invertible
-f7 <- compose(inv, decompose(compose(log, abs)))
-stopifnot(isTRUE(all.equal(f7, f)), isTRUE(all.equal(f7(-2), f(-2))))
+# compose() and as.list() are mutally invertible
+f7 <- compose(inv, as.list(compose(log, abs)))
+stopifnot(
+  all.equal(f7, f), all.equal(f7(-2), f(-2))
+)
 fs <- list(inv, log, abs)
-stopifnot(isTRUE(all.equal(decompose(compose(fs)), fs)))
+stopifnot(all.equal(check.attributes = FALSE,
+  as.list(compose(fs)), fs,
+))
 
 }
