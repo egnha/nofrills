@@ -347,3 +347,122 @@ test_that("compose() inverts as.list()", {
   for (val in vals)
     expect_equal(cmp1(val), cmp2(val))
 })
+
+context("Generic methods")
+
+sq <- function(x) x^2
+foo <- sq %>>>% inc:{. + 1} %>>>% log:log
+
+vals <- {set.seed(1); runif(10, 1, 2)}
+
+test_that("function in composition can be extracted by name", {
+  expect_equal(foo$inc(vals), vals + 1)
+  expect_equal(foo[["inc"]](vals), vals + 1)
+  expect_equal(foo$log(vals), log(vals))
+  expect_equal(foo[["log"]](vals), log(vals))
+})
+
+test_that("compositions can be filtered by name", {
+  expect_equal(foo["inc"](vals), vals + 1)
+  expect_equal(foo["log"](vals), log(vals))
+  expect_equal(foo[c("inc", "log")](vals), log(vals + 1))
+  expect_equal(foo[c("log", "inc")](vals), log(vals) + 1)
+})
+
+test_that("compositions can be filtered by position", {
+  expect_equal(foo[1](vals), sq(vals))
+  expect_equal(foo[2](vals), vals + 1)
+  expect_equal(foo[3](vals), log(vals))
+  expect_equal(foo[-1](vals), log(vals + 1))
+  expect_equal(foo[-2](vals), log(sq(vals)))
+  expect_equal(foo[-3](vals), sq(vals) + 1)
+  expect_equal(foo[c(1, 2)](vals), sq(vals) + 1)
+  expect_equal(foo[c(2, 1)](vals), sq(vals + 1))
+  expect_equal(foo[c(1, 3)](vals), log(sq(vals)))
+  expect_equal(foo[c(3, 1)](vals), sq(log(vals)))
+  expect_equal(foo[c(2, 3)](vals), log(vals + 1))
+  expect_equal(foo[c(3, 2)](vals), log(vals) + 1)
+  expect_equal(foo[-c(1, 2)](vals), log(vals))
+  expect_equal(foo[-c(1, 3)](vals), vals + 1)
+  expect_equal(foo[-c(2, 3)](vals), sq(vals))
+  expect_equal(foo[c(1, 2, 3)](vals), log(sq(vals) + 1))
+  expect_equal(foo[c(1, 3, 2)](vals), log(sq(vals)) + 1)
+  expect_equal(foo[c(2, 3, 1)](vals), sq(log(vals + 1)))
+  expect_equal(foo[c(2, 1, 3)](vals), log(sq(vals + 1)))
+  expect_equal(foo[c(3, 1, 2)](vals), sq(log(vals)) + 1)
+  expect_equal(foo[c(3, 2, 1)](vals), sq(log(vals) + 1))
+})
+
+test_that("compositions can be filtered by predicate", {
+  expect_null(foo[c(F, F, F)])
+  expect_equal(foo[c(F, F, T)](vals), log(vals))
+  expect_equal(foo[c(F, T, F)](vals), vals + 1)
+  expect_equal(foo[c(F, T, T)](vals), log(vals + 1))
+  expect_equal(foo[c(T, F, F)](vals), sq(vals))
+  expect_equal(foo[c(T, F, T)](vals), log(sq(vals)))
+  expect_equal(foo[c(T, T, F)](vals), sq(vals) + 1)
+  expect_equal(foo[c(T, T, T)](vals), log(sq(vals) + 1))
+})
+
+test_that("error signaled when predicate is of unequal length", {
+  expect_error(
+    foo[c(T, T, T, T)],
+    "Length of predicate \\(4\\) must equal length of composition \\(3\\)"
+  )
+})
+
+test_that("filtering composition out-of-bounds yields NULL", {
+  expect_null(foo[0])
+  expect_null(foo[length(foo) + 1])
+  expect_null(foo$nonexistent)
+  expect_null(foo[["nonexistent"]])
+})
+
+test_that("compositions can be replaced by name", {
+  bar <- sq %>>>% inc:{. + 1} %>>>% log:log
+
+  bar$log <- NULL
+  expect_equal(bar(vals), sq(vals) + 1)
+
+  bar$inc <- sin
+  expect_equal(bar(vals), sin(sq(vals)))
+
+  bar[["inc"]] <- cos
+  expect_equal(bar(vals), cos(sq(vals)))
+
+  bar[["inc"]] <- NULL
+  expect_equal(bar(vals), sq(vals))
+})
+
+test_that("compositions can be replaced by index", {
+  bar <- sq %>>>% inc:{. + 1} %>>>% log:log
+
+  bar[[3]] <- NULL
+  expect_equal(bar(vals), sq(vals) + 1)
+
+  bar[[2]] <- sin
+  expect_equal(bar(vals), sin(sq(vals)))
+})
+
+test_that("composition names are in call-order", {
+  expect_named(foo, c("", "inc", "log"))
+})
+
+test_that("compositions can be renamed", {
+  bar <- sq %>>>% inc:{. + 1} %>>>% log:log
+
+  names(bar) <- c("square", "increment", "logarithm")
+  expect_named(bar, c("square", "increment", "logarithm"))
+  expect_equal(bar$square(vals), sq(vals))
+  expect_equal(bar$increment(vals), vals + 1)
+  expect_equal(bar$logarithm(vals), log(vals))
+
+  names(bar) <- NULL
+  expect_named(bar, rep("", length(bar)))
+})
+
+test_that("composition length is the number of component functions", {
+  expect_length(sin, 1)
+  expect_length(sin %>>>% cos, 2)
+  expect_length(sin %>>>% cos %>>>% tan, 3)
+})
