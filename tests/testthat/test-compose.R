@@ -40,11 +40,11 @@ test_that("composition returns a single function unchanged", {
     expect_equal(compose(f), f)
 })
 
-test_that("empty or length 0 composition yields the identity function (#41)", {
-  expect_identical(identity, compose())
-  expect_identical(identity, compose(NULL))
-  expect_identical(identity, compose(list()))
-  expect_identical(identity, compose(!!!list()))
+test_that("empty or NULL composition yields NULL", {
+  expect_null(compose())
+  expect_null(compose(NULL))
+  expect_null(compose(list()))
+  expect_null(compose(!!!list()))
 })
 
 test_that("NULL and identity are dropped when composing", {

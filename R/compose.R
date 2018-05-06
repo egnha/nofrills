@@ -90,7 +90,7 @@ compose <- function(...) {
   pipeline <- flatten_fns(...)
   n <- length(pipeline)
   if (n == 0L)
-    return(identity)
+    return(NULL)
   if (n == 1L)
     return(pipeline[[1L]])
   fn_init <- closure(pipeline[[n]])
