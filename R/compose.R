@@ -16,7 +16,7 @@
 #'
 #' - Alternatively, use the infix notation \code{f \%>>>\% g \%>>>\% ...}, which
 #'   comprehends the semantics of the
-#'   [magrittr](https://cran.r-project.org/package=magrittr)-\code{\%>\%}
+#'   [\pkg{magrittr}](https://cran.r-project.org/package=magrittr)-\code{\%>\%}
 #'   operator and, additionally, [quasiquotation][rlang::quasiquotation].
 #'   Thus, assuming `sep` has the value `""`,
 #'   \preformatted{sample \%>>>\% paste(collapse = !!sep)}
@@ -241,7 +241,7 @@ get_fns <- function(fnms, nms, env) {
 #' @param inner,outer Functions. These may be optionally named using `:`, e.g.,
 #'   \code{f \%>>>\% nm: g} names the `g`-component.
 #'   [Quasiquotation][rlang::quasiquotation] and the
-#'   [magrittr](https://cran.r-project.org/package=magrittr)-\code{\%>\%}
+#'   [\pkg{magrittr}](https://cran.r-project.org/package=magrittr)-\code{\%>\%}
 #'   semantics are supported (see _Examples_).
 #'
 #' @rdname compose

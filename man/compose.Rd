@@ -18,7 +18,7 @@ via \code{!!!}, are supported.}
 \item{inner, outer}{Functions. These may be optionally named using \code{:}, e.g.,
 \code{f \%>>>\% nm: g} names the \code{g}-component.
 \link[rlang:quasiquotation]{Quasiquotation} and the
-\href{https://cran.r-project.org/package=magrittr}{magrittr}-\code{\%>\%}
+\href{https://cran.r-project.org/package=magrittr}{\pkg{magrittr}}-\code{\%>\%}
 semantics are supported (see \emph{Examples}).}
 }
 \value{
@@ -38,7 +38,7 @@ is equivalent to the function\preformatted{function(..., sep = " ", collapse = N
 }
 \item Alternatively, use the infix notation \code{f \%>>>\% g \%>>>\% ...}, which
 comprehends the semantics of the
-\href{https://cran.r-project.org/package=magrittr}{magrittr}-\code{\%>\%}
+\href{https://cran.r-project.org/package=magrittr}{\pkg{magrittr}}-\code{\%>\%}
 operator and, additionally, \link[rlang:quasiquotation]{quasiquotation}.
 Thus, assuming \code{sep} has the value \code{""},
 \preformatted{sample \%>>>\% paste(collapse = !!sep)}
