@@ -162,7 +162,7 @@ lambda <- function(body, env) {
 is_lambda <- check_head("{")
 
 lambda_partial <- local({
-  placeholder <- as.name(".")
+  arg <- as.name(".")
   is_void <- function(call) {
     length(call) == 1L
   }
@@ -179,7 +179,7 @@ lambda_partial <- local({
       return(f)
     }
     args <- as.list(call)[-1L]
-    if (all(args != placeholder))
+    if (all(args != arg))
       call <- as.call(c(call[[1L]], quote(.), args))
     call <- standardize(call, env) %unless%
       fmt("%s is an invalid call: %%s", expr_label(call))
