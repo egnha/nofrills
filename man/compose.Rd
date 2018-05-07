@@ -61,9 +61,8 @@ are automatically “flattened out” when they are composed—intermediate
 compositions are spliced rather than nested.
 
 \code{as.list()} and \code{compose()} are \emph{mutually invertible}.
-\code{compose(as.list(f))} is the same as \code{f}, when \code{f} is a function.
 \code{as.list(compose(fs))} is the same as \code{fs}, when \code{fs} is a list of
-functions.
+functions (though the names of \code{as.list()} are always strings).
 }
 
 \examples{

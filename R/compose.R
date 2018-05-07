@@ -47,9 +47,8 @@
 #'   compositions are spliced rather than nested.
 #'
 #'   `as.list()` and `compose()` are _mutually invertible_.
-#'   `compose(as.list(f))` is the same as `f`, when `f` is a function.
 #'   `as.list(compose(fs))` is the same as `fs`, when `fs` is a list of
-#'   functions.
+#'   functions (though the names of `as.list()` are always strings).
 #'
 #' @examples
 #' # Functions are composed from right to left (following convention)

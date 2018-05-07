@@ -413,6 +413,10 @@ test_that("composition names are in call-order", {
   expect_named(foo, c("", "inc", "log"))
 })
 
+test_that("unnamed compositions have empty-string names", {
+  expect_named(abs %>>>% log %>>>% sin, c("", "", ""))
+})
+
 test_that("compositions can be renamed", {
   bar <- sq %>>>% inc:{. + 1} %>>>% log:log
 
