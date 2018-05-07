@@ -288,9 +288,9 @@ get_fns <- function(fnms, nms, env) {
   fns <- as.list.CompositeFunction(x)
   if (is.numeric(i))
     i <- i[abs(i) <= length(fns)]
-  (!is.logical(i) || length(i) == length(fns)) %because%
-    fmt("Length of predicate (%d) must equal length of composition (%d)",
-        length(i), length(fns))
+  if (is.logical(i) && length(i) != length(fns))
+    halt("Length of predicate (%d) must equal length of composition (%d)",
+         length(i), length(fns))
   compose(.subset(fns, i))
 }
 
