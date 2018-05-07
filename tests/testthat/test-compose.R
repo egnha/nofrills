@@ -247,6 +247,14 @@ test_that("error is signaled if void call in pipeline doesn't yield function", {
   )
 })
 
+test_that("namespace operators are literally interpreted", {
+  f <- stats::runif %>>>% base:::log
+  expect_equal(
+    {set.seed(1); f(10)},
+    {set.seed(1); log(runif(10))}
+  )
+})
+
 test_that("functions in composition can be named", {
   f0 <- function(x) log(abs(x) + 1)
 

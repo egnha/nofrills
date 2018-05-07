@@ -134,7 +134,7 @@ fn_interp <- function(x) {
 #' @export
 fn_interp.quosure <- function(x) {
   expr <- quo_get_expr(x)
-  if (!is.call(expr) || is_compose_op(expr))
+  if (!is.call(expr) || is_compose_op(expr) || is_namespace_op(expr))
     return(fn_interp(eval_tidy(x)))
   if (is_named(expr))
     return(lambda_named(expr, quo_get_env(x)))
@@ -143,6 +143,11 @@ fn_interp.quosure <- function(x) {
   lambda_partial(expr, quo_get_env(x))
 }
 is_compose_op <- check_head("%>>>%")
+is_namespace_op <- function(expr) {
+  is_double_colon(expr) || is_triple_colon(expr)
+}
+is_double_colon <- check_head("::")
+is_triple_colon <- check_head(":::")
 
 lambda_named <- function(expr, env) {
   expr[[1L]] <- quote(`:=`)
