@@ -43,8 +43,8 @@
 #'   `compose(f, compose(g, h))`,
 #'   `compose(compose(f, g), h)`,
 #'   are implemented as the _same function_. In other words, lists of functions
-#'   are automatically \dQuote{flattened out} when they are composed, so nested
-#'   compositions do not pile up.
+#'   are automatically “flattened out” when they are composed—intermediate
+#'   compositions are spliced rather than nested.
 #'
 #'   `as.list()` and `compose()` are _mutually invertible_.
 #'   `compose(as.list(f))` is the same as `f`, when `f` is a function.

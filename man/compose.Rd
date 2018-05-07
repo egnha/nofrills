@@ -57,8 +57,8 @@ operationally. This means, for instance, that
 \code{compose(f, compose(g, h))},
 \code{compose(compose(f, g), h)},
 are implemented as the \emph{same function}. In other words, lists of functions
-are automatically \dQuote{flattened out} when they are composed, so nested
-compositions do not pile up.
+are automatically “flattened out” when they are composed—intermediate
+compositions are spliced rather than nested.
 
 \code{as.list()} and \code{compose()} are \emph{mutually invertible}.
 \code{compose(as.list(f))} is the same as \code{f}, when \code{f} is a function.
