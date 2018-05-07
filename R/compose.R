@@ -301,6 +301,7 @@ names.CompositeFunction <- function(x) {
 #' @export
 `names<-.CompositeFunction` <- function(x, value) {
   fns <- as.list.CompositeFunction(x)
+  # From rlang::names2()
   if (is.null(value)) {
     value <- rep("", length(fns))
   } else {
