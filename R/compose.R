@@ -310,7 +310,8 @@ as.list.CompositeFunction <- local({
 
 #' @export
 print.CompositeFunction <- function(x, ...) {
-  cat("<Function Composition (in calling order)>\n")
+  cat("<Function Composition>\n")
+  cat("From the inner to outer function:\n")
   fns <- rev(as.list.CompositeFunction(x))
   nms <- names_chr(fns)
   nms[!nzchar(nms)] <- list(NULL)
