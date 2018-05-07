@@ -198,9 +198,7 @@ fn_interp.list <- function(x) {
 }
 
 #' @export
-fn_interp.CompositeFunction <- function(x) {
-  .subset2(environment(x), "__pipeline__")
-}
+fn_interp.CompositeFunction <- getter("__pipeline__")
 
 #' @export
 fn_interp.function <- function(x) {
@@ -317,10 +315,9 @@ length.CompositeFunction <- function(x) {
 }
 
 #' @export
-as.list.CompositeFunction <- local({
-  decompose <- getter("__pipeline__")
-  function(x, ...) decompose(x)
-})
+as.list.CompositeFunction <- function(x, ...) {
+  fn_interp.CompositeFunction(x)
+}
 
 #' @export
 print.CompositeFunction <- function(x, ...) {
