@@ -60,12 +60,12 @@
 #' f1 <- abs %>>>% log %>>>% {1 / .}
 #' stopifnot(all.equal(f1(-2), f0(-2)))
 #'
-#' # Presume to_json()/from_json() convert to/from JSON
+#' # Compose higher-order functions
 #' \dontrun{
-#' json_out <- partial(`%<<<%`, to_json)    # transforms function to produce JSON
-#' json_in  <- partial(`%>>>%`, from_json)  # transforms function to consume JSON
-#' jsonify  <- json_in %>>>% json_out       # transforms function to JSON function
-#' }
+#' # Transforms function to a JSON function
+#' require(jsonlite)
+#' jsonify <- {fromJSON %>>>% .} %>>>% {. %>>>% toJSON}
+#' jsonify <- fn(f ~ fromJSON %>>>% f %>>>% toJSON)}
 #'
 #' # Formals of initial function are preserved
 #' inner <- function(a, b = 0) a + b
@@ -142,12 +142,7 @@ fn_interp.quosure <- function(x) {
     return(lambda(expr, quo_get_env(x)))
   lambda_partial(expr, quo_get_env(x))
 }
-
-is_compose_op <- function(expr) {
-  is_forward_compose(expr) || is_backward_compose(expr)
-}
-is_forward_compose  <- check_head("%>>>%")
-is_backward_compose <- check_head("%<<<%")
+is_compose_op <- check_head("%>>>%")
 
 lambda_named <- function(expr, env) {
   expr[[1L]] <- quote(`:=`)

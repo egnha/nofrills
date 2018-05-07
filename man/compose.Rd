@@ -75,12 +75,12 @@ stopifnot(all.equal(f0(-2), 1 / log(abs(-2))))
 f1 <- abs \%>>>\% log \%>>>\% {1 / .}
 stopifnot(all.equal(f1(-2), f0(-2)))
 
-# Presume to_json()/from_json() convert to/from JSON
+# Compose higher-order functions
 \dontrun{
-json_out <- partial(`\%<<<\%`, to_json)    # transforms function to produce JSON
-json_in  <- partial(`\%>>>\%`, from_json)  # transforms function to consume JSON
-jsonify  <- json_in \%>>>\% json_out       # transforms function to JSON function
-}
+# Transforms function to a JSON function
+require(jsonlite)
+jsonify <- {fromJSON \%>>>\% .} \%>>>\% {. \%>>>\% toJSON}
+jsonify <- fn(f ~ fromJSON \%>>>\% f \%>>>\% toJSON)}
 
 # Formals of initial function are preserved
 inner <- function(a, b = 0) a + b
