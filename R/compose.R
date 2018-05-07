@@ -122,6 +122,18 @@ compose <- function(...) {
   fn_cmps
 }
 
+#' @param inner,outer Functions. These may be optionally named using `:`, e.g.,
+#'   \code{f \%>>>\% nm: g} names the `g`-component.
+#'   [Quasiquotation][rlang::quasiquotation] and the
+#'   [\pkg{magrittr}](https://cran.r-project.org/package=magrittr)-\code{\%>\%}
+#'   semantics are supported (see _Examples_).
+#'
+#' @rdname compose
+#' @export
+`%>>>%` <- function(inner, outer) {
+  compose(enquo(inner), enquo(outer))
+}
+
 flatten_fns <- function(...) {
   fns <- lapply(list_tidy(...), fn_interp)
   unlist(do.call(c, fns))  # Collapse NULL's by invoking 'c'
@@ -241,18 +253,6 @@ get_fns <- function(fnms, nms, env) {
     fns <- mget(fnms, envir = env, mode = "function", inherits = FALSE)
     fns %named% nms
   }
-}
-
-#' @param inner,outer Functions. These may be optionally named using `:`, e.g.,
-#'   \code{f \%>>>\% nm: g} names the `g`-component.
-#'   [Quasiquotation][rlang::quasiquotation] and the
-#'   [\pkg{magrittr}](https://cran.r-project.org/package=magrittr)-\code{\%>\%}
-#'   semantics are supported (see _Examples_).
-#'
-#' @rdname compose
-#' @export
-`%>>>%` <- function(inner, outer) {
-  compose(enquo(inner), enquo(outer))
 }
 
 #' @export
