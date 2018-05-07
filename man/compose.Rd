@@ -3,41 +3,52 @@
 \name{compose}
 \alias{compose}
 \alias{\%>>>\%}
-\alias{\%<<<\%}
 \title{Compose functions}
 \usage{
 compose(...)
 
-fst \%>>>\% snd
-
-snd \%<<<\% fst
+inner \%>>>\% outer
 }
 \arguments{
 \item{...}{Functions or lists thereof to compose. Lists of functions are
-automatically spliced in. (Explicit \link[rlang:quasiquotation]{splicing} via
-\code{!!!} is also supported.) Following convention, functions are composed from
-right to left.}
+automatically spliced in. \link[rlang:quasiquotation]{Unquoting} of names, via
+\code{!!} on the left-hand side of \code{:=}, and \link[rlang:quasiquotation]{splicing},
+via \code{!!!}, are supported.}
 
-\item{fst, snd}{Functions.}
+\item{inner, outer}{Functions. These may be optionally named using \code{:}, e.g.,
+\code{f \%>>>\% nm: g} names the \code{g}-component.
+\link[rlang:quasiquotation]{Quasiquotation} and the
+\href{https://cran.r-project.org/package=magrittr}{magrittr}-\code{\%>\%}
+semantics are supported (see \emph{Examples}).}
 }
 \value{
-\code{compose()}, \code{\%<<<\%} and \code{\%>>>\%} return a function
-composition, whose \link[base:formals]{formals} match those of the initial
-function called (as a closure).
+A function composition, whose \link[base:formals]{formals} match those
+of the inner function applied (as a closure).
 }
 \description{
-Compose functions in three ways:
+Compose functions in two ways:
 \itemize{
-\item Using \code{compose()}: \code{compose(f, g)} is the function that calls \code{g} followed
-by \code{f}. It has the \link[base:formals]{formals} of \code{g}.
-\item Using \code{\%<<<\%} (\dQuote{backward} composition): \code{f \%<<<\% g}
-is another way to express \code{compose(f, g)}.
-\item Using \code{\%>>>\%} (\dQuote{forward} composition): \code{f \%>>>\% g}
-is another way to express \code{compose(g, f)}.
+\item Use \code{compose(f, g, ...)} to make the function that applies \code{f}, then \code{g},
+etc. It has the \link[base:formals]{formals} of the “inner” function \code{f}.
+Thus
+\preformatted{compose(paste, toupper)}
+is equivalent to the function\preformatted{function(..., sep = " ", collapse = NULL) {
+  toupper(paste(..., sep = sep, collapse = collapse))
+}
+}
+\item Alternatively, use the infix notation \code{f \%>>>\% g \%>>>\% ...}, which
+comprehends the semantics of the
+\href{https://cran.r-project.org/package=magrittr}{magrittr}-\code{\%>\%}
+operator and, additionally, \link[rlang:quasiquotation]{quasiquotation}.
+Thus, assuming \code{sep} has the value \code{""},
+\preformatted{sample \%>>>\% paste(collapse = !!sep)}
+is equivalent to the function\preformatted{function(x, size, replace = FALSE, prob = NULL) {
+  paste(sample(x, size, replace, prob), collapse = "")
+}
+}
 }
 
-Use \code{as.list()} to recover the list of composite functions of a function
-composition.
+Use \code{as.list()} to recover the list of composite functions.
 }
 \section{Properties}{
  \code{compose()} is \emph{associative}, semantically and
@@ -58,16 +69,12 @@ functions.
 \examples{
 # Functions are composed from right to left (following convention)
 inv <- partial(`/`, 1)  # reciprocal
-f <- compose(inv, log, abs)
-stopifnot(all.equal(f(-2), 1 / log(abs(-2))))
-
-# "Backward" composition operator composes from right to left, like compose()
-f1 <- inv \%<<<\% log \%<<<\% abs
-stopifnot(all.equal(f1(-2), f(-2)))
+f0 <- compose(abs, log, inv)
+stopifnot(all.equal(f0(-2), 1 / log(abs(-2))))
 
 # Forward composition operator composes from left to right
-f2 <- abs \%>>>\% log \%>>>\% inv
-stopifnot(all.equal(f2(-2), f(-2)))
+f1 <- abs \%>>>\% log \%>>>\% {1 / .}
+stopifnot(all.equal(f1(-2), f0(-2)))
 
 # Presume to_json()/from_json() convert to/from JSON
 \dontrun{
@@ -77,29 +84,39 @@ jsonify  <- json_in \%>>>\% json_out       # transforms function to JSON functio
 }
 
 # Formals of initial function are preserved
-first <- function(a, b = 0) a + b
-stopifnot(identical(formals(compose(inv, first)), formals(first)))
+inner <- function(a, b = 0) a + b
+stopifnot(identical(formals(compose(inner, inv)), formals(inner)))
 
 # Compositions can be provided by lists, in several equivalent ways
-f3 <- compose(list(inv, log, abs))
-f4 <- compose(!!! list(inv, log, abs))
-f5 <- compose(inv, list(log, abs))
-f6 <- compose(inv, !!! list(log, abs))
+f2 <- compose(list(abs, log, inv))
+f3 <- compose(!!! list(abs, log, inv))
+f4 <- compose(abs, list(log, inv))
+f5 <- compose(abs, !!! list(log, inv))
 stopifnot(
-  all.equal(f3, f), all.equal(f3(-2), f(-2)),
-  all.equal(f4, f), all.equal(f4(-2), f(-2)),
-  all.equal(f5, f), all.equal(f5(-2), f(-2)),
-  all.equal(f6, f), all.equal(f6(-2), f(-2))
+  all.equal(f2, f0), all.equal(f2(-2), f0(-2)),
+  all.equal(f3, f0), all.equal(f3(-2), f0(-2)),
+  all.equal(f4, f0), all.equal(f4(-2), f0(-2)),
+  all.equal(f5, f0), all.equal(f5(-2), f0(-2))
 )
 
 # compose() and as.list() are mutally invertible
-f7 <- compose(inv, as.list(compose(log, abs)))
+f6 <- compose(abs, as.list(compose(log, inv)))
 stopifnot(
-  all.equal(f7, f), all.equal(f7(-2), f(-2))
+  all.equal(f6, f0), all.equal(f6(-2), f0(-2))
 )
-fs <- list(inv, log, abs)
+fs <- list(abs, log, inv)
 stopifnot(all.equal(check.attributes = FALSE,
   as.list(compose(fs)), fs,
 ))
+
+# `\%>>>\%` supports names, magrittr-`\%>\%` semantics, quasiquotation
+sep <- ""
+scramble <- shuffle: sample \%>>>\% paste(collapse = !!sep)
+nonsense <- scramble(letters)
+stopifnot(
+  nchar(nonsense) == 26L,
+  identical(letters, sort(strsplit(nonsense, sep)[[1]])),
+  identical(scramble$shuffle, sample)
+)
 
 }

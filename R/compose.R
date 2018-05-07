@@ -1,28 +1,41 @@
 #' Compose functions
 #'
 #' @description
-#' Compose functions in three ways:
+#' Compose functions in two ways:
 #'
-#' - Using `compose()`: `compose(f, g)` is the function that calls `g` followed
-#'   by `f`. It has the [formals][base::formals()] of `g`.
+#' - Use `compose(f, g, ...)` to make the function that applies `f`, then `g`,
+#'   etc. It has the [formals][base::formals()] of the “inner” function `f`.
+#'   Thus
+#'   \preformatted{compose(paste, toupper)}
+#'   is equivalent to the function
+#'   ```
+#'   function(..., sep = " ", collapse = NULL) {
+#'     toupper(paste(..., sep = sep, collapse = collapse))
+#'   }
+#'   ```
 #'
-#' - Using \code{\%<<<\%} (\dQuote{backward} composition): \code{f \%<<<\% g}
-#'   is another way to express `compose(f, g)`.
+#' - Alternatively, use the infix notation \code{f \%>>>\% g \%>>>\% ...}, which
+#'   comprehends the semantics of the
+#'   [magrittr](https://cran.r-project.org/package=magrittr)-\code{\%>\%}
+#'   operator and, additionally, [quasiquotation][rlang::quasiquotation].
+#'   Thus, assuming `sep` has the value `""`,
+#'   \preformatted{sample \%>>>\% paste(collapse = !!sep)}
+#'   is equivalent to the function
+#'   ```
+#'   function(x, size, replace = FALSE, prob = NULL) {
+#'     paste(sample(x, size, replace, prob), collapse = "")
+#'   }
+#'   ```
 #'
-#' - Using \code{\%>>>\%} (\dQuote{forward} composition): \code{f \%>>>\% g}
-#'   is another way to express `compose(g, f)`.
-#'
-#' Use `as.list()` to recover the list of composite functions of a function
-#' composition.
+#' Use `as.list()` to recover the list of composite functions.
 #'
 #' @param ... Functions or lists thereof to compose. Lists of functions are
-#'   automatically spliced in. (Explicit [splicing][rlang::quasiquotation] via
-#'   `!!!` is also supported.) Following convention, functions are composed from
-#'   right to left.
+#'   automatically spliced in. [Unquoting][rlang::quasiquotation] of names, via
+#'   `!!` on the left-hand side of `:=`, and [splicing][rlang::quasiquotation],
+#'   via `!!!`, are supported.
 #'
-#' @return `compose()`, \code{\%<<<\%} and \code{\%>>>\%} return a function
-#'   composition, whose [formals][base::formals()] match those of the initial
-#'   function called (as a closure).
+#' @return A function composition, whose [formals][base::formals()] match those
+#'   of the inner function applied (as a closure).
 #'
 #' @section Properties: `compose()` is _associative_, semantically and
 #'   operationally. This means, for instance, that
@@ -41,16 +54,12 @@
 #' @examples
 #' # Functions are composed from right to left (following convention)
 #' inv <- partial(`/`, 1)  # reciprocal
-#' f <- compose(inv, log, abs)
-#' stopifnot(all.equal(f(-2), 1 / log(abs(-2))))
-#'
-#' # "Backward" composition operator composes from right to left, like compose()
-#' f1 <- inv %<<<% log %<<<% abs
-#' stopifnot(all.equal(f1(-2), f(-2)))
+#' f0 <- compose(abs, log, inv)
+#' stopifnot(all.equal(f0(-2), 1 / log(abs(-2))))
 #'
 #' # Forward composition operator composes from left to right
-#' f2 <- abs %>>>% log %>>>% inv
-#' stopifnot(all.equal(f2(-2), f(-2)))
+#' f1 <- abs %>>>% log %>>>% {1 / .}
+#' stopifnot(all.equal(f1(-2), f0(-2)))
 #'
 #' # Presume to_json()/from_json() convert to/from JSON
 #' \dontrun{
@@ -60,30 +69,40 @@
 #' }
 #'
 #' # Formals of initial function are preserved
-#' first <- function(a, b = 0) a + b
-#' stopifnot(identical(formals(compose(inv, first)), formals(first)))
+#' inner <- function(a, b = 0) a + b
+#' stopifnot(identical(formals(compose(inner, inv)), formals(inner)))
 #'
 #' # Compositions can be provided by lists, in several equivalent ways
-#' f3 <- compose(list(inv, log, abs))
-#' f4 <- compose(!!! list(inv, log, abs))
-#' f5 <- compose(inv, list(log, abs))
-#' f6 <- compose(inv, !!! list(log, abs))
+#' f2 <- compose(list(abs, log, inv))
+#' f3 <- compose(!!! list(abs, log, inv))
+#' f4 <- compose(abs, list(log, inv))
+#' f5 <- compose(abs, !!! list(log, inv))
 #' stopifnot(
-#'   all.equal(f3, f), all.equal(f3(-2), f(-2)),
-#'   all.equal(f4, f), all.equal(f4(-2), f(-2)),
-#'   all.equal(f5, f), all.equal(f5(-2), f(-2)),
-#'   all.equal(f6, f), all.equal(f6(-2), f(-2))
+#'   all.equal(f2, f0), all.equal(f2(-2), f0(-2)),
+#'   all.equal(f3, f0), all.equal(f3(-2), f0(-2)),
+#'   all.equal(f4, f0), all.equal(f4(-2), f0(-2)),
+#'   all.equal(f5, f0), all.equal(f5(-2), f0(-2))
 #' )
 #'
 #' # compose() and as.list() are mutally invertible
-#' f7 <- compose(inv, as.list(compose(log, abs)))
+#' f6 <- compose(abs, as.list(compose(log, inv)))
 #' stopifnot(
-#'   all.equal(f7, f), all.equal(f7(-2), f(-2))
+#'   all.equal(f6, f0), all.equal(f6(-2), f0(-2))
 #' )
-#' fs <- list(inv, log, abs)
+#' fs <- list(abs, log, inv)
 #' stopifnot(all.equal(check.attributes = FALSE,
 #'   as.list(compose(fs)), fs,
 #' ))
+#'
+#' # `%>>>%` supports names, magrittr-`%>%` semantics, quasiquotation
+#' sep <- ""
+#' scramble <- shuffle: sample %>>>% paste(collapse = !!sep)
+#' nonsense <- scramble(letters)
+#' stopifnot(
+#'   nchar(nonsense) == 26L,
+#'   identical(letters, sort(strsplit(nonsense, sep)[[1]])),
+#'   identical(scramble$shuffle, sample)
+#' )
 #'
 #' @export
 compose <- function(...) {
@@ -93,11 +112,11 @@ compose <- function(...) {
     return(NULL)
   if (n == 1L)
     return(pipeline[[1L]])
-  fn_init <- closure(pipeline[[n]])
-  fmls <- formals(fn_init)
-  call <- iterated_call(n, fmls)
+  fn_inner <- closure(pipeline[[1L]])
+  fmls <- formals(fn_inner)
+  call <- nest_calls(n, fmls)
   fnms <- call$fnms
-  env <- environment(fn_init) %encloses% (pipeline %named% fnms)
+  env <- environment(fn_inner) %encloses% (pipeline %named% fnms)
   makeActiveBinding("__pipeline__", get_fns(fnms, names_chr(pipeline), env), env)
   fn_cmps <- new_fn(fmls, call$expr, env)
   class(fn_cmps) <- c("CompositeFunction", "function")
@@ -200,7 +219,7 @@ fn_interp.default <- function(x) {
   halt("Cannot interpret object of class %s as a function", cls)
 }
 
-iterated_call <- local({
+nest_calls <- local({
   args <- function(fmls) {
     args <- eponymous(names(fmls))
     names(args)[names(args) == "..."] <- ""
@@ -208,11 +227,11 @@ iterated_call <- local({
   }
 
   function(n, fmls) {
-    fnms <- fmt("__%s__", n:1L)
+    fnms <- fmt("__%s__", seq_len(n))
     expr <- as.call(c(as.name(fnms[[1L]]), args(fmls)))
     for (nm in fnms[-1L])
       expr <- call(nm, expr)
-    list(expr = expr, fnms = rev(fnms))
+    list(expr = expr, fnms = fnms)
   }
 })
 
@@ -227,16 +246,17 @@ get_fns <- function(fnms, nms, env) {
   }
 }
 
-#' @param fst,snd Functions.
+#' @param inner,outer Functions. These may be optionally named using `:`, e.g.,
+#'   \code{f \%>>>\% nm: g} names the `g`-component.
+#'   [Quasiquotation][rlang::quasiquotation] and the
+#'   [magrittr](https://cran.r-project.org/package=magrittr)-\code{\%>\%}
+#'   semantics are supported (see _Examples_).
+#'
 #' @rdname compose
 #' @export
-`%>>>%` <- function(fst, snd) {
-  compose(enquo(snd), enquo(fst))
+`%>>>%` <- function(inner, outer) {
+  compose(enquo(inner), enquo(outer))
 }
-
-#' @rdname compose
-#' @export
-`%<<<%` <- opposite(`%>>>%`)
 
 #' @export
 `$.CompositeFunction` <- function(x, i) {
@@ -253,15 +273,11 @@ get_fns <- function(fnms, nms, env) {
 #' @export
 `[[.CompositeFunction` <- function(x, i, ...) {
   fns <- as.list.CompositeFunction(x)
-  if (is.numeric(i))
-    i <- length(fns) + 1L - i
   .subset2(fns, i)
 }
 #' @export
 `[[<-.CompositeFunction` <- function(x, i, value) {
   fns <- as.list.CompositeFunction(x)
-  if (is.numeric(i))
-    i <- length(fns) + 1L - i
   fns[[i]] <- value
   compose(fns)
 }
@@ -271,28 +287,26 @@ get_fns <- function(fnms, nms, env) {
   if (missing(i))
     return(x)
   fns <- as.list.CompositeFunction(x)
-  if (is.numeric(i)) {
-    len <- length(fns)
-    i <- i[abs(i) <= len]
-    i <- sign(i) * (len + 1L - abs(i))
-  }
+  if (is.numeric(i))
+    i <- i[abs(i) <= length(fns)]
   (!is.logical(i) || length(i) == length(fns)) %because%
     fmt("Length of predicate (%d) must equal length of composition (%d)",
         length(i), length(fns))
-  compose(.subset(fns, rev(i)))
+  compose(.subset(fns, i))
 }
 
 #' @export
 names.CompositeFunction <- function(x) {
-  rev(names(as.list.CompositeFunction(x)))
+  names(as.list.CompositeFunction(x))
 }
 #' @export
 `names<-.CompositeFunction` <- function(x, value) {
   fns <- as.list.CompositeFunction(x)
-  if (is.null(value))
+  if (is.null(value)) {
     value <- rep("", length(fns))
-  else
-    value <- rev(value %|% "")
+  } else {
+    value <- value %|% ""
+  }
   names(fns) <- value
   compose(fns)
 }
@@ -312,7 +326,7 @@ as.list.CompositeFunction <- local({
 print.CompositeFunction <- function(x, ...) {
   cat("<Function Composition>\n")
   cat("From the inner to outer function:\n")
-  fns <- rev(as.list.CompositeFunction(x))
+  fns <- as.list.CompositeFunction(x)
   nms <- names_chr(fns)
   nms[!nzchar(nms)] <- list(NULL)
   for (i in seq_along(fns)) {
