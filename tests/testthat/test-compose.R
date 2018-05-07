@@ -1,5 +1,8 @@
 make_funs <- function(n) {
-  lapply(seq_len(n), function(i) {force(i); function(. = NULL) c(i, .)})
+  lapply(seq_len(n), function(i) {
+    force(i)
+    function(. = NULL) c(i, .)
+  })
 }
 
 fs <- make_funs(3)
@@ -12,25 +15,19 @@ fn_kinds <- list(
 )
 
 cmp <- function() {
-  fs[[1]](fs[[2]](fs[[3]]()))
+  fs[[3]](fs[[2]](fs[[1]]()))
 }
 
 cmps <- list(
-  # Conventional composition
   compose(fs[[1]], compose(fs[[2]], compose(fs[[3]]))),
   compose(compose(fs[[1]], compose(fs[[2]])), fs[[3]]),
   compose(fs[[1]], compose(fs[[2]], fs[[3]])),
   compose(compose(fs[[1]], fs[[2]]), fs[[3]]),
   compose(compose(fs[[1]], fs[[2]], fs[[3]])),
   compose(fs[[1]], fs[[2]], fs[[3]]),
-  # Backward composition
-  (!!fs[[1]]) %<<<% !!fs[[2]] %<<<% !!fs[[3]],
-  (!!((!!fs[[1]]) %<<<% !!fs[[2]])) %<<<% !!fs[[3]],
-  (!!fs[[1]]) %<<<% !!((!!fs[[2]]) %<<<% !!fs[[3]]),
-  # Forward composition
-  (!!fs[[3]]) %>>>% !!fs[[2]] %>>>% !!fs[[1]],
-  (!!((!!fs[[3]]) %>>>% !!fs[[2]])) %>>>% !!fs[[1]],
-  (!!fs[[3]]) %>>>% !!((!!fs[[2]]) %>>>% !!fs[[1]])
+  (!!fs[[1]]) %>>>% !!fs[[2]] %>>>% !!fs[[3]],
+  (!!((!!fs[[1]]) %>>>% !!fs[[2]])) %>>>% !!fs[[3]],
+  (!!fs[[1]]) %>>>% !!((!!fs[[2]]) %>>>% !!fs[[3]])
 )
 
 context("Composing functions")
@@ -56,39 +53,29 @@ test_that("NULL and identity are dropped when composing", {
   expect_identical(log, log %>>>% NULL)
   expect_identical(log, identity %>>>% log)
   expect_identical(log, log %>>>% identity)
-  expect_identical(log, NULL %<<<% log)
-  expect_identical(log, log %<<<% NULL)
-  expect_identical(log, identity %<<<% log)
-  expect_identical(log, log %<<<% identity)
 
   inc <- function(x) x + 1
-  cmp0 <- compose(log, inc)
+  cmp0 <- compose(inc, log)
   cmps <- list(
-    compose(NULL, log, inc),
-    compose(log, NULL, inc),
-    compose(log, inc, NULL),
-    compose(identity, log, inc),
-    compose(log, identity, inc),
-    compose(log, inc, identity),
+    compose(NULL, inc, log),
+    compose(inc, NULL, log),
+    compose(inc, log, NULL),
+    compose(identity, inc, log),
+    compose(inc, identity, log),
+    compose(inc, log, identity),
     inc %>>>% log %>>>% NULL,
     inc %>>>% NULL %>>>% log,
     NULL %>>>% inc %>>>% log,
     inc %>>>% log %>>>% identity,
     inc %>>>% identity %>>>% log,
-    identity %>>>% inc %>>>% log,
-    NULL %<<<% log %<<<% inc,
-    log %<<<% NULL %<<<% inc,
-    log %<<<% inc %<<<% NULL,
-    identity %<<<% log %<<<% inc,
-    log %<<<% identity %<<<% inc,
-    log %<<<% inc %<<<% identity
+    identity %>>>% inc %>>>% log
   )
 
   # Function equality by equality of return values and composite functions
   vals <- {set.seed(1); runif(10)}
   for (cmp in cmps) {
     expect_equal(cmp(vals), cmp0(vals))
-    expect_equivalent(as.list(cmp), list(log, inc))
+    expect_equivalent(as.list(cmp), list(inc, log))
   }
 })
 
@@ -115,7 +102,7 @@ test_that("error is signalled when composing a non-interpretable object", {
 
 test_that("composition is associative", {
   value <- cmp()
-  expect_identical(value, 1:3)
+  expect_identical(value, 3:1)
   for (assoc in cmps)
     expect_identical(assoc(), value)
 })
@@ -127,19 +114,17 @@ test_that("nested compositions are flattened", {
   cmps <- list(
     compose(gs[[1]], gs[[2]], gs[[3]], gs[[4]]),
     compose(compose(gs[[1]], gs[[2]], gs[[3]], gs[[4]])),
-    compose((!!gs[[1]]) %<<<% !!gs[[2]] %<<<% !!gs[[3]] %<<<% !!gs[[4]]),
-    compose((!!gs[[4]]) %>>>% !!gs[[3]] %>>>% !!gs[[2]] %>>>% !!gs[[1]]),
+    compose((!!gs[[1]]) %>>>% !!gs[[2]] %>>>% !!gs[[3]] %>>>% !!gs[[4]]),
     compose(gs[[1]], compose(gs[[2]], gs[[3]], gs[[4]])),
-    compose((!!gs[[1]]) %<<<% !!compose(gs[[2]], gs[[3]], gs[[4]])),
-    compose((!!compose(gs[[2]], gs[[3]], gs[[4]])) %>>>% !!gs[[1]]),
-    compose(gs[[1]], compose(gs[[2]], (!!gs[[3]]) %<<<% !!gs[[4]])),
-    compose(gs[[1]], compose(gs[[2]], (!!gs[[4]]) %>>>% !!gs[[3]])),
+    compose((!!gs[[1]]) %>>>% !!compose(gs[[2]], gs[[3]], gs[[4]])),
+    compose((!!compose(gs[[1]], gs[[2]], gs[[3]])) %>>>% !!gs[[4]]),
+    compose(gs[[1]], compose(gs[[2]], (!!gs[[3]]) %>>>% !!gs[[4]])),
     compose(gs[[1]], compose(gs[[2]], compose(gs[[3]], gs[[4]]))),
-    compose(gs[[1]], (!!gs[[2]]) %<<<% !!compose(gs[[3]], gs[[4]])),
-    compose(gs[[1]], (!!compose(gs[[3]], gs[[4]])) %>>>% !!gs[[2]]),
+    compose(gs[[1]], (!!gs[[2]]) %>>>% !!compose(gs[[3]], gs[[4]])),
+    compose(gs[[1]], (!!compose(gs[[3]], gs[[3]])) %>>>% !!gs[[4]]),
     compose(gs[[1]], compose(gs[[2]], compose(gs[[3]], compose(gs[[4]])))),
-    compose((!!gs[[1]]) %<<<% !!((!!gs[[2]]) %<<<% !!((!!gs[[3]]) %<<<% !!gs[[4]]))),
-    compose((!!((!!((!!gs[[4]]) %>>>% !!gs[[3]])) %>>>% (!!gs[[2]]))) %>>>% !!gs[[1]])
+    compose((!!gs[[1]]) %>>>% !!((!!gs[[2]]) %>>>% !!((!!gs[[3]]) %>>>% !!gs[[4]]))),
+    compose((!!((!!((!!gs[[1]]) %>>>% !!gs[[2]])) %>>>% (!!gs[[3]]))) %>>>% !!gs[[4]])
   )
   for (cmp in cmps)
     expect_equivalent(as.list(cmp), gs)
@@ -170,17 +155,17 @@ test_that("composition has formals of innermost function (as a closure)", {
   )
   for (inner in fs) {
     fmls_inner <- formals(rlang::as_closure(inner))
-    expect_identical(formals(compose(outer, inner)), fmls_inner)
+    expect_identical(formals(compose(inner, outer)), fmls_inner)
   }
 })
 
-test_that("environment of composition is child of initial-function environment", {
+test_that("environment of composition is child of inner-function environment", {
   fs <- c(
     fn_kinds[names(fn_kinds) != "composition"],
     local(function() NULL)
   )
   for (f in fs) {
-    cmp <- compose(function(...) NULL, f)
+    cmp <- compose(f, function(...) NULL)
     env <- if (is.null(environment(f))) baseenv() else environment(f)
     expect_identical(parent.env(environment(cmp)), env)
   }
@@ -194,34 +179,25 @@ test_that("composition operator obeys magrittr semantics (#39)", {
   }
   f1 <- .[[1]] %>>>% toupper %>>>% sprintf("%s", .) %>>>% paste(collapse = "")
   f2 <- .[[1]] %>>>% toupper() %>>>% sprintf("%s", .) %>>>% paste(collapse = "")
-  f3 <- paste(collapse = "") %<<<% sprintf("%s", .) %<<<% toupper %<<<% .[[1]]
-  f4 <- paste(collapse = "") %<<<% sprintf("%s", .) %<<<% toupper() %<<<% .[[1]]
   x <- list(letters)
   expect_identical(f0(x), paste(LETTERS, collapse = ""))
   expect_identical(f1(x), f0(x))
   expect_identical(f2(x), f0(x))
-  expect_identical(f3(x), f0(x))
-  expect_identical(f4(x), f0(x))
 
   # Anonymous function of '.' using {...}
   f0 <- function(x) log(abs(x) + 1)
   f1 <- abs %>>>% {. + 1} %>>>% log
-  f2 <- log %<<<% {. + 1} %<<<% abs
   vals <- {set.seed(1); runif(10, -1, 1)}
-  for (val in vals) {
+  for (val in vals)
     expect_equal(f1(val), f0(val))
-    expect_equal(f2(val), f0(val))
-  }
 
   f0 <- function(x) {
     out <- list(result = x)
     paste(out$result, collapse = "")
   }
   f1 <- {list(result = .)} %>>>% {paste(.$result, collapse = "")}
-  f2 <- {paste(.$result, collapse = "")} %<<<% {list(result = .)}
   expect_identical(f0(letters), paste(letters, collapse = ""))
   expect_identical(f1(letters), f0(letters))
-  expect_identical(f2(letters), f0(letters))
 })
 
 test_that("composition operator operands can be unquoted", {
@@ -229,15 +205,11 @@ test_that("composition operator operands can be unquoted", {
   inc <- 1
   f0 <- function(x) log(abs(x) + 1)
   f1 <- abs %>>>% {. + !!inc} %>>>% !!f[[1]]
-  f2 <- (!!f[[1]]) %<<<% {. + !!inc} %<<<% abs
-  f3 <- (!!(abs %>>>% {. + !!inc})) %>>>% !!f[[1]]
-  f4 <- (!!f[[1]]) %<<<% !!({. + !!inc} %<<<% abs)
+  f2 <- (!!(abs %>>>% {. + !!inc})) %>>>% !!f[[1]]
   vals <- {set.seed(1); runif(10, -1, 1)}
   for (val in vals) {
     expect_equal(f1(val), f0(val))
     expect_equal(f2(val), f0(val))
-    expect_equal(f3(val), f0(val))
-    expect_equal(f4(val), f0(val))
   }
 })
 
@@ -248,57 +220,50 @@ test_that("composition operator yields flattened compositions", {
   p <- sq %>>>% sq
   q <- p %>>>% id %>>>% sq
   r <- q %>>>% id
-  expect_equivalent(as.list(r), list(id, sq, id, sq, sq))
-
-  p <- sq %<<<% sq
-  q <- sq %<<<% id %<<<% p
-  r <- id %<<<% q
-  expect_equivalent(as.list(r), list(id, sq, id, sq, sq))
+  expect_equivalent(as.list(r), list(sq, sq, id, sq, id))
 })
 
 test_that("in pipeline, void call is interpreted as its caller", {
   id <- function(f) f
   cmps <- list(
-    log() %<<<% abs,
-    id(log)() %<<<% abs,
     abs %>>>% log(),
     abs %>>>% id(log)()
   )
   for (cmp in cmps)
-    expect_identical(log, as.list(cmp)[[1]])
+    expect_identical(log, as.list(cmp)[[2]])
 })
 
 test_that("error is signaled if void call in pipeline doesn't yield function", {
   id <- function(f) f
   foo <- quote(foo)
 
-  expect_errors_with_message(
-    "`foo` must be a function \\(to be composable\\)",
-    foo() %<<<% abs,
-    abs %>>>% foo()
+  expect_error(
+    abs %>>>% foo(),
+    "`foo` must be a function \\(to be composable\\)"
   )
-  expect_errors_with_message(
-    "`id\\(foo\\)` must be a function \\(to be composable\\)",
-    id(foo)() %<<<% abs,
-    abs %>>>% id(foo)()
+  expect_error(
+    abs %>>>% id(foo)(),
+    "`id\\(foo\\)` must be a function \\(to be composable\\)"
   )
 })
 
 test_that("functions in composition can be named", {
   f0 <- function(x) log(abs(x) + 1)
+
+  nm <- "logarithm"
   fs <- list(
-    compose(!!"logarithm" := log, inc = function(x) x + 1, abs),
-    abs %>>>% inc: {. + 1} %>>>% !!"logarithm": log,
-    (!!"logarithm"): log %<<<% inc: {. + 1} %<<<% abs
+    compose(abs, inc = function(x) x + 1, !!nm := log),
+    abs %>>>% inc: {. + 1} %>>>% !!nm: log
   )
+
   vals <- {set.seed(1); runif(10)}
 
   for (f in fs) {
     expect_equal(f(vals), f0(vals))
 
     pipeline <- as.list(f)
-    expect_identical(names(pipeline), c("logarithm", "inc", ""))
-    expect_equal(pipeline[[3]](vals), abs(vals))
+    expect_identical(names(pipeline), c("", "inc", "logarithm"))
+    expect_equal(pipeline[[1]](vals), abs(vals))
     expect_equal(pipeline$logarithm(vals), log(vals))
     expect_equal(pipeline$inc(vals), vals + 1)
   }

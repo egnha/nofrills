@@ -29,7 +29,7 @@ test_that("tidy function shows underlying function", {
 })
 
 test_that("composition of functions shows composite functions", {
-  f <- compose(log, inc = partial(`+`, 1), abs)
+  f <- compose(abs, inc = partial(`+`, 1), log)
   out <- c(
     "<Function Composition>",
     "From the inner to outer function:",
