@@ -12,6 +12,10 @@ new_fn <- function(..args, ..body, ..env = NULL, ...) {
   eval(call("function", ..args, ..body), list_tidy(...), ..env)
 }
 
+fml_args <- function(f) {
+  formals(args(f))
+}
+
 closure <- function(f) {
   if (typeof(f) == "closure")
     return(f)

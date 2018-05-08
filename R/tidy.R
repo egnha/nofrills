@@ -51,7 +51,7 @@ tidy <- local({
 
   function(f) {
     is.function(f) %because% "Only functions can be tidied"
-    fmls <- formals(args(f))
+    fmls <- fml_args(f)
     if (is_tidy(f, fmls))
       return(f)
     env <- environment(f) %||% baseenv() %encloses% c(funs, `__pretidy__` = f)
@@ -61,7 +61,7 @@ tidy <- local({
   }
 })
 
-is_tidy <- function(f, fmls = formals(args(f))) {
+is_tidy <- function(f, fmls = fml_args(f)) {
   if (is_empty(fmls))
     return(TRUE)
   inherits(f, "TidyFunction")
