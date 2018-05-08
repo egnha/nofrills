@@ -106,35 +106,32 @@
 #' @export
 compose <- function(...) {
   pipeline <- flatten_pipeline(...)
-  n <- length(pipeline)
-  if (n == 0L)
+  len <- length(pipeline)
+  if (len == 0L)
     return(NULL)
-  if (n == 1L)
+  if (len == 1L)
     return(pipeline[[1L]])
-  fn_cmps <- compose_(pipeline)
+  fn_cmps <- compose_(pipeline, len)
   class(fn_cmps) <- c("CompositeFunction", "function")
   fn_cmps
 }
 
-compose_ <- function(pipeline, n = length(pipeline)) {
+compose_ <- function(pipeline, len) {
   fn_inner <- pipeline[[1L]]
   fmls <- fml_args(fn_inner)
-  call <- nest_calls(n, fmls)
+  call <- nest_calls(len, fmls)
   env <- envir(fn_inner) %encloses% (pipeline %named% call$fnms)
   makeActiveBinding("__pipeline__", get_fns(call$fnms, pipeline, env), env)
   new_fn(fmls, call$expr, env)
 }
 
-#' @param inner,outer Functions. These may be optionally named using `:`, e.g.,
-#'   \code{f \%>>>\% nm: g} names the `g`-component.
-#'   [Quasiquotation][rlang::quasiquotation] and the
-#'   [\pkg{magrittr}](https://cran.r-project.org/package=magrittr)-\code{\%>\%}
-#'   semantics are supported (see _Examples_).
-#'
-#' @rdname compose
-#' @export
-`%>>>%` <- function(inner, outer) {
-  compose(enquo(inner), enquo(outer))
+nest_calls <- function(n, fmls) {
+  fnms <- fmt("__%s__", seq_len(n))
+  args <- lapply(names(fmls), as.name)
+  expr <- as.call(c(as.name(fnms[[1L]]), args))
+  for (nm in fnms[-1L])
+    expr <- call(nm, expr)
+  list(expr = expr, fnms = fnms)
 }
 
 flatten_pipeline <- function(...) {
@@ -231,15 +228,6 @@ fn_interp.default <- function(x) {
   halt("Cannot interpret object of class %s as a function", cls)
 }
 
-nest_calls <- function(n, fmls) {
-  fnms <- fmt("__%s__", seq_len(n))
-  args <- lapply(names(fmls), as.name)
-  expr <- as.call(c(as.name(fnms[[1L]]), args))
-  for (nm in fnms[-1L])
-    expr <- call(nm, expr)
-  list(expr = expr, fnms = fnms)
-}
-
 get_fns <- function(fnms, fns, env) {
   force(fnms)
   force(env)
@@ -249,6 +237,18 @@ get_fns <- function(fnms, fns, env) {
     fns <- mget(fnms, envir = env, mode = "function", inherits = FALSE)
     fns %named% nms
   }
+}
+
+#' @param inner,outer Functions. These may be optionally named using `:`, e.g.,
+#'   \code{f \%>>>\% nm: g} names the `g`-component.
+#'   [Quasiquotation][rlang::quasiquotation] and the
+#'   [\pkg{magrittr}](https://cran.r-project.org/package=magrittr)-\code{\%>\%}
+#'   semantics are supported (see _Examples_).
+#'
+#' @rdname compose
+#' @export
+`%>>>%` <- function(inner, outer) {
+  compose(enquo(inner), enquo(outer))
 }
 
 #' @export
