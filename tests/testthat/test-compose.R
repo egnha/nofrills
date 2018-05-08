@@ -234,16 +234,12 @@ test_that("in pipeline, void call is interpreted as its caller", {
 })
 
 test_that("error is signaled if void call in pipeline doesn't yield function", {
-  id <- function(f) f
   foo <- quote(foo)
 
-  expect_error(
+  expect_errors_with_message(
+    "object 'foo' of mode 'function' was not found",
     abs %>>>% foo(),
-    "`foo` must be a function \\(to be composable\\)"
-  )
-  expect_error(
-    abs %>>>% id(foo)(),
-    "`id\\(foo\\)` must be a function \\(to be composable\\)"
+    abs %>>>% identity(foo)()
   )
 })
 

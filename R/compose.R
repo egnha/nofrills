@@ -178,23 +178,19 @@ lambda_partial <- local({
   is_void <- function(call) {
     length(call) == 1L
   }
-  standardize <- function(call, env) {
-    f <- match.fun(eval(call[[1L]], env))
-    match.call(args(f), call)
+  conform <- function(call, to) {
+    match.call(args(to), call) %unless%
+      fmt("%s is an invalid call: %%s", expr_label(call))
   }
 
   function(call, env) {
-    if (is_void(call)) {
-      f <- eval(call[[1L]], env)
-      is.function(f) %because%
-        fmt("%s must be a function (to be composable)", expr_label(call[[1L]]))
-      return(f)
-    }
+    caller <- match.fun(eval_tidy(call[[1L]], env))
+    if (is_void(call))
+      return(caller)
     args <- as.list(call)[-1L]
     if (all(args != arg))
       call <- as.call(c(call[[1L]], quote(.), args))
-    call <- standardize(call, env) %unless%
-      fmt("%s is an invalid call: %%s", expr_label(call))
+    call <- conform(call, to = caller)
     lambda(call, env)
   }
 })
