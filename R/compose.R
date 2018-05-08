@@ -105,7 +105,7 @@
 #'
 #' @export
 compose <- function(...) {
-  pipeline <- flatten_fns(...)
+  pipeline <- flatten_pipeline(...)
   n <- length(pipeline)
   if (n == 0L)
     return(NULL)
@@ -133,7 +133,7 @@ compose <- function(...) {
   compose(enquo(inner), enquo(outer))
 }
 
-flatten_fns <- function(...) {
+flatten_pipeline <- function(...) {
   fns <- lapply(list_tidy(...), fn_interp)
   unlist(do.call(c, fns))  # Collapse NULL's by invoking 'c'
 }
