@@ -248,10 +248,10 @@ test_that("error is signaled if void call in pipeline doesn't yield function", {
 })
 
 test_that("namespace operators are literally interpreted", {
-  f <- stats::runif %>>>% base:::log
+  f <- stats::runif %>>>% base:::log(base = 2)
   expect_equal(
     {set.seed(1); f(10)},
-    {set.seed(1); log(runif(10))}
+    {set.seed(1); log(runif(10), base = 2)}
   )
 })
 

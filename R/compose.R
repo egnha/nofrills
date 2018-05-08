@@ -179,7 +179,7 @@ lambda_partial <- local({
     length(call) == 1L
   }
   standardize <- function(call, env) {
-    f <- get(as.character(call[[1L]]), envir = env, mode = "function")
+    f <- match.fun(eval(call[[1L]], env))
     match.call(args(f), call)
   }
 
