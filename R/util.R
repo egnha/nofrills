@@ -107,3 +107,7 @@ check_head <- function(nm) {
 `%encloses%` <- function(parent, bindings) {
   list2env(bindings, parent = parent)
 }
+
+envir <- function(f) {
+  environment(f) %||% baseenv()
+}

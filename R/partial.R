@@ -150,7 +150,7 @@ partial_ <- local({
     }
     nms_fix <- c(nms_priv, names_fixed(f))
     fmls_partial <- formals(f)[names(formals(f)) %notin% names(fix)]
-    env <- environment(f) %encloses% (fix %named% nms_priv)
+    env <- envir(f) %encloses% (fix %named% nms_priv)
     env %binds% list(
       `__with_fixed_args__` = promise_tidy(nms_fix, nms_bare, env),
       `__partial__`         = new_fn(fmls_partial, body, env),
