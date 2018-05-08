@@ -44,7 +44,6 @@ tidy <- local({
     enquo <- call("__quo__", `[[<-`(sys.call(), 1L, `__pretidy__`))
     `__eval_tidy__`(eval(enquo, `__quo__`, parent.frame()))
   })
-
   funs <- list(
     `__eval_tidy__` = eval_tidy,
     `__quo__`       = list(`__quo__` = quo)
@@ -52,7 +51,7 @@ tidy <- local({
 
   function(f) {
     is.function(f) %because% "Only functions can be tidied"
-    fmls <- formals(closure(f))
+    fmls <- formals(args(f))
     if (is_tidy(f, fmls))
       return(f)
     env <- environment(f) %||% baseenv() %encloses% c(funs, `__pretidy__` = f)
@@ -62,7 +61,7 @@ tidy <- local({
   }
 })
 
-is_tidy <- function(f, fmls = formals(closure(f))) {
+is_tidy <- function(f, fmls = formals(args(f))) {
   if (is_empty(fmls))
     return(TRUE)
   inherits(f, "TidyFunction")
