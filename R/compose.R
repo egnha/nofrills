@@ -154,12 +154,13 @@ fn_interp.quosure <- function(x) {
     return(lambda(expr, quo_get_env(x)))
   lambda_partial(expr, quo_get_env(x))
 }
+
 is_literal <- function(expr) {
-  is_compose_op(expr) || is_ns_public_op(expr) || is_ns_private_op(expr)
+  is_op_compose(expr) || is_op_ns_public(expr) || is_op_ns_private(expr)
 }
-is_compose_op    <- check_head("%>>>%")
-is_ns_public_op  <- check_head("::")
-is_ns_private_op <- check_head(":::")
+is_op_compose    <- check_head("%>>>%")
+is_op_ns_public  <- check_head("::")
+is_op_ns_private <- check_head(":::")
 
 lambda_named <- function(expr, env) {
   expr[[1L]] <- quote(`:=`)
