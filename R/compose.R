@@ -111,14 +111,18 @@ compose <- function(...) {
     return(NULL)
   if (n == 1L)
     return(pipeline[[1L]])
+  fn_cmps <- compose_(pipeline)
+  class(fn_cmps) <- c("CompositeFunction", "function")
+  fn_cmps
+}
+
+compose_ <- function(pipeline, n = length(pipeline)) {
   fn_inner <- pipeline[[1L]]
   fmls <- fml_args(fn_inner)
   call <- nest_calls(n, fmls)
   env <- envir(fn_inner) %encloses% (pipeline %named% call$fnms)
   makeActiveBinding("__pipeline__", get_fns(call$fnms, pipeline, env), env)
-  fn_cmps <- new_fn(fmls, call$expr, env)
-  class(fn_cmps) <- c("CompositeFunction", "function")
-  fn_cmps
+  new_fn(fmls, call$expr, env)
 }
 
 #' @param inner,outer Functions. These may be optionally named using `:`, e.g.,
