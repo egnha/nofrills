@@ -13,7 +13,7 @@ new_fn <- function(..args, ..body, ..env = NULL, ...) {
 }
 
 fml_args <- function(f) {
-  formals(args(f))
+  formals(args(f) %||% as_closure(f))
 }
 
 closure <- function(f) {

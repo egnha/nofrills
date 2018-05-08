@@ -111,13 +111,11 @@ compose <- function(...) {
     return(NULL)
   if (n == 1L)
     return(pipeline[[1L]])
-  fn_inner <- closure(pipeline[[1L]])
-  fmls <- formals(fn_inner)
-  call <- nest_calls(n, fmls)
-  fnms <- call$fnms
-  env <- environment(fn_inner) %encloses% (pipeline %named% fnms)
-  makeActiveBinding("__pipeline__", get_fns(fnms, names_chr(pipeline), env), env)
-  fn_cmps <- new_fn(fmls, call$expr, env)
+  inner <- inner(pipeline)
+  call <- nest_calls(n, inner$fmls)
+  env <- inner$env %encloses% (pipeline %named% call$fnms)
+  makeActiveBinding("__pipeline__", get_fns(call$fnms, pipeline, env), env)
+  fn_cmps <- new_fn(inner$fmls, call$expr, env)
   class(fn_cmps) <- c("CompositeFunction", "function")
   fn_cmps
 }
@@ -180,8 +178,11 @@ lambda_partial <- local({
     length(call) == 1L
   }
   conform <- function(call, to) {
-    match.call(args(to), call) %unless%
+    call_conform <- match.call(args(to) %||% as_closure(to), call) %unless%
       fmt("%s is an invalid call: %%s", expr_label(call))
+    if (is.primitive(to))
+      return(call)
+    call_conform
   }
 
   function(call, env) {
@@ -225,26 +226,27 @@ fn_interp.default <- function(x) {
   halt("Cannot interpret object of class %s as a function", cls)
 }
 
-nest_calls <- local({
-  args <- function(fmls) {
-    args <- eponymous(names(fmls))
-    names(args)[names(args) == "..."] <- ""
-    args
-  }
+nest_calls <- function(n, fmls) {
+  fnms <- fmt("__%s__", seq_len(n))
+  args <- lapply(names(fmls), as.name)
+  expr <- as.call(c(as.name(fnms[[1L]]), args))
+  for (nm in fnms[-1L])
+    expr <- call(nm, expr)
+  list(expr = expr, fnms = fnms)
+}
 
-  function(n, fmls) {
-    fnms <- fmt("__%s__", seq_len(n))
-    expr <- as.call(c(as.name(fnms[[1L]]), args(fmls)))
-    for (nm in fnms[-1L])
-      expr <- call(nm, expr)
-    list(expr = expr, fnms = fnms)
-  }
-})
+inner <- function(fns) {
+  fn_inner <- fns[[1L]]
+  list(
+    fmls = fml_args(fn_inner),
+    env  = environment(fn_inner) %||% baseenv()
+  )
+}
 
-get_fns <- function(fnms, nms, env) {
+get_fns <- function(fnms, fns, env) {
   force(fnms)
-  force(nms)
   force(env)
+  nms <- names_chr(fns)
 
   function() {
     fns <- mget(fnms, envir = env, mode = "function", inherits = FALSE)

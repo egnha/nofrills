@@ -150,11 +150,11 @@ test_that("composition has formals of innermost function (as a closure)", {
   outer <- function(.) NULL
   fs <- list(
     closure = function(x, y, ..., z = "default") NULL,
-    special = log,
-    builtin = c
+    special = `[[`,
+    builtin = `+`
   )
   for (inner in fs) {
-    fmls_inner <- formals(rlang::as_closure(inner))
+    fmls_inner <- formals(args(inner) %||% rlang::as_closure(inner))
     expect_identical(formals(compose(inner, outer)), fmls_inner)
   }
 })
@@ -179,10 +179,19 @@ test_that("composition operator obeys magrittr semantics (#39)", {
   }
   f1 <- .[[1]] %>>>% toupper %>>>% sprintf("%s", .) %>>>% paste(collapse = "")
   f2 <- .[[1]] %>>>% toupper() %>>>% sprintf("%s", .) %>>>% paste(collapse = "")
+  f3 <- `[[`(1) %>>>% toupper %>>>% sprintf("%s", .) %>>>% paste(collapse = "")
+
   x <- list(letters)
   expect_identical(f0(x), paste(LETTERS, collapse = ""))
   expect_identical(f1(x), f0(x))
   expect_identical(f2(x), f0(x))
+  expect_identical(f3(x), f0(x))
+
+  x <- mtcars
+  expect_identical(f0(x), paste(mtcars[[1]], collapse = ""))
+  expect_identical(f1(x), f0(x))
+  expect_identical(f2(x), f0(x))
+  expect_identical(f3(x), f0(x))
 
   # Anonymous function of '.' using {...}
   f0 <- function(x) log(abs(x) + 1)
