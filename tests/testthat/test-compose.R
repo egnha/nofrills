@@ -32,11 +32,6 @@ cmps <- list(
 
 context("Composing functions")
 
-test_that("composition returns a single function unchanged", {
-  for (f in fn_kinds)
-    expect_equal(compose(f), f)
-})
-
 test_that("empty or NULL composition yields NULL", {
   expect_null(compose())
   expect_null(compose(NULL))
@@ -453,7 +448,7 @@ test_that("compositions can be renamed", {
 })
 
 test_that("composition length is the number of component functions", {
-  expect_length(sin, 1)
+  expect_length(compose(sin), 1)
   expect_length(sin %>>>% cos, 2)
   expect_length(sin %>>>% cos %>>>% tan, 3)
 })

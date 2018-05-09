@@ -109,8 +109,6 @@ compose <- function(...) {
   len <- length(pipeline)
   if (len == 0L)
     return(NULL)
-  if (len == 1L)
-    return(pipeline[[1L]])
   fn_cmps <- compose_(pipeline, len)
   class(fn_cmps) <- c("CompositeFunction", "function")
   fn_cmps
