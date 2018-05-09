@@ -197,7 +197,7 @@ lambda_partial <- local({
       return(caller)
     args <- as.list(call)[-1L]
     if (all(args != point))
-      call <- as.call(c(call[[1L]], quote(.), args))
+      call <- as.call(c(call[[1L]], point, args))
     call <- conform(call, to = caller)
     lambda(call, env)
   }
