@@ -175,7 +175,7 @@ lambda <- function(body, env) {
 }
 
 lambda_partial <- local({
-  arg <- as.name(".")
+  point <- as.name(".")
   is_void <- function(call) {
     length(call) == 1L
   }
@@ -192,7 +192,7 @@ lambda_partial <- local({
     if (is_void(call))
       return(caller)
     args <- as.list(call)[-1L]
-    if (all(args != arg))
+    if (all(args != point))
       call <- as.call(c(call[[1L]], quote(.), args))
     call <- conform(call, to = caller)
     lambda(call, env)
