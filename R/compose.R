@@ -215,11 +215,7 @@ fn_interp.list <- function(x) {
 fn_interp.CompositeFunction <- getter("__pipeline__")
 
 #' @export
-fn_interp.function <- function(x) {
-  if (identical(x, identity))
-    return(NULL)
-  x
-}
+fn_interp.function <- function(x) x
 
 #' @export
 fn_interp.NULL <- function(x) NULL

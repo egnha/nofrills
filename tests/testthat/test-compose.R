@@ -39,15 +39,11 @@ test_that("empty or NULL composition yields NULL", {
   expect_null(compose(!!!list()))
 })
 
-test_that("NULL and identity are dropped when composing", {
-  expect_identical(log, compose(NULL, log))
-  expect_identical(log, compose(log, NULL))
-  expect_identical(log, compose(identity, log))
-  expect_identical(log, compose(log, identity))
-  expect_identical(log, NULL %>>>% log)
-  expect_identical(log, log %>>>% NULL)
-  expect_identical(log, identity %>>>% log)
-  expect_identical(log, log %>>>% identity)
+test_that("NULL is dropped when composing", {
+  expect_equal(compose(log), compose(NULL, log))
+  expect_equal(compose(log), compose(log, NULL))
+  expect_equal(compose(log), NULL %>>>% log)
+  expect_equal(compose(log), log %>>>% NULL)
 
   inc <- function(x) x + 1
   cmp0 <- compose(inc, log)
@@ -55,15 +51,9 @@ test_that("NULL and identity are dropped when composing", {
     compose(NULL, inc, log),
     compose(inc, NULL, log),
     compose(inc, log, NULL),
-    compose(identity, inc, log),
-    compose(inc, identity, log),
-    compose(inc, log, identity),
     inc %>>>% log %>>>% NULL,
     inc %>>>% NULL %>>>% log,
-    NULL %>>>% inc %>>>% log,
-    inc %>>>% log %>>>% identity,
-    inc %>>>% identity %>>>% log,
-    identity %>>>% inc %>>>% log
+    NULL %>>>% inc %>>>% log
   )
 
   # Function equality by equality of return values and composite functions
