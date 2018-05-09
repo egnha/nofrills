@@ -117,7 +117,7 @@ partial_ <- local({
   assign_setter("bare_args")
   assign_setter("names_fixed")
 
-  body_partial <- quote({
+  body <- quote({
     environment(`__partial__`) <- `__with_fixed_args__`()
     eval(`[[<-`(sys.call(), 1L, `__partial__`), parent.frame())
   })
@@ -141,24 +141,24 @@ partial_ <- local({
       no_name_reuse(f, fix) %because% "Can't reset previously fixed argument(s)"
       nms_bare <- nms_bare[nms_bare != "..."]
       nms_priv <- privatize(names(fix), names_fixed(f))
-      args <- c(args(f, nms_bare), tidy_dots(nms_priv, nms_bare))
-      body <- call_bare(args, quote(...))
+      args_bare <- c(args(f, nms_bare), tidy_dots(nms_priv, nms_bare))
+      body_bare <- call_bare(args_bare, quote(...))
     } else {
       nms_priv <- privatize(names(fix))
-      args <- args(f, nms_bare)
-      body <- call_bare(args)
+      args_bare <- args(f, nms_bare)
+      body_bare <- call_bare(args_bare)
     }
     nms_fix <- c(nms_priv, names_fixed(f))
-    fmls_partial <- formals(f)[names(formals(f)) %notin% names(fix)]
-    env <- envir(f) %encloses% (fix %named% nms_priv)
-    env %binds% list(
-      `__with_fixed_args__` = promise_tidy(nms_fix, nms_bare, env),
-      `__partial__`         = new_fn(fmls_partial, body, env),
-      `__bare__`            = f_bare
+    fmls <- formals(f)[names(formals(f)) %notin% names(fix)]
+    parent <- envir(f) %encloses% (fix %named% nms_priv)
+    env_bare <- parent %encloses% list(`__bare__` = f_bare)
+    env <- parent %encloses% list(
+      `__with_fixed_args__` = promise_tidy(nms_fix, nms_bare, env_bare),
+      `__partial__`         = new_fn(fmls, body_bare, env_bare)
     )
-    p <- new_fn(fmls_partial, body_partial, env)
+    p <- new_fn(fmls, body, env)
     names_fixed(p) <- nms_fix
-    bare_args(p)   <- args
+    bare_args(p)   <- args_bare
     p
   }
 })
@@ -221,8 +221,12 @@ departial <- function(..f) {
 }
 
 departial_ <- local({
-  get_bare <- getter("__bare__")
-  function(f) get_bare(f) %||% f
+  get_bare    <- getter("__bare__")
+  get_partial <- getter("__partial__")
+
+  function(f) {
+    get_bare(get_partial(f)) %||% f
+  }
 })
 
 #' @export
