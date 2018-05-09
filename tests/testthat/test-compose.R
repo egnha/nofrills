@@ -261,11 +261,11 @@ test_that("namespace operators are literally interpreted", {
 })
 
 test_that("parentheses are literally interpreted", {
-  . <- runif
+  . <- seq_len
   f <- identity(.) %>>>% (identity(.)) %>>>% (log(2) %>>>% sum)
   expect_equal(
-    {set.seed(1); f(10)},
-    {set.seed(1); sum(log(runif(10), 2))}
+    f(10),
+    sum(log(seq_len(10), 2))
   )
 })
 
