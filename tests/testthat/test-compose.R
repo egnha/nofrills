@@ -442,3 +442,60 @@ test_that("composition length is the number of component functions", {
   expect_length(sin %>>>% cos, 2)
   expect_length(sin %>>>% cos %>>>% tan, 3)
 })
+
+test_that("concatenating compositions composes them", {
+  out <- sum(log(vals + 1))
+  expect_equal(
+    c({. + 1} %>>>% log, sum)(vals),
+    out
+  )
+  expect_equal(
+    c(compose(fn(. ~ . + 1)), log %>>>% sum)(vals),
+    out
+  )
+  expect_equal(
+    c(compose(fn(. ~ . + 1)), log, sum)(vals),
+    out
+  )
+})
+
+test_that("concatenating compositions drops identity components", {
+  expect_length(c(identity %>>>% log %>>>% sum), 2)
+  expect_length(c(log %>>>% identity %>>>% sum), 2)
+  expect_length(c(log %>>>% sum %>>>% identity), 2)
+  expect_length(c(identity %>>>% identity %>>>% log %>>>% sum), 2)
+  expect_length(c(identity %>>>% log %>>>% identity %>>>% sum), 2)
+  expect_length(c(identity %>>>% log %>>>% sum %>>>% identity), 2)
+  expect_length(c(log %>>>% identity %>>>% identity %>>>% sum), 2)
+  expect_length(c(log %>>>% identity %>>>% sum %>>>% identity), 2)
+  expect_length(c(log %>>>% sum %>>>% identity %>>>% identity), 2)
+  expect_length(c(identity %>>>% log, sum), 2)
+  expect_length(c(log %>>>% identity, sum), 2)
+  expect_length(c(log %>>>% sum, identity), 2)
+  expect_length(c(identity %>>>% identity, log %>>>% sum), 2)
+  expect_length(c(identity %>>>% log, identity %>>>% sum), 2)
+  expect_length(c(identity %>>>% log, sum %>>>% identity), 2)
+  expect_length(c(log %>>>% identity, identity %>>>% sum), 2)
+  expect_length(c(log %>>>% identity, sum %>>>% identity), 2)
+  expect_length(c(log %>>>% sum, identity %>>>% identity), 2)
+
+  out <- sum(log(vals))
+  expect_equal(c(identity %>>>% log %>>>% sum)(vals), out)
+  expect_equal(c(log %>>>% identity %>>>% sum)(vals), out)
+  expect_equal(c(log %>>>% sum %>>>% identity)(vals), out)
+  expect_equal(c(identity %>>>% identity %>>>% log %>>>% sum)(vals), out)
+  expect_equal(c(identity %>>>% log %>>>% identity %>>>% sum)(vals), out)
+  expect_equal(c(identity %>>>% log %>>>% sum %>>>% identity)(vals), out)
+  expect_equal(c(log %>>>% identity %>>>% identity %>>>% sum)(vals), out)
+  expect_equal(c(log %>>>% identity %>>>% sum %>>>% identity)(vals), out)
+  expect_equal(c(log %>>>% sum %>>>% identity %>>>% identity)(vals), out)
+  expect_equal(c(identity %>>>% log, sum)(vals), out)
+  expect_equal(c(log %>>>% identity, sum)(vals), out)
+  expect_equal(c(log %>>>% sum, identity)(vals), out)
+  expect_equal(c(identity %>>>% identity, log %>>>% sum)(vals), out)
+  expect_equal(c(identity %>>>% log, identity %>>>% sum)(vals), out)
+  expect_equal(c(identity %>>>% log, sum %>>>% identity)(vals), out)
+  expect_equal(c(log %>>>% identity, identity %>>>% sum)(vals), out)
+  expect_equal(c(log %>>>% identity, sum %>>>% identity)(vals), out)
+  expect_equal(c(log %>>>% sum, identity %>>>% identity)(vals), out)
+})

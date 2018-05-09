@@ -314,6 +314,12 @@ as.list.CompositeFunction <- function(x, ...) {
 }
 
 #' @export
+c.CompositeFunction <- function(...) {
+  cmp <- compose(...)
+  cmp[!vapply(cmp, identical, identity, FUN.VALUE = TRUE)]
+}
+
+#' @export
 print.CompositeFunction <- function(x, ...) {
   cat("<Function Composition>\n")
   cat("From the inner to outer function:\n")
