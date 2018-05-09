@@ -103,7 +103,7 @@ partial <- local({
       return(..f)
     f <- closure(..f)
     p <- partial_(f, ...)
-    expr_partial(p) <- expr_partial(f) %||% expr_fn(..f, f)
+    expr_partial(p) <- expr_partial(..f) %||% expr_fn(..f, f)
     class(p) <- "PartialFunction" %subclass% class(..f)
     p
   }
