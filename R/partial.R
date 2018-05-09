@@ -165,7 +165,7 @@ partial_ <- local({
 
 quos_match <- local({
   non_void_expr <- function(q) {
-    quo_get_expr(q) != quote(expr = )
+    !identical(quo_get_expr(q), quote(expr = ))
   }
 
   function(..f, ...) {
