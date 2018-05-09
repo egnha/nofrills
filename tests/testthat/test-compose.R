@@ -260,6 +260,15 @@ test_that("namespace operators are literally interpreted", {
   )
 })
 
+test_that("parentheses are literally interpreted", {
+  . <- runif
+  f <- identity(.) %>>>% (identity(.)) %>>>% (log(2) %>>>% sum)
+  expect_equal(
+    {set.seed(1); f(10)},
+    {set.seed(1); sum(log(runif(10), 2))}
+  )
+})
+
 test_that("functions in composition can be named", {
   f0 <- function(x) log(abs(x) + 1)
 

@@ -156,11 +156,15 @@ fn_interp.quosure <- function(x) {
 }
 
 is_literal <- function(expr) {
-  is_op_compose(expr) || is_op_ns_public(expr) || is_op_ns_private(expr)
+  is_op_compose(expr) || is_paren(expr) || is_op_namespace(expr)
 }
-is_op_compose    <- check_head("%>>>%")
-is_op_ns_public  <- check_head("::")
-is_op_ns_private <- check_head(":::")
+is_op_compose <- check_head("%>>>%")
+is_paren      <- check_head("(")
+is_op_namespace <- function(expr) {
+  is_op_public(expr) || is_op_private(expr)
+}
+is_op_public  <- check_head("::")
+is_op_private <- check_head(":::")
 
 is_named <- check_head(":")
 lambda_named <- function(expr, env) {
