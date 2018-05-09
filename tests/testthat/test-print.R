@@ -2,17 +2,20 @@ context("Printing")
 
 test_that("partially applied function shows function with arguments fixed", {
   replace <- TRUE
-  f <- partial(sample, size = expr, replace = !!replace)
+  draw <- function(x, size = length(x), replace = FALSE, prob = NULL) {
+    sample(x, size, replace, prob)
+  }
+  draw_letters <- partial(draw, letters, replace = !!replace)
   out <- c(
     "<Partially Applied Function>",
     "",
-    "function(x, prob = NULL) {",
-    "  sample(x = x, size = ^expr, replace = ^TRUE, prob = prob)",
+    "function(size = length(^letters), prob = NULL) {",
+    "  draw(x = ^letters, size = size, replace = ^TRUE, prob = prob)",
     "}",
     "",
     "Recover the inner function with 'departial()'."
   )
-  expect_identical(capture.output(print(f)), out)
+  expect_identical(capture.output(print(draw_letters)), out)
 })
 
 test_that("tidy function shows underlying function", {
