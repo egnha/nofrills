@@ -162,17 +162,17 @@ is_op_compose    <- check_head("%>>>%")
 is_op_ns_public  <- check_head("::")
 is_op_ns_private <- check_head(":::")
 
+is_named <- check_head(":")
 lambda_named <- function(expr, env) {
   expr[[1L]] <- quote(`:=`)
   enquos <- as.call(c(quos, expr))
   fn_interp(eval(enquos, env))
 }
-is_named <- check_head(":")
 
+is_lambda <- check_head("{")
 lambda <- function(body, env) {
   new_fn(alist(. = ), body, env)
 }
-is_lambda <- check_head("{")
 
 lambda_partial <- local({
   arg <- as.name(".")
