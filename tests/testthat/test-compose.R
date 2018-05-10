@@ -315,6 +315,8 @@ test_that("distilling a composition drops identity components", {
     dist <- distill(cmp)
     expect_length(dist, 2)
     expect_named(dist, c("", "sum"))
+    expect_identical(dist[[1]], log)
+    expect_identical(dist[[2]], sum)
     expect_equal(dist(vals), out)
   }
 })
