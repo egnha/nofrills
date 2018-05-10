@@ -321,6 +321,16 @@ test_that("distilling a composition drops identity components", {
   }
 })
 
+test_that("pipeline of identity function distills to identity function", {
+  cmps <- list(
+    identity,
+    identity %>>>% identity,
+    identity %>>>% identity %>>>% identity
+  )
+  for (cmp in cmps)
+    expect_identical(distill(cmp), identity)
+})
+
 test_that("distilled non-composite function is itself", {
   for (f in fn_kinds[names(fn_kinds) != "composition"])
     expect_identical(distill(f), f)
