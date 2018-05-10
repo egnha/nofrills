@@ -27,8 +27,9 @@ semantics are supported (see \emph{Examples}).}
 \item{f}{Function.}
 }
 \value{
-A function composition, whose \link[base:formals]{formals} match those
-of the inner function applied (as a closure).
+\code{compose()} returns a function of class \code{CompositeFunction}, whose
+\link[base:formals]{formals} match those of the inner function applied (as a
+closure).
 
 For a composite function, \code{distill()} drops every component function
 that is identical to \code{\link[base:identity]{base::identity()}}, yielding another composite

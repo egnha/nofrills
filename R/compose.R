@@ -34,8 +34,9 @@
 #'   `!!` on the left-hand side of `:=`, and [splicing][rlang::quasiquotation],
 #'   via `!!!`, are supported.
 #'
-#' @return A function composition, whose [formals][base::formals()] match those
-#'   of the inner function applied (as a closure).
+#' @return `compose()` returns a function of class `CompositeFunction`, whose
+#'   [formals][base::formals()] match those of the inner function applied (as a
+#'   closure).
 #'
 #' @section Properties: `compose()` is _associative_, semantically and
 #'   operationally. This means, for instance, that
