@@ -66,14 +66,16 @@ test_that("untidying undoes tidying", {
   expect_identical(f_(1, z = 0), f_(1, z = 0))
 })
 
-test_that("error is signaled when attempting to tidy a non-function", {
-  non_fs <- list(NULL, "c", ~c(), quote(c), quote(identity))
-  for (x in non_fs)
-    expect_error(tidy(x), "Only functions can be tidied")
-})
-
-test_that("error is signaled when attempting to untidy a non-function", {
-  non_fs <- list(NULL, "c", ~c(), quote(c), quote(identity))
-  for (x in non_fs)
-    expect_error(untidy(x), "Only functions can be untidied")
+test_that("error is signaled when attempting to tidy or untidy a non-function", {
+  foo <- quote(foo)
+  expect_errors_with_message(
+    "object 'foo' of mode 'function' was not found",
+    tidy(foo),
+    untidy(foo)
+  )
+  expect_errors_with_message(
+    "'NULL' is not a function, character or symbol",
+    tidy(NULL),
+    untidy(NULL)
+  )
 })

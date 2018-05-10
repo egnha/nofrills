@@ -564,11 +564,7 @@ test_that("departial() is the identity for non-partial functions", {
 })
 
 test_that("error is signaled when applying departial() to a non-function", {
-  expect_errors_with_message(
-    "Only functions can be de-partialized",
-    departial(NULL),
-    departial(~function(x) NULL),
-    departial(quo(function(x) NULL)),
-    departial(quote(function(x) NULL))
-  )
+  foo <- quote(foo)
+  expect_error(departial(foo), "object 'foo' of mode 'function' was not found")
+  expect_error(departial(NULL), "'NULL' is not a function, character or symbol")
 })

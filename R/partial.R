@@ -216,7 +216,7 @@ eneval_tidy <- function(nm) {
 #' @rdname partial
 #' @export
 departial <- function(..f) {
-  is.function(..f) %because% "Only functions can be de-partialized"
+  ..f <- match.fun(..f)
   departial_(..f)
 }
 

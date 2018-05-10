@@ -50,7 +50,7 @@ tidy <- local({
   )
 
   function(f) {
-    is.function(f) %because% "Only functions can be tidied"
+    f <- match.fun(f)
     fmls <- fml_args(f)
     if (is_tidy(f, fmls))
       return(f)
@@ -78,7 +78,7 @@ is_tidy <- function(f, fmls = fml_args(f)) {
 #' )
 #' @export
 untidy <- function(f) {
-  is.function(f) %because% "Only functions can be untidied"
+  f <- match.fun(f)
   untidy_(f) %||% f
 }
 
