@@ -313,6 +313,7 @@ test_that("distilling a composition drops identity components", {
 
   for (cmp in cmps) {
     dist <- distill(cmp)
+    expect_true(inherits(dist, "CompositeFunction"))
     expect_length(dist, 2)
     expect_named(dist, c("", "sum"))
     expect_identical(dist[[1]], log)
@@ -327,8 +328,17 @@ test_that("pipeline of identity function distills to identity function", {
     identity %>>>% identity,
     identity %>>>% identity %>>>% identity
   )
-  for (cmp in cmps)
-    expect_identical(distill(cmp), identity)
+
+  for (cmp in cmps) {
+    dist <- distill(cmp)
+    if (inherits(cmp, "CompositeFunction")) {
+      expect_true(inherits(dist, "CompositeFunction"))
+      expect_length(dist, 1)
+      expect_identical(dist[[1]], identity)
+    } else {
+      expect_identical(dist, identity)
+    }
+  }
 })
 
 test_that("distilled non-composite function is itself", {

@@ -313,17 +313,6 @@ as.list.CompositeFunction <- function(x, ...) {
   fn_interp.CompositeFunction(x)
 }
 
-#' @param f Function.
-#' @rdname compose
-#' @export
-distill <- function(f) {
-  f <- match.fun(f)
-  if (!inherits(f, "CompositeFunction"))
-    return(f)
-  not_identity <- !vapply(f, identical, identity, FUN.VALUE = TRUE)
-  f[not_identity] %||% identity
-}
-
 #' @export
 print.CompositeFunction <- function(x, ...) {
   cat("<Function Composition>\n")
@@ -346,4 +335,29 @@ trim_capture <- function(f) {
   if (inherits(f, c("PartialFunction", "TidyFunction")))
     out <- out[-c(2L, length(out) - 1L, length(out))]
   out
+}
+
+#' @param f Function.
+#'
+#' @return For a composite function, `distill()` drops every component function
+#'   that is identical to [base::identity()], yielding another composite
+#'   function. Non-composite functions are returned unchanged.
+#'
+#' @examples
+#' # distill() drops identity components
+#' vals <- {set.seed(1); runif(10, 1, 2)}
+#' sum_log <- log %>>>% identity %>>>% sum %>>>% identity
+#' stopifnot(
+#'   length(distill(sum_log)) == 2L,
+#'   all.equal(sum_log(vals), sum(log(vals)))
+#' )
+#'
+#' @rdname compose
+#' @export
+distill <- function(f) {
+  f <- match.fun(f)
+  if (!inherits(f, "CompositeFunction"))
+    return(f)
+  not_identity <- !vapply(f, identical, identity, FUN.VALUE = TRUE)
+  f[not_identity] %||% compose(identity)
 }
