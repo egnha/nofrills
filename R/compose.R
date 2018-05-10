@@ -313,10 +313,15 @@ as.list.CompositeFunction <- function(x, ...) {
   fn_interp.CompositeFunction(x)
 }
 
+#' @param f Function.
+#' @rdname compose
 #' @export
-c.CompositeFunction <- function(...) {
-  cmp <- compose(...)
-  cmp[!vapply(cmp, identical, identity, FUN.VALUE = TRUE)]
+distill <- function(f) {
+  f <- match.fun(f)
+  if (!inherits(f, "CompositeFunction"))
+    return(f)
+  not_identity <- !vapply(f, identical, identity, FUN.VALUE = TRUE)
+  f[not_identity] %||% identity
 }
 
 #' @export

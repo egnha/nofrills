@@ -3,11 +3,14 @@
 \name{compose}
 \alias{compose}
 \alias{\%>>>\%}
+\alias{distill}
 \title{Compose functions}
 \usage{
 compose(...)
 
 inner \%>>>\% outer
+
+distill(f)
 }
 \arguments{
 \item{...}{Functions or lists thereof to compose. Lists of functions are
@@ -20,6 +23,8 @@ via \code{!!!}, are supported.}
 \link[rlang:quasiquotation]{Quasiquotation} and the
 \href{https://cran.r-project.org/package=magrittr}{\pkg{magrittr}}-\code{\%>\%}
 semantics are supported (see \emph{Examples}).}
+
+\item{f}{Function.}
 }
 \value{
 A function composition, whose \link[base:formals]{formals} match those
