@@ -107,18 +107,17 @@
 #' @export
 compose <- function(...) {
   pipeline <- flatten_pipeline(...)
-  len <- length(pipeline)
-  if (len == 0L)
+  if (is_empty(pipeline))
     return(NULL)
-  fn_cmps <- compose_(pipeline, len)
-  class(fn_cmps) <- c("CompositeFunction", "function")
-  fn_cmps
+  cmp <- fuse(pipeline)
+  class(cmp) <- c("CompositeFunction", "function")
+  cmp
 }
 
-compose_ <- function(pipeline, len) {
+fuse <- function(pipeline) {
   fn_inner <- pipeline[[1L]]
   fmls <- fml_args(fn_inner)
-  call <- nest_calls(len, fmls)
+  call <- nest_calls(length(pipeline), fmls)
   env <- envir(fn_inner) %encloses% (pipeline %named% call$fnms)
   makeActiveBinding("__pipeline__", get_fns(call$fnms, pipeline, env), env)
   new_fn(fmls, call$expr, env)
