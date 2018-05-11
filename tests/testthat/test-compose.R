@@ -25,9 +25,9 @@ cmps <- list(
   compose(compose(fs[[1]], fs[[2]]), fs[[3]]),
   compose(compose(fs[[1]], fs[[2]], fs[[3]])),
   compose(fs[[1]], fs[[2]], fs[[3]]),
-  (!!fs[[1]]) %>>>% !!fs[[2]] %>>>% !!fs[[3]],
-  (!!((!!fs[[1]]) %>>>% !!fs[[2]])) %>>>% !!fs[[3]],
-  (!!fs[[1]]) %>>>% !!((!!fs[[2]]) %>>>% !!fs[[3]])
+  fs[[1]] %>>>% fs[[2]] %>>>% fs[[3]],
+  (fs[[1]] %>>>% fs[[2]]) %>>>% fs[[3]],
+  fs[[1]] %>>>% (fs[[2]] %>>>% fs[[3]])
 )
 
 context("Composing functions")
@@ -99,17 +99,17 @@ test_that("nested compositions are flattened", {
   cmps <- list(
     compose(gs[[1]], gs[[2]], gs[[3]], gs[[4]]),
     compose(compose(gs[[1]], gs[[2]], gs[[3]], gs[[4]])),
-    compose((!!gs[[1]]) %>>>% !!gs[[2]] %>>>% !!gs[[3]] %>>>% !!gs[[4]]),
+    compose(gs[[1]] %>>>% gs[[2]] %>>>% gs[[3]] %>>>% gs[[4]]),
     compose(gs[[1]], compose(gs[[2]], gs[[3]], gs[[4]])),
-    compose((!!gs[[1]]) %>>>% !!compose(gs[[2]], gs[[3]], gs[[4]])),
-    compose((!!compose(gs[[1]], gs[[2]], gs[[3]])) %>>>% !!gs[[4]]),
-    compose(gs[[1]], compose(gs[[2]], (!!gs[[3]]) %>>>% !!gs[[4]])),
+    compose(gs[[1]] %>>>% !!compose(gs[[2]], gs[[3]], gs[[4]])),
+    compose((!!compose(gs[[1]], gs[[2]], gs[[3]])) %>>>% gs[[4]]),
+    compose(gs[[1]], compose(gs[[2]], gs[[3]] %>>>% gs[[4]])),
     compose(gs[[1]], compose(gs[[2]], compose(gs[[3]], gs[[4]]))),
-    compose(gs[[1]], (!!gs[[2]]) %>>>% !!compose(gs[[3]], gs[[4]])),
-    compose(gs[[1]], (!!compose(gs[[3]], gs[[3]])) %>>>% !!gs[[4]]),
+    compose(gs[[1]], gs[[2]] %>>>% !!compose(gs[[3]], gs[[4]])),
+    compose(gs[[1]], (!!compose(gs[[3]], gs[[3]])) %>>>% gs[[4]]),
     compose(gs[[1]], compose(gs[[2]], compose(gs[[3]], compose(gs[[4]])))),
-    compose((!!gs[[1]]) %>>>% !!((!!gs[[2]]) %>>>% !!((!!gs[[3]]) %>>>% !!gs[[4]]))),
-    compose((!!((!!((!!gs[[1]]) %>>>% !!gs[[2]])) %>>>% (!!gs[[3]]))) %>>>% !!gs[[4]])
+    compose(gs[[1]] %>>>% (gs[[2]] %>>>% (gs[[3]] %>>>% gs[[4]]))),
+    compose(((gs[[1]] %>>>% gs[[2]]) %>>>% gs[[3]]) %>>>% gs[[4]])
   )
   for (cmp in cmps)
     expect_equivalent(as.list(cmp), gs)
