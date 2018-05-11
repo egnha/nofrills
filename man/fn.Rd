@@ -173,4 +173,12 @@ if (suppressWarnings(require(dplyr))) {
   my_summarise
 }
 
+# Lightweight metaprogramming
+enforce <- fn_(cond ~ fn(. ~ {stopifnot(!!substitute(cond)); .}))
+nonans <- enforce(!is.nan(.))
+log_strict <- fn(x ~ nonans(log(x)))
+\dontrun{
+log_strict(2)   # 0.6931472
+log_strict(-1)  # Error: !is.nan(.) is not TRUE}
+
 }
