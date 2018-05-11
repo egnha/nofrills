@@ -154,13 +154,22 @@ fn_interp.quosure <- function(x) {
 }
 
 is_literal <- function(expr) {
-  is_op_compose(expr) || is_paren(expr) || is_op_namespace(expr)
+  is_op_compose(expr)  ||
+    is_paren(expr)     ||
+    is_subsetter(expr) ||
+    is_op_namespace(expr)
 }
 is_op_compose <- check_head("%>>>%")
 is_paren      <- check_head("(")
+is_subsetter <- function(expr) {
+  is_dollar(expr) || is_double_sq(expr) || is_single_sq(expr)
+}
 is_op_namespace <- function(expr) {
   is_op_public(expr) || is_op_private(expr)
 }
+is_dollar     <- check_head("$")
+is_double_sq  <- check_head("[[")
+is_single_sq  <- check_head("[")
 is_op_public  <- check_head("::")
 is_op_private <- check_head(":::")
 

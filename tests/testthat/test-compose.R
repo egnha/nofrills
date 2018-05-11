@@ -162,21 +162,18 @@ test_that("composition operator obeys magrittr semantics (#39)", {
     upper <- sprintf("%s", toupper(x[[1]]))
     paste(upper, collapse = "")
   }
-  f1 <- .[[1]] %>>>% toupper %>>>% sprintf("%s", .) %>>>% paste(collapse = "")
-  f2 <- .[[1]] %>>>% toupper() %>>>% sprintf("%s", .) %>>>% paste(collapse = "")
-  f3 <- `[[`(1) %>>>% toupper %>>>% sprintf("%s", .) %>>>% paste(collapse = "")
+  f1 <- {.[[1]]} %>>>% toupper %>>>% sprintf("%s", .) %>>>% paste(collapse = "")
+  f2 <- {.[[1]]} %>>>% toupper() %>>>% sprintf("%s", .) %>>>% paste(collapse = "")
 
   x <- list(letters)
   expect_identical(f0(x), paste(LETTERS, collapse = ""))
   expect_identical(f1(x), f0(x))
   expect_identical(f2(x), f0(x))
-  expect_identical(f3(x), f0(x))
 
   x <- mtcars
   expect_identical(f0(x), paste(mtcars[[1]], collapse = ""))
   expect_identical(f1(x), f0(x))
   expect_identical(f2(x), f0(x))
-  expect_identical(f3(x), f0(x))
 
   # Anonymous function of '.' using {...}
   f0 <- function(x) log(abs(x) + 1)
@@ -252,6 +249,14 @@ test_that("parentheses are literally interpreted", {
     f(10),
     sum(log(seq_len(10), 2))
   )
+})
+
+test_that("subsetters are literally interpreted (#51)", {
+  fs <- list(log, sum, exp, sq = function(x) x^2)
+  vals <- {set.seed(1); runif(10, 1, 2)}
+
+  f <- fs[[1]] %>>>% fs[2:3] %>>>% fs$sq
+  expect_equal(f(vals), exp(sum(log(vals)))^2)
 })
 
 test_that("functions in composition can be named", {
