@@ -115,10 +115,10 @@ compose <- function(...) {
 }
 
 fuse <- function(pipeline) {
-  fn_inner <- pipeline[[1L]]
-  fmls <- fml_args(fn_inner)
+  innermost <- pipeline[[1L]]
+  fmls <- fml_args(innermost)
   call <- nest_calls(length(pipeline), fmls)
-  env <- envir(fn_inner) %encloses% (pipeline %named% call$fnms)
+  env <- envir(innermost) %encloses% (pipeline %named% call$fnms)
   makeActiveBinding("__pipeline__", get_fns(call$fnms, pipeline, env), env)
   new_fn(fmls, call$expr, env)
 }
