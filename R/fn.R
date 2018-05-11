@@ -162,6 +162,14 @@
 #'   my_summarise
 #' }
 #'
+#' # Lightweight metaprogramming
+#' enforce <- fn_(cond ~ fn(. ~ {stopifnot(!!substitute(cond)); .}))
+#' nonans <- enforce(!is.nan(.))
+#' log_strict <- fn(x ~ nonans(log(x)))
+#' \dontrun{
+#' log_strict(2)   # 0.6931472
+#' log_strict(-1)  # Error: !is.nan(.) is not TRUE}
+#'
 #' @name fn
 NULL
 
@@ -265,15 +273,6 @@ literal <- function(...) {
   exprs %named% names_chr(exprs)
 }
 
-#' @examples
-#' # Lightweight metaprogramming
-#' enforce <- fn_(cond ~ fn(. ~ {stopifnot(!!substitute(cond)); .}))
-#' nonans <- enforce(!is.nan(.))
-#' log_strict <- fn(x ~ nonans(log(x)))
-#' \dontrun{
-#' log_strict(2)   # 0.6931472
-#' log_strict(-1)  # Error: !is.nan(.) is not TRUE}
-#'
 #' @rdname fn
 #' @export
 fn_ <- fn_constructor(literal)
