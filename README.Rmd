@@ -111,8 +111,8 @@ fn(!!!args, ~ x + y)  # note the one-sided formula
 
 #### Literally unquote with `QUQ()`, `QUQS()`
 
-```{r}
-library(dplyr, warn.conflicts = FALSE)
+```{r message = FALSE}
+library(dplyr)
 
 summariser <- quote(mean)
 
@@ -120,7 +120,7 @@ my_summarise <- fn(df, ... ~ {
   group_by <- quos(...)
   df %>%
     group_by(QUQS(group_by)) %>%
-    summarise(a = `!!`(summariser)(a))
+    summarise(a = (!!summariser)(a))
 })
 
 my_summarise

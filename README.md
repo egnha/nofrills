@@ -122,7 +122,7 @@ fn(!!!args, ~ x + y)  # note the one-sided formula
 #### Literally unquote with `QUQ()`, `QUQS()`
 
 ``` r
-library(dplyr, warn.conflicts = FALSE)
+library(dplyr)
 
 summariser <- quote(mean)
 
@@ -130,7 +130,7 @@ my_summarise <- fn(df, ... ~ {
   group_by <- quos(...)
   df %>%
     group_by(QUQS(group_by)) %>%
-    summarise(a = `!!`(summariser)(a))
+    summarise(a = (!!summariser)(a))
 })
 
 my_summarise
@@ -160,7 +160,7 @@ is_this <- compare_to("this")
 is_this
 #> function (x) 
 #> identical(x, "this")
-#> <environment: 0x7fdab9ed3248>
+#> <environment: 0x7fd4cdbc4960>
 ```
 
 #### Curry a function with `curry()`
