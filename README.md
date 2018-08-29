@@ -1,43 +1,45 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
+> Unless you need `curry()` or `curry_fn()`, you should use the more
+> versatile [gestalt](https://github.com/egnha/gestalt) package, which
+> includes `fn()`.
+
 [![Travis-CI Build
 Status](https://travis-ci.org/egnha/nofrills.svg?branch=master)](https://travis-ci.org/egnha/nofrills)
 [![codecov](https://codecov.io/gh/egnha/nofrills/branch/master/graph/badge.svg)](https://codecov.io/gh/egnha/nofrills)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/nofrills)](https://cran.r-project.org/package=nofrills)
 
-nofrills <img src="inst/logo.png" align="right" />
-==================================================
+# nofrills <img src="inst/logo.png" align="right" />
 
 *Low-Cost Anonymous Functions*
 
-Overview
---------
+## Overview
 
 *nofrills* is a lightweight R package that provides `fn()`, a more
 powerful variation of `function()` that:
 
--   **costs less** — enables tidyverse
+  - **costs less** — enables tidyverse
     [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html)
     so you don’t pay the price of [functional
     impurity](#pure-functions-via-quasiquotation)
 
--   has the **same great taste** — supports a superset of `function()`’s
+  - has the **same great taste** — supports a superset of `function()`’s
     syntax and capabilities
 
--   is **less filling** —
-
+  - is **less filling** —
+    
     ``` r
     fn(x, y = 1 ~ x + y)
     ```
-
+    
     is equivalent to
-
+    
     ``` r
     function(x, y = 1) x + y
     ```
 
-Installation
-------------
+## Installation
 
 ``` r
 install.packages("nofrills")
@@ -50,8 +52,7 @@ Alternatively, install the development version from GitHub:
 devtools::install_github("egnha/nofrills")
 ```
 
-Usage
------
+## Usage
 
 ### Same syntax as `function()` but shorter
 
@@ -159,6 +160,7 @@ is_this <- compare_to("this")
 is_this
 #> function (x) 
 #> identical(x, "this")
+#> <environment: 0x7fdab9ed3248>
 ```
 
 #### Curry a function with `curry()`
@@ -173,8 +175,7 @@ double(3)
 #> [1] 6
 ```
 
-Pure functions via quasiquotation
----------------------------------
+## Pure functions via quasiquotation
 
 Functions in R are generally
 [impure](https://en.wikipedia.org/wiki/Pure_function), i.e., the return
@@ -189,27 +190,27 @@ Notebook](http://rmarkdown.rstudio.com/r_notebooks.html)), it can be
 tricky to ensure that you haven’t unwittingly mutated an object that an
 earlier function depends upon.
 
--   Consider the following function:
-
+  - Consider the following function:
+    
     ``` r
     a <- 1
     foo <- function(x) x + a
     ```
-
+    
     What is the value of `foo(1)`? It is not necessarily `2` because the
     value of `a` may have changed between the *creation* of `foo()` and
     the *calling* of `foo(1)`:
-
+    
     ``` r
     foo(1)
     #> [1] 2
-
+    
     a <- 0
-
+    
     foo(1)
     #> [1] 1
     ```
-
+    
     In other words, `foo()` is impure because the value of `foo(x)`
     depends not only on the value of `x` but also on the *externally
     mutable* value of `a`.
@@ -218,46 +219,44 @@ earlier function depends upon.
 [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html)
 to eliminate such indeterminacy.
 
--   With `fn()`, you can unquote `a` to capture its value at the point
+  - With `fn()`, you can unquote `a` to capture its value at the point
     of creation:
-
+    
     ``` r
     a <- 1
     foo <- fn(x ~ x + !!a)
     ```
-
+    
     Now `foo()` is a pure function, unaffected by changes in its lexical
     scope:
-
+    
     ``` r
     foo(1)
     #> [1] 2
-
+    
     a <- 0
-
+    
     foo(1)
     #> [1] 2
     ```
 
-Alternatives to nofrills
-------------------------
+## Alternatives to nofrills
 
 Alternative anonymous-function constructors (which don’t support
-quasiquotation) include:
+quasiquotation)
+    include:
 
--   [`pryr::f()`](https://github.com/hadley/pryr)
--   [`lambda::f()`](https://github.com/jimhester/lambda)
--   [`rlang::as_function()`](http://rlang.tidyverse.org/reference/as_function.html)
+  - [`pryr::f()`](https://github.com/hadley/pryr)
+  - [`lambda::f()`](https://github.com/jimhester/lambda)
+  - [`rlang::as_function()`](http://rlang.tidyverse.org/reference/as_function.html)
 
-Acknowledgement
----------------
+## Acknowledgement
 
 The [rlang](https://github.com/tidyverse/rlang) package by [Lionel
 Henry](https://github.com/lionel-) and [Hadley
 Wickham](https://github.com/hadley) makes nofrills possible. Crucially,
 rlang provides the engine for quasiquotation and expression capture.
 
-License
--------
+## License
 
 MIT Copyright © 2017–18 [Eugene Ha](https://github.com/egnha)

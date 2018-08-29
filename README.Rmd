@@ -12,6 +12,9 @@ knitr::opts_chunk$set(
 )
 ```
 
+> Unless you need `curry()` or `curry_fn()`, you should use the more versatile
+[gestalt](https://github.com/egnha/gestalt) package, which includes `fn()`.
+
 [![Travis-CI Build Status](https://travis-ci.org/egnha/nofrills.svg?branch=master)](https://travis-ci.org/egnha/nofrills)
 [![codecov](https://codecov.io/gh/egnha/nofrills/branch/master/graph/badge.svg)](https://codecov.io/gh/egnha/nofrills)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/nofrills)](https://cran.r-project.org/package=nofrills)
