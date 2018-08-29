@@ -1,6 +1,10 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+> Unless you need `curry()` or `curry_fn()`, you should use the more
+> versatile [gestalt](https://github.com/egnha/gestalt) package, which
+> includes `fn()`.
+
 [![Travis-CI Build
 Status](https://travis-ci.org/egnha/nofrills.svg?branch=master)](https://travis-ci.org/egnha/nofrills)
 [![codecov](https://codecov.io/gh/egnha/nofrills/branch/master/graph/badge.svg)](https://codecov.io/gh/egnha/nofrills)
@@ -155,11 +159,13 @@ as_this <- classify_as("this")
 as_this
 #> function (x) 
 #> `class<-`(x, "this")
+#> <environment: 0x7fe0b84ad780>
 
 do_call <- curry_fn(... = , f ~ f(QUQS(list(...))))
 do_call(x = 1, 2)
 #> function (f) 
 #> f(x = 1, 2)
+#> <environment: 0x7fe0b861cde8>
 ```
 
 #### Curry a function with `curry()`
