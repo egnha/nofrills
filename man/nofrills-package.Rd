@@ -7,8 +7,8 @@
 \title{nofrills: Low-Cost Anonymous Functions}
 \description{
 Provides a compact variation of the usual syntax of function
-declaration, in order to support tidyverse-style quasiquotation of a
-function's arguments and body.
+  declaration, in order to support tidyverse-style quasiquotation of a
+  function's arguments and body.
 }
 \seealso{
 Useful links:

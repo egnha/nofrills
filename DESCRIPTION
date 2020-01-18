@@ -22,5 +22,5 @@ Collate:
     'as-fn.R'
     'make-fn-aware.R'
     'curry.R'
-RoxygenNote: 6.0.1
+RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)

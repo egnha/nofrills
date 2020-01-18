@@ -27,13 +27,13 @@ A function of nested single-argument functions.
 \description{
 \code{curry()} \href{https://en.wikipedia.org/wiki/Currying}{curries} functions—it
 reconstitutes a function as a succession of single-argument functions. For
-example, \code{curry()} produces the the function\preformatted{function(x) {
-  function(y) {
-    function(z) {
+example, \code{curry()} produces the the function\preformatted{function(x) \{
+  function(y) \{
+    function(z) \{
       x * y * z
-    }
-  }
-}
+    \}
+  \}
+\}
 }
 
 from the function \code{function(x, y, z) x * y * z}.
