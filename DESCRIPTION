@@ -1,7 +1,7 @@
 Package: nofrills
 Type: Package
 Title: Low-Cost Anonymous Functions
-Version: 0.3.0
+Version: 0.3.1
 Authors@R: person("Eugene", "Ha", , "eha@posteo.de", c("aut", "cre"))
 Description: Provides a compact variation of the usual syntax of function
   declaration, in order to support tidyverse-style quasiquotation of a
