@@ -1,5 +1,10 @@
 # nofrills
 
+## 0.3.1
+
+  This minor update accommodates the deprecation of `rlang::is_expr()` in rlang
+  0.2.0 (#52). There are no user-facing changes.
+
 ## 0.3.0
 
   * Currying operators `curry()` and `curry_fn()` are introduced (#10). Notably,

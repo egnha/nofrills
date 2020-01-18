@@ -75,7 +75,7 @@ make_function <- function(args, body, env) {
   stopifnot(all(have_name(args)), is.environment(env))
   if (is_closure(body)) {
     body <- call("function", formals(body), base::body(body))
-  } else if (!is_expr(body)) {
+  } else if (!is_expression(body)) {
     abort("Body must be an expression or closure.")
   }
   args <- as.pairlist(args)
