@@ -2,8 +2,10 @@
 
 ## 0.3.1
 
-  This minor update accommodates the deprecation of `rlang::is_expr()` in rlang
-  0.2.0 (#52). There are no user-facing changes.
+  This minor update eliminates a warning caused by the deprecation of
+  `rlang::is_expr()` in 0.2.0, and fixes a breakage in `curry()` caused by
+  `rlang::as_closure()`. Tests are updated to accommodate an upcoming change in
+  `all.equal()`. There are no user-facing changes.
 
 ## 0.3.0
 
