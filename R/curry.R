@@ -38,7 +38,7 @@
 #' @export
 curry <- function(f, env = environment(f)) {
   stopifnot(is.function(f), is.environment(env) || is.null(env))
-  f <- as_closure(f)
+  f <- closure(f)
   fmls <- formals(f)
   if (length(fmls) < 2)
     return(f)
