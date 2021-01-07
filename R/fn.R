@@ -158,7 +158,7 @@ make_function <- function(args, body, env) {
 #'         summarise(a = mean(a))
 #'     })}
 #'         (Source:
-#'         _[Programming with dplyr](http://dplyr.tidyverse.org/articles/programming.html)_)
+#'         _[Programming with dplyr](https://dplyr.tidyverse.org/articles/programming.html)_)
 #'     }
 #'   }
 #'

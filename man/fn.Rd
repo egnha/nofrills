@@ -83,7 +83,7 @@ formula.)
         summarise(a = mean(a))
     })}
 (Source:
-\emph{\href{http://dplyr.tidyverse.org/articles/programming.html}{Programming with dplyr}})
+\emph{\href{https://dplyr.tidyverse.org/articles/programming.html}{Programming with dplyr}})
 }
 }
 }

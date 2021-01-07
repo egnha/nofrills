@@ -142,7 +142,7 @@ my_summarise
 ```
 
 (Source: [*Programming with
-dplyr*](http://dplyr.tidyverse.org/articles/programming.html#capturing-multiple-variables))
+dplyr*](https://dplyr.tidyverse.org/articles/programming.html))
 
 ### [Curry](https://en.wikipedia.org/wiki/Currying) functions
 
@@ -251,7 +251,7 @@ quasiquotation) include:
 
 ## Acknowledgement
 
-The [rlang](https://github.com/tidyverse/rlang) package by [Lionel
+The [rlang](https://github.com/r-lib/rlang) package by [Lionel
 Henry](https://github.com/lionel-) and [Hadley
 Wickham](https://github.com/hadley) makes nofrills possible. Crucially,
 rlang provides the engine for quasiquotation and expression capture.
