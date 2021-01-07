@@ -259,4 +259,4 @@ rlang provides the engine for quasiquotation and expression capture.
 
 ## License
 
-MIT Copyright © 2017–18 [Eugene Ha](https://github.com/egnha)
+MIT Copyright © 2017–21 [Eugene Ha](https://github.com/egnha)
