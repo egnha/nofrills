@@ -56,27 +56,33 @@ test_that("f is called from same environment as make_fn_aware(f, ...)()", {
 test_that("can splice in argument names", {
   expect_equal(
     make_fn_aware(foo, "f", "g"),
-    make_fn_aware(foo, !!!list("f", "g"))
+    make_fn_aware(foo, !!!list("f", "g")),
+    ignore_function_env = FALSE
   )
   expect_equal(
     make_fn_aware(foo, "f"),
-    make_fn_aware(foo, !!!list("f"))
+    make_fn_aware(foo, !!!list("f")),
+    ignore_function_env = FALSE
   )
   expect_equal(
     make_fn_aware(foo),
-    make_fn_aware(foo, !!!list())
+    make_fn_aware(foo, !!!list()),
+    ignore_function_env = FALSE
   )
   expect_equal(
     make_fn_aware(foo, "f", "g"),
-    make_fn_aware(foo, !!!list("f", "g"))
+    make_fn_aware(foo, !!!list("f", "g")),
+    ignore_function_env = FALSE
   )
   expect_equal(
     make_fn_aware(foo, "f"),
-    make_fn_aware(foo, !!!list("f"))
+    make_fn_aware(foo, !!!list("f")),
+    ignore_function_env = FALSE
   )
   expect_equal(
     make_fn_aware(foo),
-    make_fn_aware(foo, !!!list())
+    make_fn_aware(foo, !!!list()),
+    ignore_function_env = FALSE
   )
 })
 
