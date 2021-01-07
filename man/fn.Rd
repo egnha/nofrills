@@ -118,7 +118,7 @@ In other words, \code{foo()} is impure because the value of \code{foo(x)} depend
 only on the value of \code{x} but also on the \emph{externally mutable} value of \code{a}.
 
 \code{fn()} enables you to write \emph{pure} functions by using
-\href{http://rlang.tidyverse.org/reference/quasiquotation.html}{quasiquotation}
+\href{https://rlang.r-lib.org/reference/quasiquotation.html}{quasiquotation}
 to eliminate such indeterminacy.
 
 \strong{Example} — With \code{fn()}, you can unquote \code{a} to \dQuote{burn in} its

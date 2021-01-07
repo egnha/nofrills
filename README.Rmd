@@ -29,7 +29,7 @@ _nofrills_ is a lightweight R package that provides `fn()`, a more powerful
 variation of `function()` that:
 
   - **costs less** — enables tidyverse
-    [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html)
+    [quasiquotation](https://rlang.r-lib.org/reference/quasiquotation.html)
     so you don’t pay the price of
     [functional impurity](#pure-functions-via-quasiquotation)
     
@@ -186,7 +186,7 @@ function depends upon.
     only on the value of `x` but also on the _externally mutable_ value of `a`.
     
 `fn()` enables you to write **pure(r)** functions by using
-[quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html)
+[quasiquotation](https://rlang.r-lib.org/reference/quasiquotation.html)
 to eliminate such indeterminacy.
 
   - With `fn()`, you can unquote `a` to capture its value at the point of
@@ -211,7 +211,7 @@ include:
 
   - [`pryr::f()`](https://github.com/hadley/pryr)
   - [`lambda::f()`](https://github.com/jimhester/lambda)
-  - [`rlang::as_function()`](http://rlang.tidyverse.org/reference/as_function.html)
+  - [`rlang::as_function()`](https://rlang.r-lib.org/reference/as_function.html)
 
 ## Acknowledgement
 

@@ -19,22 +19,22 @@ Status](https://travis-ci.org/egnha/nofrills.svg?branch=master)](https://travis-
 *nofrills* is a lightweight R package that provides `fn()`, a more
 powerful variation of `function()` that:
 
-  - **costs less** — enables tidyverse
-    [quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html)
+-   **costs less** — enables tidyverse
+    [quasiquotation](https://rlang.r-lib.org/reference/quasiquotation.html)
     so you don’t pay the price of [functional
     impurity](#pure-functions-via-quasiquotation)
 
-  - has the **same great taste** — supports a superset of `function()`’s
+-   has the **same great taste** — supports a superset of `function()`’s
     syntax and capabilities
 
-  - is **less filling** —
-    
+-   is **less filling** —
+
     ``` r
     fn(x, y = 1 ~ x + y)
     ```
-    
+
     is equivalent to
-    
+
     ``` r
     function(x, y = 1) x + y
     ```
@@ -190,52 +190,52 @@ Notebook](http://rmarkdown.rstudio.com/r_notebooks.html)), it can be
 tricky to ensure that you haven’t unwittingly mutated an object that an
 earlier function depends upon.
 
-  - Consider the following function:
-    
+-   Consider the following function:
+
     ``` r
     a <- 1
     foo <- function(x) x + a
     ```
-    
+
     What is the value of `foo(1)`? It is not necessarily `2` because the
     value of `a` may have changed between the *creation* of `foo()` and
     the *calling* of `foo(1)`:
-    
+
     ``` r
     foo(1)
     #> [1] 2
-    
+
     a <- 0
-    
+
     foo(1)
     #> [1] 1
     ```
-    
+
     In other words, `foo()` is impure because the value of `foo(x)`
     depends not only on the value of `x` but also on the *externally
     mutable* value of `a`.
 
 `fn()` enables you to write **pure(r)** functions by using
-[quasiquotation](http://rlang.tidyverse.org/reference/quasiquotation.html)
+[quasiquotation](https://rlang.r-lib.org/reference/quasiquotation.html)
 to eliminate such indeterminacy.
 
-  - With `fn()`, you can unquote `a` to capture its value at the point
+-   With `fn()`, you can unquote `a` to capture its value at the point
     of creation:
-    
+
     ``` r
     a <- 1
     foo <- fn(x ~ x + !!a)
     ```
-    
+
     Now `foo()` is a pure function, unaffected by changes in its lexical
     scope:
-    
+
     ``` r
     foo(1)
     #> [1] 2
-    
+
     a <- 0
-    
+
     foo(1)
     #> [1] 2
     ```
@@ -243,12 +243,11 @@ to eliminate such indeterminacy.
 ## Alternatives to nofrills
 
 Alternative anonymous-function constructors (which don’t support
-quasiquotation)
-    include:
+quasiquotation) include:
 
-  - [`pryr::f()`](https://github.com/hadley/pryr)
-  - [`lambda::f()`](https://github.com/jimhester/lambda)
-  - [`rlang::as_function()`](http://rlang.tidyverse.org/reference/as_function.html)
+-   [`pryr::f()`](https://github.com/hadley/pryr)
+-   [`lambda::f()`](https://github.com/jimhester/lambda)
+-   [`rlang::as_function()`](https://rlang.r-lib.org/reference/as_function.html)
 
 ## Acknowledgement
 
