@@ -57,32 +57,32 @@ test_that("can splice in argument names", {
   expect_equal(
     make_fn_aware(foo, "f", "g"),
     make_fn_aware(foo, !!!list("f", "g")),
-    ignore_function_env = FALSE
+    check.environment = FALSE
   )
   expect_equal(
     make_fn_aware(foo, "f"),
     make_fn_aware(foo, !!!list("f")),
-    ignore_function_env = FALSE
+    check.environment = FALSE
   )
   expect_equal(
     make_fn_aware(foo),
     make_fn_aware(foo, !!!list()),
-    ignore_function_env = FALSE
+    check.environment = FALSE
   )
   expect_equal(
     make_fn_aware(foo, "f", "g"),
     make_fn_aware(foo, !!!list("f", "g")),
-    ignore_function_env = FALSE
+    check.environment = FALSE
   )
   expect_equal(
     make_fn_aware(foo, "f"),
     make_fn_aware(foo, !!!list("f")),
-    ignore_function_env = FALSE
+    check.environment = FALSE
   )
   expect_equal(
     make_fn_aware(foo),
     make_fn_aware(foo, !!!list()),
-    ignore_function_env = FALSE
+    check.environment = FALSE
   )
 })
 
