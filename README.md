@@ -8,7 +8,7 @@
 [![Travis-CI Build
 Status](https://travis-ci.org/egnha/nofrills.svg?branch=master)](https://travis-ci.org/egnha/nofrills)
 [![codecov](https://codecov.io/gh/egnha/nofrills/branch/master/graph/badge.svg)](https://codecov.io/gh/egnha/nofrills)
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/nofrills)](https://cran.r-project.org/package=nofrills)
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/nofrills)](https://cran.r-project.org/package=nofrills)
 
 # nofrills <img src="inst/logo.png" align="right" />
 
@@ -160,7 +160,7 @@ is_this <- compare_to("this")
 is_this
 #> function (x) 
 #> identical(x, "this")
-#> <environment: 0x7fd4cdbc4960>
+#> <environment: 0x7fd045fde208>
 ```
 
 #### Curry a function with `curry()`
@@ -182,11 +182,11 @@ Functions in R are generally
 value of a function will *not* in general be determined by the value of
 its inputs alone. This is because a function may depend on mutable
 objects in its [lexical
-scope](http://adv-r.hadley.nz/functions.html#lexical-scoping). Normally
+scope](https://adv-r.hadley.nz/functions.html#lexical-scoping). Normally
 this isn’t an issue. But if you are working interactively and sourcing
 files into the global environment, say, or using a notebook interface
 (like [Jupyter](https://jupyter.org) or [R
-Notebook](http://rmarkdown.rstudio.com/r_notebooks.html)), it can be
+Notebook](https://rmarkdown.rstudio.com/r_notebooks.html)), it can be
 tricky to ensure that you haven’t unwittingly mutated an object that an
 earlier function depends upon.
 
