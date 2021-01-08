@@ -97,11 +97,8 @@ its
 \href{https://adv-r.hadley.nz/functions.html#lexical-scoping}{lexical scope}.
 Normally this isn’t an issue. But if you are working interactively and
 sourcing files into the global environment, say, or using a notebook
-interface
-(like \href{https://jupyter.org}{Jupyter} or
-\href{https://rmarkdown.rstudio.com/r_notebooks.html}{R Notebook}),
-it can be tricky to ensure that you haven’t unwittingly mutated an object
-that an earlier function depends upon.
+interface (like Jupyter or R Notebook), it can be tricky to ensure that you
+haven’t unwittingly mutated an object that an earlier function depends upon.
 
 \strong{Example} — Consider the following function:\preformatted{    a <- 1
     foo <- function(x) x + a
