@@ -94,7 +94,7 @@ test_that("error is signaled if f is not a function or abbreviation thereof", {
 
 test_that("error is signaled if ... are neither strings nor empty", {
   expect_error(make_fn_aware(foo, f), "object 'f' not found")
-  expect_error(make_fn_aware(foo, 1), "Can't convert a double vector")
+  expect_error(make_fn_aware(foo, 1))
 })
 
 test_that("error is signaled if ... are not names of arguments of f", {
