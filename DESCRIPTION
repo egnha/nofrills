@@ -8,7 +8,6 @@ Description: Provides a compact variation of the usual syntax of function
   function's arguments and body.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 ByteCompile: true
 Depends: R (>= 3.3.0)
 Imports: rlang (>= 1.0.0)
