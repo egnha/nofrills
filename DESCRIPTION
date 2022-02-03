@@ -1,7 +1,7 @@
 Package: nofrills
 Type: Package
 Title: Low-Cost Anonymous Functions
-Version: 0.3.1
+Version: 0.3.2
 Authors@R: person("Eugene", "Ha", , "eha@posteo.de", c("aut", "cre"))
 Description: Provides a compact variation of the usual syntax of function
   declaration, in order to support tidyverse-style quasiquotation of a
@@ -10,9 +10,9 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
-Depends: R (>= 3.1.0)
-Imports: rlang (>= 0.2.0)
-Suggests: testthat, dplyr (>= 0.7.0)
+Depends: R (>= 3.3.0)
+Imports: rlang (>= 1.0.0)
+Suggests: testthat (>= 3.0.0), dplyr (>= 0.7.0)
 URL: https://github.com/egnha/nofrills
 BugReports: https://github.com/egnha/nofrills/issues
 Collate:
@@ -23,5 +23,6 @@ Collate:
     'as-fn.R'
     'make-fn-aware.R'
     'curry.R'
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.2
 Roxygen: list(markdown = TRUE)
+Config/testthat/edition: 2
