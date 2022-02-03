@@ -1,5 +1,11 @@
 # nofrills
 
+## 0.3.2
+
+  Nofrills now depends on a stable release of rlang, version 1.0.0 and above.
+  (A minor internal fix was made to address a change in the behavior of
+  `rlang::is_expression()`.) There are no user-facing changes.
+
 ## 0.3.1
 
   This minor update eliminates a warning caused by the deprecation of
