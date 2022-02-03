@@ -7,8 +7,8 @@
 
 [![Travis-CI Build
 Status](https://travis-ci.org/egnha/nofrills.svg?branch=master)](https://travis-ci.org/egnha/nofrills)
-[![codecov](https://codecov.io/gh/egnha/nofrills/branch/master/graph/badge.svg)](https://codecov.io/gh/egnha/nofrills)
-[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/nofrills)](https://cran.r-project.org/package=nofrills)
+[![codecov](https://codecov.io/gh/egnha/nofrills/branch/master/graph/badge.svg)](https://app.codecov.io/gh/egnha/nofrills)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/nofrills)](https://cran.r-project.org/package=nofrills)
 
 # nofrills <img src="inst/logo.png" align="right" />
 
@@ -19,9 +19,8 @@ Status](https://travis-ci.org/egnha/nofrills.svg?branch=master)](https://travis-
 *nofrills* is a lightweight R package that provides `fn()`, a more
 powerful variation of `function()` that:
 
--   **costs less** — enables tidyverse
-    [quasiquotation](https://rlang.r-lib.org/reference/quasiquotation.html)
-    so you don’t pay the price of [functional
+-   **costs less** — enables tidyverse quasiquotation so you don’t pay
+    the price of [functional
     impurity](#pure-functions-via-quasiquotation)
 
 -   has the **same great taste** — supports a superset of `function()`’s
@@ -160,7 +159,7 @@ is_this <- compare_to("this")
 is_this
 #> function (x) 
 #> identical(x, "this")
-#> <environment: 0x7fd045fde208>
+#> <environment: 0x7fdc55943678>
 ```
 
 #### Curry a function with `curry()`
@@ -215,8 +214,7 @@ upon.
     mutable* value of `a`.
 
 `fn()` enables you to write **pure(r)** functions by using
-[quasiquotation](https://rlang.r-lib.org/reference/quasiquotation.html)
-to eliminate such indeterminacy.
+quasiquotation to eliminate such indeterminacy.
 
 -   With `fn()`, you can unquote `a` to capture its value at the point
     of creation:

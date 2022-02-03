@@ -16,7 +16,7 @@ curry_fn(..., ..env = parent.frame())
 environment of the curried function is the calling environment.}
 
 \item{...}{Function declaration, which supports
-\link[rlang:quasiquotation]{quasiquotation}.}
+\link[rlang:topic-inject]{quasiquotation}.}
 
 \item{..env}{Environment in which to create the function (i.e., the
 function’s \link[base:environment]{enclosing environment}).}
@@ -39,7 +39,7 @@ example, \code{curry()} produces the the function\preformatted{function(x) \{
 from the function \code{function(x, y, z) x * y * z}.
 \cr\cr
 \code{curry_fn()} produces a curried function from an \code{\link[=fn]{fn()}}-style function
-declaration, which supports \link[rlang:quasiquotation]{quasiquotation} of a
+declaration, which supports \link[rlang:topic-inject]{quasiquotation} of a
 function’s body and (default) argument values.
 }
 \details{

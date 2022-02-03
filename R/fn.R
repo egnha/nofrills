@@ -189,9 +189,8 @@ make_function <- function(args, body, env) {
 #'   In other words, `foo()` is impure because the value of `foo(x)` depends not
 #'   only on the value of `x` but also on the _externally mutable_ value of `a`.
 #'
-#'   `fn()` enables you to write _pure_ functions by using
-#'   [quasiquotation](https://rlang.r-lib.org/reference/quasiquotation.html)
-#'   to eliminate such indeterminacy.
+#'   `fn()` enables you to write _pure_ functions by using quasiquotation to
+#'   eliminate such indeterminacy.
 #'
 #'   **Example** — With `fn()`, you can unquote `a` to \dQuote{burn in} its
 #'   value at the point of creation:

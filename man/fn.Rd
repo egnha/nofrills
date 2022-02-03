@@ -8,7 +8,7 @@ fn(..., ..env = parent.frame())
 }
 \arguments{
 \item{...}{Function declaration, which supports
-\link[rlang:quasiquotation]{quasiquotation}.}
+\link[rlang:topic-inject]{quasiquotation}.}
 
 \item{..env}{Environment in which to create the function (i.e., the
 function’s \link[base:environment]{enclosing environment}).}
@@ -27,7 +27,7 @@ want to:
     function(x, y = 1) x + y}
 are equivalent
 \item guard against changes in lexical scope: by enabling tidyverse
-\link[rlang:quasiquotation]{quasiquotation}, \code{fn()} allows you to
+\link[rlang:topic-inject]{quasiquotation}, \code{fn()} allows you to
 \dQuote{burn in} values at the point of function creation (see
 \emph{Pure functions via quasiquotation})
 }
@@ -42,7 +42,7 @@ or\preformatted{    arg1, arg2, ..., argN, ~ body
 }
 
 (Note in the second form that the body is a one-sided formula. This
-distinction is relevant for argument \link[rlang:quasiquotation]{splicing}, see
+distinction is relevant for argument \link[rlang:topic-inject]{splicing}, see
 below.)
 \itemize{
 \item To the left of \code{~}, you write a conventional function-argument
@@ -55,7 +55,7 @@ i.e., an expression of the arguments.
 
 \subsection{Quasiquotation}{
 All parts of a function declaration support tidyverse
-\link[rlang:quasiquotation]{quasiquotation}:
+\link[rlang:topic-inject]{quasiquotation}:
 \itemize{
 \item To unquote values (of arguments or parts of the body), use \verb{!!}:
 \preformatted{
@@ -114,9 +114,8 @@ of \code{foo(1)}:\preformatted{    foo(1)  #> [1] 2
 In other words, \code{foo()} is impure because the value of \code{foo(x)} depends not
 only on the value of \code{x} but also on the \emph{externally mutable} value of \code{a}.
 
-\code{fn()} enables you to write \emph{pure} functions by using
-\href{https://rlang.r-lib.org/reference/quasiquotation.html}{quasiquotation}
-to eliminate such indeterminacy.
+\code{fn()} enables you to write \emph{pure} functions by using quasiquotation to
+eliminate such indeterminacy.
 
 \strong{Example} — With \code{fn()}, you can unquote \code{a} to \dQuote{burn in} its
 value at the point of creation:\preformatted{    a <- 1

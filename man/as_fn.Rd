@@ -10,7 +10,7 @@ as_fn(.f)
 \item{.f}{A function or an abbreviated anonymous-function expression of the
 form \code{.(...)}, where \code{...} is a \link[=fn]{function declaration} (i.e., \code{.}
 (dot) in this context is an alias of \code{\link[=fn]{fn()}}).
-\link[rlang:quasiquotation]{Quasiquotation} is supported.}
+\link[rlang:topic-inject]{Quasiquotation} is supported.}
 }
 \value{
 If \code{.f} is a function, it is simply returned, otherwise the function
